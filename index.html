@@ -2611,13 +2611,7 @@ window.onload = function() {
   }
 };
 
-// 覆蓋以修正 event 參考問題
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', function() {
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
+// nav-item active 狀態已由 show() 統一管理，無需額外 listener
 </script>
 </body>
 </html>
