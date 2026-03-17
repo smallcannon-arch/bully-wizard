@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校園霸凌防制準則 — 完整表單系統（生對生 v1）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+:root {
+  --ink: #1a1a2e; --paper: #f5f3ee; --warm: #ede9e0; --line: #c5bfb0;
+  --accent: #8b1a1a; --ok: #1a5c2e; --info: #1a3a5c;
+  --sidebar-w: 200px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color: var(--ink); font-size: 14px; display: flex; flex-direction: column; }
+
+/* ── 頂部標題列 ── */
+.top-bar {
+  background: var(--ink); color: #fff;
+  height: 48px; padding: 0 1.2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  flex-shrink: 0;
+}
+.top-bar h1 { font-family: 'Noto Serif TC', serif; font-size: .95rem; font-weight: 700; letter-spacing: .04em; }
+.top-bar-right { display: flex; align-items: center; gap: .75rem; font-size: .78rem; }
+.print-btn { padding: .3rem 1rem; background: var(--accent); color: #fff; border: none; border-radius: 20px; font-family: 'Noto Sans TC', sans-serif; font-size: .78rem; cursor: pointer; }
+.print-btn:hover { opacity: .88; }
+
+/* ── 主體佈局 ── */
+.layout { display: flex; flex: 1; overflow: hidden; }
+
+/* ── 左側導覽 ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding-bottom: 2rem;
+}
+.stage-group { }
+.stage-head {
+  padding: .55rem .8rem;
+  font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  color: #fff; background: var(--ink-soft, #3a3a5c);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  user-select: none;
+}
+.stage-head.s-receive { background: #2c4a6e; }
+.stage-head.s-mediate { background: #2c5c3c; }
+.stage-head.s-investigate { background: #5c3a00; }
+.stage-head.s-review { background: #6e2c2c; }
+.stage-arrow { font-size: .65rem; transition: transform .2s; }
+.stage-arrow.open { transform: rotate(90deg); }
+
+.nav-item {
+  padding: .4rem .9rem .4rem 1rem;
+  font-size: .78rem; color: var(--ink-soft, #3a3a5c);
+  cursor: pointer; border-bottom: 1px solid var(--paper);
+  line-height: 1.4;
+  transition: background .12s;
+  display: flex; align-items: center; gap: .4rem;
+}
+.nav-item:hover { background: var(--paper); }
+.nav-item.active { background: var(--paper); font-weight: 600; color: var(--ink); border-left: 3px solid var(--ink); padding-left: calc(1rem - 3px); }
+.nav-num { font-size: .68rem; color: var(--line); font-family: monospace; min-width: 2.4em; }
+.stage-items { display: none; }
+.stage-items.open { display: block; }
+
+/* ── 主內容區 ── */
+.main-content {
+  flex: 1; overflow-y: auto;
+  background: var(--paper);
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+.form-page { display: none; }
+.form-page.active { display: block; }
+
+/* ── 麵包屑 ── */
+.breadcrumb {
+  font-size: .75rem; color: var(--line);
+  margin-bottom: 1rem;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.breadcrumb span { color: var(--ink-soft, #3a3a5c); }
+
+/* ── 表單樣式（繼承自各階段）── */
+.doc {
+  background: #fff; border: 1px solid var(--line);
+  padding: 2rem 2.5rem; font-family: 'Noto Serif TC', serif;
+  line-height: 1.9; margin-bottom: 1.5rem; max-width: 780px;
+}
+.doc-title { text-align: center; font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; letter-spacing: .08em; }
+.gongwen-school { font-size: 1rem; font-weight: 700; text-align: center; letter-spacing: .15em; border-bottom: 2px solid var(--ink); padding-bottom: .4rem; margin-bottom: .8rem; }
+.classified { display: inline-block; border: 1.5px solid var(--ink); padding: 0 5px; font-size: .75rem; font-weight: 700; }
+
+.section { margin-bottom: .8rem; }
+.section-title { font-weight: 700; }
+.item { padding-left: 1.2rem; margin-bottom: .25rem; line-height: 1.8; }
+.sub-item { padding-left: 2.4rem; margin-bottom: .2rem; }
+
+.form-table { width: 100%; border-collapse: collapse; font-size: .87rem; margin: .4rem 0; }
+.form-table th, .form-table td { border: 1px solid var(--ink); padding: .32rem .5rem; vertical-align: top; line-height: 1.65; }
+.form-table th { background: #f0ece4; font-weight: 600; text-align: center; white-space: nowrap; }
+.cell-label { background: #f0ece4; font-weight: 600; text-align: center; white-space: nowrap; width: 6em; }
+
+.iline { display: inline-block; border-bottom: 1px solid #999; min-width: 60px; vertical-align: bottom; }
+.iline-sm { min-width: 28px; }
+.iline-lg { min-width: 140px; }
+.iblock { display: block; border-bottom: 1px solid #999; min-height: 1.5rem; width: 100%; margin: .12rem 0; }
+.iarea { display: block; min-height: 3rem; width: 100%; border-bottom: 1px dashed #ddd; }
+.iarea-lg { min-height: 6rem; }
+.cb { display: inline-block; width: 13px; height: 13px; border: 1.5px solid var(--ink); vertical-align: middle; flex-shrink: 0; }
+.ck-row { display: flex; align-items: baseline; gap: .4rem; margin: .22rem 0; line-height: 1.75; }
+.ck-row .cb { margin-top: .2rem; flex-shrink: 0; }
+
+.sign-row { display: flex; gap: 2rem; margin-top: 1.2rem; font-size: .88rem; justify-content: center; }
+.sign-item { text-align: center; }
+.sign-line { width: 90px; border-bottom: 1px solid var(--ink); margin: 0 auto .2rem; height: 1.6rem; }
+.date-row { text-align: center; margin-top: 1rem; font-size: .9rem; letter-spacing: .1em; }
+
+.gongwen-meta { font-size: .85rem; margin-bottom: .6rem; border-bottom: 1px solid var(--line); padding-bottom: .4rem; }
+.gongwen-meta-row { display: flex; gap: .3rem; margin-bottom: .18rem; }
+.gm-label { color: #555; white-space: nowrap; min-width: 5.5em; }
+.gm-value { flex: 1; border-bottom: 1px solid #ddd; }
+
+.note-box { background: #f8f6f0; border-left: 3px solid var(--line); padding: .55rem .8rem; font-size: .78rem; color: #555; margin-top: .75rem; line-height: 1.7; font-family: 'Noto Sans TC', sans-serif; }
+.note-box strong { color: var(--accent); }
+
+.law-banner { background: var(--info); color: #fff; padding: .65rem 1rem; border-radius: 3px; margin-bottom: 1rem; font-size: .82rem; line-height: 1.65; font-family: 'Noto Sans TC', sans-serif; }
+.law-banner strong { color: #80d0ff; }
+
+.quorum-notice { background: #ddeeff; border: 1px solid #a0c0e0; color: var(--info); padding: .55rem .8rem; border-radius: 3px; font-size: .82rem; margin-bottom: .75rem; font-family: 'Noto Sans TC', sans-serif; line-height: 1.65; }
+
+.relief-box { border: 1.5px solid var(--line); border-radius: 3px; overflow: hidden; margin-top: .75rem; }
+.relief-head { padding: .45rem .8rem; font-size: .82rem; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; }
+.relief-head-victim { background: #ddeeff; color: var(--info); }
+.relief-head-perp { background: #fff3cd; color: #5c3a00; }
+.relief-body { padding: .65rem .8rem; font-size: .82rem; line-height: 1.7; font-family: 'Noto Sans TC', sans-serif; }
+
+.history-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.history-table th, .history-table td { border: 1px solid var(--ink); padding: .3rem .5rem; vertical-align: top; }
+.history-table th { background: #f0ece4; font-weight: 600; text-align: center; white-space: nowrap; }
+
+.attachment-list { font-size: .82rem; color: #555; border-top: 1px solid var(--line); margin-top: 1rem; padding-top: .5rem; font-family: 'Noto Sans TC', sans-serif; }
+
+.variant-badge { display: inline-block; font-size: .72rem; padding: 2px 8px; border-radius: 20px; background: #f0ece4; border: 1px solid var(--line); font-family: 'Noto Sans TC', sans-serif; margin-bottom: .5rem; }
+.badge-bully { background: #ddeeff; border-color: #a0c0e0; color: var(--info); }
+.badge-injury { background: #fff3cd; border-color: #f0d080; color: var(--accent); }
+
+.page-sep { border-top: 2px dashed var(--line); margin: 2rem 0 1.5rem; text-align: center; }
+.page-sep span { background: var(--paper); padding: 0 .5rem; font-size: .72rem; color: var(--line); font-family: 'Noto Sans TC', sans-serif; position: relative; top: -.55rem; }
+
+/* ── 列印 ── */
+@media print {
+  .top-bar, .sidebar { display: none !important; }
+  .layout { display: block; }
+  .main-content { padding: 0; overflow: visible; }
+  .form-page { display: none !important; }
+  .form-page.active { display: block !important; }
+  .doc { border: none; padding: 1.2rem 2rem; max-width: 100%; page-break-after: always; }
+  .page-sep { display: none; }
+  .breadcrumb { display: none; }
+  body { background: #fff; font-size: 12px; }
+  @page { size: A4; margin: 1.5cm 2cm; }
+}
+
+/* ── RWD ── */
+@media (max-width: 680px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { display: none; }
+  .form-table th, .form-table td { font-size: .75rem; padding: .25rem .35rem; }
+  .doc { padding: 1.2rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 頂部列 -->
+<div class="top-bar">
+  <h1>🏫 校園霸凌防制準則 — 表單系統（生對生 v1）</h1>
+  <div class="top-bar-right">
+    <span id="currentFormName" style="color:rgba(255,255,255,.6);">請選擇表單</span>
+    <button class="print-btn" onclick="window.print()">🖨️ 列印此表單</button>
+  </div>
+</div>
+
+<!-- 主體 -->
+<div class="layout">
+
+  <!-- 左側導覽 -->
+  <nav class="sidebar">
+
+    <!-- 受理階段 -->
+    <div class="stage-group">
+      <div class="stage-head s-receive" onclick="toggleStage('s1')">
+        📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
+      </div>
+      <div class="stage-items open" id="s1">
+        <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
+        <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
+        <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
+        <div class="nav-item" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
+        <div class="nav-item" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
+        <div class="nav-item" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
+        <div class="nav-item" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
+        <div class="nav-item" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
+        <div class="nav-item" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
+        <div class="nav-item" onclick="show('f_stage01_confirm','STAGE01 送出前確認清單','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>送出前確認清單</strong></div>
+      </div>
+    </div>
+
+    <!-- 調和階段 -->
+    <div class="stage-group">
+      <div class="stage-head s-mediate" onclick="toggleStage('s2')">
+        🤝 調和階段（4-x）<span class="stage-arrow" id="arr-s2">›</span>
+      </div>
+      <div class="stage-items" id="s2">
+        <div class="nav-item" onclick="show('f41','4-1 調和或調查程序說明書','調和')"><span class="nav-num">4-1</span>程序說明書</div>
+        <div class="nav-item" onclick="show('f42','4-2 調和意願書','調和')"><span class="nav-num">4-2</span>調和意願書</div>
+        <div class="nav-item" onclick="show('f43','4-3 個別會談會議紀錄','調和')"><span class="nav-num">4-3</span>個別會談紀錄</div>
+        <div class="nav-item" onclick="show('f44','4-4 調和會議紀錄','調和')"><span class="nav-num">4-4</span>調和會議紀錄</div>
+        <div class="nav-item" onclick="show('f45','4-5 調和協議書','調和')"><span class="nav-num">4-5</span>調和協議書</div>
+        <div class="nav-item" onclick="show('f46','4-6 調和協議保證書','調和')"><span class="nav-num">4-6</span>調和協議保證書</div>
+        <div class="nav-item" onclick="show('f47','4-7 調和報告（空白版）','調和')"><span class="nav-num">4-7</span>調和報告（空白版）</div>
+        <div class="nav-item" onclick="show('f48a','4-8 調和報告 寫法1','調和')"><span class="nav-num">4-8a</span>調和報告 寫法1</div>
+        <div class="nav-item" onclick="show('f48b','4-8 調和報告 寫法2','調和')"><span class="nav-num">4-8b</span>調和報告 寫法2</div>
+        <div class="nav-item" onclick="show('f48c','4-8 調和報告 寫法3','調和')"><span class="nav-num">4-8c</span>調和報告 寫法3</div>
+      </div>
+    </div>
+
+    <!-- 調查階段 -->
+    <div class="stage-group">
+      <div class="stage-head s-investigate" onclick="toggleStage('s3')">
+        🔍 調查階段（5-x）<span class="stage-arrow" id="arr-s3">›</span>
+      </div>
+      <div class="stage-items" id="s3">
+        <div class="nav-item" onclick="show('f51','5-1 學生調查訪談通知單','調查')"><span class="nav-num">5-1</span>訪談通知單</div>
+        <div class="nav-item" onclick="show('f52','5-2 處理程序延長通知函','調查')"><span class="nav-num">5-2</span>延長通知函</div>
+        <div class="nav-item" onclick="show('f53','5-3 調查訪談大綱','調查')"><span class="nav-num">5-3</span>調查訪談大綱</div>
+        <div class="nav-item" onclick="show('f54','5-4 調查報告格式','調查')"><span class="nav-num">5-4</span>調查報告格式</div>
+        <div class="nav-item" onclick="show('f55a','5-5 調查報告 持續霸凌 寫法1','調查')"><span class="nav-num">5-5a</span>持續霸凌 寫法1</div>
+        <div class="nav-item" onclick="show('f55b','5-5 調查報告 持續霸凌 寫法2','調查')"><span class="nav-num">5-5b</span>持續霸凌 寫法2</div>
+        <div class="nav-item" onclick="show('f56a','5-6 調查報告 故意傷害 寫法1','調查')"><span class="nav-num">5-6a</span>故意傷害 寫法1</div>
+        <div class="nav-item" onclick="show('f56b','5-6 調查報告 故意傷害 寫法2','調查')"><span class="nav-num">5-6b</span>故意傷害 寫法2</div>
+      </div>
+    </div>
+
+    <!-- 審議階段 -->
+    <div class="stage-group">
+      <div class="stage-head s-review" onclick="toggleStage('s4')">
+        ⚖️ 審議階段（6-x）<span class="stage-arrow" id="arr-s4">›</span>
+      </div>
+      <div class="stage-items" id="s4">
+        <div class="nav-item" onclick="show('f61','6-1 防制委員會會議紀錄','審議')"><span class="nav-num">6-1</span>防制委員會會議紀錄</div>
+        <div class="nav-item" onclick="show('f62','6-2 會簽移送懲處單位','審議')"><span class="nav-num">6-2</span>會簽移送懲處</div>
+        <div class="nav-item" onclick="show('f63','6-3 被行為人結果通知函','審議')"><span class="nav-num">6-3</span>被行為人結果通知函</div>
+        <div class="nav-item" onclick="show('f64','6-4 行為人結果通知函','審議')"><span class="nav-num">6-4</span>行為人結果通知函</div>
+        <div class="nav-item" onclick="show('f65','6-5 報教育局備查','審議')"><span class="nav-num">6-5</span>報教育局備查</div>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- 主內容 -->
+  <main class="main-content" id="mainContent">
+    <div class="breadcrumb" id="breadcrumb">← 請從左側選擇表單</div>
+    <div id="formPages">
+<!-- ══════════════════════════════
+  3-1 簽請組成防制委員會及審查小組
+══════════════════════════════ -->
+<div class="form-page" id="f31">
+<div class="doc">
+  <div class="doc-title">簽　請　單</div>
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr>
+      <td class="cell-label">簽於</td>
+      <td>○○處</td>
+      <td class="cell-label">日期</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+  </table>
+
+  <div class="gongwen-section">
+    <span class="gongwen-section-title">主旨：</span>有關本校○○○學年度校園霸凌防制委員會（以下簡稱防制委員會）及審查小組組成一案，簽請核示。
+  </div>
+
+  <div class="gongwen-section">
+    <div class="gongwen-section-title">說明：</div>
+    <div class="gongwen-item">一、依據「校園霸凌防制準則」第7條規定，高級中等以下學校防制委員會應置委員五人至十一人，任期一年為原則，期滿得續聘。委員應包括：(一)校長或副校長（主席）；(二)未兼行政職務之教師代表、學務人員或輔導人員至少二人；(三)家長代表；(四)外聘學者專家；(五)高中學校並應包括學生代表。</div>
+    <div class="gongwen-item">二、另依準則第24條規定，學校校長應於防制委員會委員中指派三人組成審查小組。</div>
+    <div class="gongwen-item">三、有關本校防制委員會委員，經徵詢相關人員，建議名單如附件一。</div>
+  </div>
+
+  <div class="gongwen-section">
+    <span class="gongwen-section-title">擬辦：</span>請鈞長勾選防制委員會委員並指派其中三人為審查小組委員，再依委員意願成立本校防制委員會及審查小組。
+  </div>
+
+  <div class="sign-row" style="margin-top:1.5rem;">
+    <div class="sign-item"><div class="sign-line"></div>承辦人</div>
+    <div class="sign-item"><div class="sign-line"></div>處室主任</div>
+    <div class="sign-item"><div class="sign-line"></div>校長</div>
+  </div>
+
+  <div class="page-break-hint"><span>附件一</span></div>
+
+  <div class="doc-title" style="font-size:.95rem;">（學校全銜）<br>校園霸凌防制委員會勾選暨審查小組指派名單</div>
+
+  <table class="form-table">
+    <tr>
+      <th>序號</th><th>編組職稱</th><th>姓名</th><th>職稱</th>
+      <th>防制委員會<br>（5–11人）</th>
+      <th>校長指派<br>3人為審查小組</th>
+      <th>備考</th>
+    </tr>
+    <tr>
+      <td style="text-align:center;">1</td>
+      <td>召集人（主席）</td>
+      <td><span class="input-line"></span></td>
+      <td>校長／副校長</td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">2</td>
+      <td>學務人員</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td rowspan="3" style="text-align:center;font-size:.78rem;">至少<br>2類人</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">3</td>
+      <td>輔導人員</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">4</td>
+      <td>未兼行政之教師代表</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">5</td>
+      <td>家長代表</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">6</td>
+      <td>外聘專家學者</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="font-size:.75rem;">偏遠地區得以社會公正人士替代</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">7</td>
+      <td>學生代表</td>
+      <td><span class="input-line"></span></td>
+      <td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+      <td style="font-size:.75rem;">高中學校應包括</td>
+    </tr>
+  </table>
+  <div class="note-box">
+    一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則，期滿得續聘。<br>
+    二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組，審查小組任期與防制委員會委員相同。
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-2 防制委員會（含審查小組）名冊
+══════════════════════════════ -->
+<div class="form-page" id="f32">
+<div class="doc">
+  <div class="doc-title">（學校全銜）<br>校園霸凌防制委員會名冊</div>
+  <table class="form-table">
+    <tr>
+      <th>序號</th><th>編組職稱</th><th>姓名</th><th>職稱</th>
+      <th>校長指派<br>3人為審查小組</th><th>備考</th>
+    </tr>
+    <tr>
+      <td style="text-align:center;">1</td><td>召集人（主席）</td>
+      <td><span class="input-line"></span></td><td>校長／副校長</td>
+      <td style="text-align:center;"><span class="cb"></span></td><td></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">2</td><td>學務人員</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td><td rowspan="3" style="text-align:center;font-size:.78rem;">至少<br>2類人</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">3</td><td>輔導人員</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">4</td><td>未兼行政之教師代表</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">5</td><td>家長代表</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td><td></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">6</td><td>外聘專家學者</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td><td style="font-size:.75rem;">偏遠地區得以社會公正人士替代</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">7</td><td>學生代表</td>
+      <td><span class="input-line"></span></td><td><span class="input-line"></span></td>
+      <td style="text-align:center;"><span class="cb"></span></td><td style="font-size:.75rem;">高中學校應包括</td>
+    </tr>
+  </table>
+  <div class="note-box">
+    一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則。<br>
+    二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組。
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-3 疑似校園霸凌事件檢舉書
+══════════════════════════════ -->
+<div class="form-page" id="f33">
+<div class="doc">
+  <div class="sign-row" style="justify-content:flex-end; margin-bottom:.5rem; font-size:.82rem;">
+    <span>承辦人：<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span></span>
+    <span style="margin-left:2rem;">主管：<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span></span>
+    <span style="margin-left:2rem;">校長：<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span></span>
+  </div>
+  <table class="form-table">
+    <tr><th colspan="9" style="font-size:1rem;padding:.5rem;">疑似校園霸凌事件檢舉書</th></tr>
+    <tr>
+      <td class="cell-label" rowspan="3">檢舉人<br>資料</td>
+      <td>姓名</td>
+      <td colspan="5"><span class="input-line"></span></td>
+      <td colspan="2">相關文件寄達地址</td>
+    </tr>
+    <tr>
+      <td></td><td colspan="5"><span class="input-line"></span></td>
+      <td colspan="2"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td>檢舉日期</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>聯絡電話</td>
+      <td><span class="input-line"></span></td>
+      <td colspan="3">與被行為人關係<br>
+        <div class="checkbox-row" style="font-size:.78rem;margin-top:.2rem;">
+          <label class="checkbox-item"><span class="cb"></span>當事人本人</label>
+          <label class="checkbox-item"><span class="cb"></span>法定代理人</label>
+          <label class="checkbox-item"><span class="cb"></span>實際照顧者</label>
+          <label class="checkbox-item"><span class="cb"></span>其他___</label>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label" rowspan="2">被行為人<br>資料</td>
+      <td>姓名</td>
+      <td colspan="3"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td colspan="3"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td></td><td colspan="3"></td><td>就讀班級</td><td colspan="3"><span class="input-line"></span></td>
+    </tr>
+    <!-- 疑似行為人（可多人） -->
+    <tr>
+      <td class="cell-label" rowspan="6">檢舉<br>事實<br>內容</td>
+      <td class="cell-label" rowspan="4">疑似<br>行為人</td>
+      <td colspan="2">姓名</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td><span class="input-line"></span></td>
+      <td>就讀班級</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2">姓名</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td><span class="input-line"></span></td>
+      <td>就讀班級</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2">姓名</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td><span class="input-line"></span></td>
+      <td>就讀班級</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2">姓名</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td><span class="input-line"></span></td>
+      <td>就讀班級</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label" rowspan="2">事件<br>經過</td>
+      <td colspan="7">是否有性霸凌等疑似情事？
+        <div class="checkbox-row" style="margin-top:.2rem;font-size:.82rem;">
+          <label class="checkbox-item"><span class="cb"></span>否</label>
+          <label class="checkbox-item"><span class="cb"></span>是，依性別平等教育法處理</label>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="7">
+        <div style="font-size:.78rem;color:#666;margin-bottom:.3rem;">請詳填事實（人、事、時、地、物等），本欄如不敷使用時，可以附件方式表述</div>
+        <div style="min-height:80px;"></div>
+        <div style="margin-top:.5rem;">是否檢附相關物證？
+          <label class="checkbox-item" style="display:inline-flex;margin-left:.5rem;"><span class="cb"></span>無</label>
+          <label class="checkbox-item" style="display:inline-flex;margin-left:.5rem;"><span class="cb"></span>有，陳附：<span style="display:inline-block;width:80px;border-bottom:1px solid #999;"></span></label>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label">檢舉人<br>親自簽名</td>
+      <td colspan="3"><span class="input-line" style="min-height:2rem;"></span></td>
+      <td class="cell-label">本校收件人</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>收件時間</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">備考</td>
+      <td colspan="8" style="font-size:.8rem;">校安通報編號：<span style="display:inline-block;width:150px;border-bottom:1px solid #999;"></span>（通報後再行填寫）</td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-4 疑似校園霸凌事件撤回檢舉書
+══════════════════════════════ -->
+<div class="form-page" id="f34">
+<div class="doc">
+  <div style="text-align:right;font-size:.82rem;margin-bottom:.3rem;">
+    ○○市○○區○○國民中（小）學<br>
+    承辦人：<span style="display:inline-block;width:50px;border-bottom:1px solid #999;"></span>
+    主管：<span style="display:inline-block;width:50px;border-bottom:1px solid #999;"></span>
+    校長：<span style="display:inline-block;width:50px;border-bottom:1px solid #999;"></span>
+  </div>
+  <table class="form-table">
+    <tr><th colspan="6" style="font-size:1rem;padding:.5rem;">疑似校園霸凌事件撤回檢舉書</th></tr>
+    <tr>
+      <td class="cell-label" rowspan="2">申請人<br>資料</td>
+      <td>姓名</td>
+      <td colspan="4"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td>申請撤回日期</td>
+      <td><span class="input-line"></span></td>
+      <td>聯絡電話</td>
+      <td colspan="2"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label"></td>
+      <td>與學生關係</td>
+      <td colspan="4">
+        <div class="checkbox-row">
+          <label class="checkbox-item"><span class="cb"></span>當事人</label>
+          <label class="checkbox-item"><span class="cb"></span>法定代理人</label>
+          <label class="checkbox-item"><span class="cb"></span>實際照顧者</label>
+          <label class="checkbox-item"><span class="cb"></span>其他___</label>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label" rowspan="2">學生<br>資料</td>
+      <td>姓名</td>
+      <td colspan="2"><span class="input-line"></span></td>
+      <td>就讀學校</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td></td><td colspan="2"></td>
+      <td>就讀班級</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">撤回聲明</td>
+      <td colspan="5">
+        本人前於<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span>年<span style="display:inline-block;width:30px;border-bottom:1px solid #999;"></span>月<span style="display:inline-block;width:30px;border-bottom:1px solid #999;"></span>日，向本校所提之檢舉案（校安通報序號：<span style="display:inline-block;width:100px;border-bottom:1px solid #999;"></span>）。<br>
+        因<span style="display:inline-block;min-height:60px;width:100%;border-bottom:1px solid #999;"></span><br>
+        ，擬予撤回。
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label">備註</td>
+      <td colspan="5" style="font-size:.8rem;">依校園霸凌防制準則第25條第2項規定，撤回檢舉事件或調和、調查中撤回檢舉之事件，調查學校認有必要者，得受理及本於職權繼續調查處理。</td>
+    </tr>
+    <tr>
+      <td class="cell-label">申請人<br>簽名或蓋章</td>
+      <td colspan="2"><span style="display:inline-block;min-height:2.5rem;width:100%;"></span></td>
+      <td>申請日期</td>
+      <td colspan="2"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">本校收件人<br>簽名或蓋章</td>
+      <td colspan="2"><span style="display:inline-block;min-height:2.5rem;width:100%;"></span></td>
+      <td>收件日期</td>
+      <td colspan="2"><span class="input-line"></span></td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-5 審查小組會議紀錄
+══════════════════════════════ -->
+<div class="form-page" id="f35">
+<div class="doc">
+  <div class="doc-title">（學校全銜）<br>校園霸凌審查小組會議紀錄</div>
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr>
+      <td class="cell-label">會議時間</td>
+      <td><span class="input-line"></span>年<span class="input-line" style="width:40px;"></span>月<span class="input-line" style="width:40px;"></span>日（星期<span class="input-line" style="width:25px;"></span>）<span class="input-line" style="width:30px;"></span>午<span class="input-line" style="width:40px;"></span>時<span class="input-line" style="width:40px;"></span>分</td>
+    </tr>
+    <tr>
+      <td class="cell-label">會議地點</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">主持人</td>
+      <td style="display:flex;gap:2rem;"><span>姓名：<span class="input-line" style="width:80px;display:inline-block;"></span></span><span>紀錄：<span class="input-line" style="width:80px;display:inline-block;"></span></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">出席委員</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">列席人員</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+  </table>
+
+  <div class="gongwen-section"><strong>壹、主席致詞：</strong>（略）</div>
+  <div class="gongwen-section"><strong>貳、業務單位報告：</strong>（略）</div>
+  <div class="gongwen-section">
+    <strong>參、討論事項：</strong>
+    <div class="gongwen-item">
+      案由：針對疑似校園霸凌案件（校安通報編號<span class="input-line" style="width:100px;display:inline-block;"></span>）受理乙案，提請討論。
+    </div>
+    <div class="gongwen-item"><strong>說明：</strong>（略）</div>
+    <div class="gongwen-item">
+      <strong>決議：</strong><br>
+      <div style="margin-top:.5rem;">
+        <label class="checkbox-item" style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.5rem;">
+          <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+          <span><strong>受理：</strong>依據本準則第25條規定，校安通報編號<span class="input-line" style="width:80px;display:inline-block;"></span>疑似霸凌案件，無本準則第25條第1項各款事由，爰同意受理，並以書面通知檢舉人。</span>
+        </label>
+        <label class="checkbox-item" style="display:flex;align-items:baseline;gap:.4rem;">
+          <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+          <span><strong>不受理：</strong>依據本準則第25條第1項規定，符合第<span class="input-line" style="width:25px;display:inline-block;"></span>款
+          <span class="input-line" style="width:150px;display:inline-block;"></span>情形，經審查小組委員全體一致同意不予受理。後續請以書面通知檢舉人，並告知不服時陳情管道。</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="gongwen-section"><strong>肆、臨時動議：</strong>無。</div>
+  <div class="gongwen-section"><strong>伍、散會：</strong><span class="input-line" style="width:60px;display:inline-block;"></span>午<span class="input-line" style="width:40px;display:inline-block;"></span>時<span class="input-line" style="width:40px;display:inline-block;"></span>分。</div>
+
+  <div class="note-box">
+    <strong>備註：</strong>家長撤回檢舉不一定要用書面，也可口頭撤回。學校只要將口頭撤回意見寫在案由「說明」即可。不受理時請以書面通知檢舉人，並告知不服學校不受理決定時的陳情管道。
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-6 受理或不受理通知函（雙版本）
+══════════════════════════════ -->
+<div class="form-page" id="f36">
+<!-- 受理版 -->
+<div class="doc">
+  <div class="doc-title">受理通知函</div>
+  <div style="font-size:.78rem;color:#888;text-align:right;margin-bottom:.5rem;font-family:'Noto Sans TC',sans-serif;">
+    檔號：<span class="input-line" style="width:80px;display:inline-block;"></span>　保存年限：<span class="input-line" style="width:60px;display:inline-block;"></span>　<span class="classified-badge">密件</span>
+  </div>
+  <div class="gongwen-header">
+    <div class="gongwen-school">（學校校名）函</div>
+  </div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">受文者：</span><span class="gongwen-meta-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">發文日期：</span><span class="gongwen-meta-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">發文字號：</span><span class="gongwen-meta-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">速別：</span><span class="gongwen-meta-value"></span></div>
+  </div>
+  <div class="gongwen-section">
+    <span class="gongwen-section-title">主旨：</span>臺端提出之疑似校園霸凌事件檢舉案（校安通報編號<span class="input-line" style="width:80px;display:inline-block;"></span>），本校依法予以受理，請查照。
+  </div>
+  <div class="gongwen-section">
+    <div class="gongwen-section-title">說明：</div>
+    <div class="gongwen-item">一、依據臺端於<span class="input-line" style="width:80px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日提出之疑似校園霸凌事件檢舉書辦理。</div>
+    <div class="gongwen-item">二、有關臺端提出前項檢舉案，依本校<span class="input-line" style="width:80px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日校園霸凌審查小組會議，決議受理，並依校園霸凌防制準則第25條第4項：「調查學校應於接獲檢舉之日起<strong>二十個工作日內</strong>，以書面通知檢舉人是否受理。」辦理。</div>
+  </div>
+  <div style="margin-top:1rem;font-size:.85rem;">
+    <div>正本：<span class="input-line" style="width:200px;display:inline-block;"></span></div>
+    <div style="margin-top:.3rem;">副本：</div>
+  </div>
+</div>
+
+<div class="page-break-hint"><span>不受理通知函（另頁）</span></div>
+
+<!-- 不受理版 -->
+<div class="doc">
+  <div class="doc-title">不受理通知函</div>
+  <div style="font-size:.78rem;color:#888;text-align:right;margin-bottom:.5rem;font-family:'Noto Sans TC',sans-serif;">
+    檔號：<span class="input-line" style="width:80px;display:inline-block;"></span>　保存年限：<span class="input-line" style="width:60px;display:inline-block;"></span>　<span class="classified-badge">密件</span>
+  </div>
+  <div class="gongwen-header">
+    <div class="gongwen-school">（學校全銜）函</div>
+  </div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">受文者：</span><span class="gongwen-meta-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">發文日期：</span><span class="gongwen-meta-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">發文字號：</span><span class="gongwen-meta-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gongwen-meta-label">附件：</span><span class="gongwen-meta-value">被行為人不服陳情書</span></div>
+  </div>
+  <div class="gongwen-section">
+    <span class="gongwen-section-title">主旨：</span>臺端提出之疑似校園霸凌事件檢舉案（校安通報編號<span class="input-line" style="width:80px;display:inline-block;"></span>），本校依法不予受理，請查照。
+  </div>
+  <div class="gongwen-section">
+    <div class="gongwen-section-title">說明：</div>
+    <div class="gongwen-item">一、依據臺端於<span class="input-line" style="width:80px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日提出之疑似校園霸凌事件檢舉書辦理。</div>
+    <div class="gongwen-item">二、依本校<span class="input-line" style="width:80px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日校園霸凌審查小組會議決議，旨案符合校園霸凌防制準則第25條第1項第<span class="input-line" style="width:25px;display:inline-block;"></span>款<span class="input-line" style="width:120px;display:inline-block;"></span>情形，經審查小組全體一致同意不予受理。</div>
+    <div class="gongwen-item">三、如臺端對不受理決定不服，得依防制準則第26條，於收受不受理決定之次日起<strong>30日內</strong>，填具陳情書向○○教育局（處）陳情；陳情，同一事件以一次為限。</div>
+    <div class="gongwen-item">四、檢附陳情書格式1份。</div>
+  </div>
+  <div style="margin-top:1rem;font-size:.85rem;">
+    <div>正本：<span class="input-line" style="width:200px;display:inline-block;"></span></div>
+    <div style="margin-top:.3rem;">副本：</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-7 不服陳情書
+══════════════════════════════ -->
+<div class="form-page" id="f37">
+<div class="doc">
+  <div class="doc-title">陳　情　書</div>
+  <div style="text-align:right;font-size:.82rem;margin-bottom:.5rem;">受理人員簽章：<span style="display:inline-block;width:80px;border-bottom:1px solid #999;"></span></div>
+  <table class="form-table">
+    <tr>
+      <td class="cell-label">陳情<br>類別</td>
+      <td colspan="8">
+        <div style="margin-bottom:.4rem;"><label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;"><span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span><span>檢舉人不服學校不受理決定（防制準則第26條）</span></label></div>
+        <div><label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;"><span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span><span>被行為人、其法定代理人或實際照顧者，不服終局實體處理（防制準則第49條）</span></label></div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label" rowspan="3">被行為人<br>資料</td>
+      <td>姓名</td><td colspan="2"><span class="input-line"></span></td>
+      <td>性別</td><td><label class="checkbox-item"><span class="cb"></span>男</label> <label class="checkbox-item"><span class="cb"></span>女</label></td>
+      <td>出生年月日</td><td colspan="2"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td colspan="2">身分證統一編號</td><td><span class="input-line"></span></td>
+      <td>聯絡電話</td><td><span class="input-line"></span></td>
+      <td>服務或就學學校</td><td colspan="2"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td>住（居）所</td>
+      <td colspan="7">縣（市）<span class="input-line" style="width:40px;display:inline-block;"></span>村（里）<span class="input-line" style="width:60px;display:inline-block;"></span>路<span class="input-line" style="width:60px;display:inline-block;"></span>段<span class="input-line" style="width:30px;display:inline-block;"></span>巷<span class="input-line" style="width:30px;display:inline-block;"></span>弄<span class="input-line" style="width:25px;display:inline-block;"></span>號<span class="input-line" style="width:25px;display:inline-block;"></span>樓</td>
+    </tr>
+    <tr>
+      <td class="cell-label" rowspan="4">陳情<br>簡述</td>
+      <td>疑似行為人</td>
+      <td colspan="7">姓名：<span class="input-line" style="width:80px;display:inline-block;"></span>　就學學校：<span class="input-line" style="width:150px;display:inline-block;"></span></td>
+    </tr>
+    <tr>
+      <td>事件發生時間</td>
+      <td colspan="7"><span class="input-line" style="width:40px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日　<label class="checkbox-item"><span class="cb"></span>上午</label> <label class="checkbox-item"><span class="cb"></span>下午</label><span class="input-line" style="width:30px;display:inline-block;"></span>時<span class="input-line" style="width:30px;display:inline-block;"></span>分</td>
+    </tr>
+    <tr>
+      <td>事件發生地點</td>
+      <td colspan="7"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td>事件發生過程</td>
+      <td colspan="7">
+        <div style="font-size:.78rem;color:#666;margin-bottom:.3rem;">請詳填事實（人、事、時、地、物等），本欄如不敷使用時，可以附件方式表述</div>
+        <div style="min-height:80px;"></div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cell-label">請求事項</td>
+      <td colspan="8">對事件處理之期待與要求：<div style="min-height:50px;"></div></td>
+    </tr>
+    <tr>
+      <td colspan="5">檢舉人／被行為人／法定代理人　簽名或蓋章：<span style="display:inline-block;width:80px;border-bottom:1px solid #999;"></span></td>
+      <td colspan="4">提出日期：<span class="input-line" style="width:80px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日</td>
+    </tr>
+    <tr>
+      <td class="cell-label">備註</td>
+      <td colspan="8" style="font-size:.78rem;line-height:1.6;">
+        防制準則第26條：檢舉人不服不受理決定者，於收受不受理決定之次日起三十日內，得填具陳情書向學校所屬主管機關陳情；陳情，同一事件以一次為限。<br>
+        防制準則第49條：被行為人、其法定代理人或實際照顧者，不服學校之終局實體處理者，於收受終局實體處理之次日起30日內，得填具陳情書向學校所屬主管機關陳情；陳情，同一事件以一次為限。
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-8 送達證書
+══════════════════════════════ -->
+<div class="form-page" id="f38">
+<div class="doc">
+  <div class="doc-title">（ＯＯＯ通知）送達證書</div>
+  <div style="font-size:.78rem;text-align:right;margin-bottom:.5rem;font-family:'Noto Sans TC',sans-serif;">
+    ※請繳回（ＯＯ學校）（送達地址：<span class="input-line" style="width:150px;display:inline-block;"></span>）
+  </div>
+  <table class="form-table">
+    <tr>
+      <td class="cell-label">受送達人<br>名稱姓名地址</td>
+      <td colspan="5"><span class="input-area"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">文號</td>
+      <td colspan="5"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">送達文書<br>（含案由）</td>
+      <td colspan="5"><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <th>原寄郵局日戳</th>
+      <th>送達郵局日戳</th>
+      <th colspan="3">送達處所（由送達人填記）</th>
+      <th>送達人簽章</th>
+    </tr>
+    <tr>
+      <td style="min-height:40px;"></td>
+      <td></td>
+      <td colspan="3">
+        <div><label class="checkbox-item"><span class="cb"></span>同上記載地址</label></div>
+        <div style="margin-top:.3rem;">改送：<span class="input-line"></span></div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2"></td>
+      <th colspan="3">送達時間（由送達人填記）</th>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2"></td>
+      <td colspan="3">中華民國<span class="input-line" style="width:40px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日<span class="input-line" style="width:30px;display:inline-block;"></span>午<span class="input-line" style="width:30px;display:inline-block;"></span>時<span class="input-line" style="width:30px;display:inline-block;"></span>分</td>
+      <td></td>
+    </tr>
+  </table>
+
+  <div style="border:1px solid var(--ink); margin-top:.5rem; padding:.6rem;">
+    <div style="font-weight:700;text-align:center;margin-bottom:.5rem;font-size:.85rem;">送　達　方　式（由送達人在□上劃V選記）</div>
+    <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.85rem;">
+      <label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;">
+        <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+        <span>已將文書交與應受送達人　□本人<span style="display:inline-block;width:80px;border-bottom:1px solid #999;margin-left:.3rem;"></span>（簽名或蓋章）</span>
+      </label>
+      <label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;">
+        <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+        <span>未獲會晤本人，已將文書交與有辨別事理能力之同居人、受雇人或應送達處所之接收郵件人員<br>
+        □同居人 □受雇人 □應送達處所接收郵件人員 <span style="display:inline-block;width:80px;border-bottom:1px solid #999;"></span>（簽名或蓋章）</span>
+      </label>
+      <label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;">
+        <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+        <span>應受送達之本人、同居人或受雇人收領後，拒絕或不能簽名或蓋章者，由送達人記明其事由</span>
+      </label>
+      <label class="checkbox-item" style="display:flex;gap:.4rem;align-items:baseline;">
+        <span class="cb" style="flex-shrink:0;margin-top:.2rem;"></span>
+        <span>未獲會晤本人亦無受領文書之同居人、受雇人或接收郵件人員，已將該送達文書：<br>
+        □寄存於<span class="input-line" style="width:60px;display:inline-block;"></span>警察派出所 □寄存於<span class="input-line" style="width:80px;display:inline-block;"></span>鄉（鎮、市、區）公所<br>
+        並作送達通知書二份，一份黏貼於門首，一份□交由鄰居轉交□置於信箱</span>
+      </label>
+    </div>
+  </div>
+  <div class="note-box" style="margin-top:.5rem;">
+    <strong>送達人注意事項：</strong><br>
+    一、依上述送達方法送達者，送達人應即將本送達證書，提出於交送達之行政機關附卷。<br>
+    二、無法依上述送達方法送達者，送達人應製作記載該事由之報告書，提出於交送達之行政機關附卷，並繳回應送達文書。
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+  3-9 處理小組委員開會通知單（含簽到表）
+══════════════════════════════ -->
+<div class="form-page" id="f39">
+<div class="doc">
+  <div class="doc-title">開　會　通　知　單</div>
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr>
+      <td class="cell-label">開會事由</td>
+      <td>有關本校疑似校園霸凌事件（校安通報編號<span class="input-line" style="width:80px;display:inline-block;"></span>），召開處理小組第<span class="input-line" style="width:25px;display:inline-block;"></span>次會議。</td>
+    </tr>
+    <tr>
+      <td class="cell-label">開會時間</td>
+      <td><span class="input-line" style="width:40px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日（星期<span class="input-line" style="width:20px;display:inline-block;"></span>）<span class="input-line" style="width:25px;display:inline-block;"></span>午<span class="input-line" style="width:30px;display:inline-block;"></span>時<span class="input-line" style="width:40px;display:inline-block;"></span>分</td>
+    </tr>
+    <tr>
+      <td class="cell-label">開會地點</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">主持人</td>
+      <td>本案處理小組召集人（召集人由調查會議中推選）</td>
+    </tr>
+    <tr>
+      <td class="cell-label">聯絡人</td>
+      <td><span class="input-line" style="width:80px;display:inline-block;"></span>　電話：<span class="input-line" style="width:120px;display:inline-block;"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">備註</td>
+      <td>惠請外聘委員所屬單位、機關或學校給予公假登記。</td>
+    </tr>
+    <tr>
+      <td class="cell-label">出席者</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">列席者</td>
+      <td><span class="input-line"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">抄本</td>
+      <td>本校○○處</td>
+    </tr>
+  </table>
+
+  <div class="page-break-hint"><span>簽到表</span></div>
+
+  <div class="doc-title" style="font-size:.9rem;">
+    （學校全銜）<span class="input-line" style="width:40px;display:inline-block;"></span>學年度第<span class="input-line" style="width:20px;display:inline-block;"></span>學期<br>
+    校安通報編號<span class="input-line" style="width:80px;display:inline-block;"></span>第<span class="input-line" style="width:20px;display:inline-block;"></span>次處理小組會議簽到表
+  </div>
+  <div style="font-size:.85rem;margin-bottom:.75rem;">
+    一、時間：<span class="input-line" style="width:120px;display:inline-block;"></span>年<span class="input-line" style="width:30px;display:inline-block;"></span>月<span class="input-line" style="width:30px;display:inline-block;"></span>日　上／下午<span class="input-line" style="width:30px;display:inline-block;"></span>時<span class="input-line" style="width:30px;display:inline-block;"></span>分<br>
+    二、地點：<span class="input-line" style="width:200px;display:inline-block;"></span><br>
+    三、出席人員：
+  </div>
+  <table class="form-table">
+    <tr>
+      <th>身分別</th><th>姓名</th><th>簽名</th>
+    </tr>
+    <tr><td>處理小組委員</td><td><span class="input-line"></span></td><td></td></tr>
+    <tr><td>處理小組委員</td><td><span class="input-line"></span></td><td></td></tr>
+    <tr><td>處理小組委員</td><td><span class="input-line"></span></td><td></td></tr>
+  </table>
+  <div class="note-box" style="margin-top:.75rem;">
+    <strong>備註：</strong><br>
+    一、依防制準則第39條第8款：學校及處理小組就當事人、檢舉人、證人或協助調查之人之姓名及其他足以辨識身分之資料，應予保密。<br>
+    二、防制準則第40條：錄音、錄影內容，學校應保存至少三年；有相關爭訟時，應保存至救濟程序確定後至少六個月。<br>
+    三、防制準則第47條：對外製作之調和報告、調查報告或其他文書，應將當事人、檢舉人、證人及協助調查人之真實姓名以代號為之。
+  </div>
+
+
+<!-- ══ 盲點補強：受理階段送出前強制確認 ══ -->
+<div class="form-page" id="f_stage01_confirm">
+<div class="doc">
+  <div class="doc-title">✅ 受理階段送出前確認清單</div>
+
+  <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;">
+    <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
+  </div>
+
+  <!-- 盲點2：跨校案件 -->
+  <div class="section" style="margin-top:1rem;">
+    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 跨校案件確認（第20條）</div>
+    <div class="ck-row">
+      <span class="cb"></span>
+      <span>雙方當事人均為本校在籍學生（非跨校案件）。</span>
+    </div>
+    <div class="ck-row">
+      <span class="cb"></span>
+      <span>本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
+          → 依第20條，以「先接獲檢舉之學校」調查；STAGE 06 防制委員會審議時，須通知行為人所屬學校派員列席。
+        </span>
+      </span>
+    </div>
+    <div class="ck-row">
+      <span class="cb"></span>
+      <span>本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
+          → 依第19條，應於知悉後<strong>3個工作日內</strong>移送調查學校，並產出案件移送函。
+        </span>
+      </span>
+    </div>
+  </div>
+
+  <!-- 盲點3：保全證據 -->
+  <div class="section" style="margin-top:1rem;">
+    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 初步保全證據確認（第23條）</div>
+    <div style="font-size:.82rem;color:#555;font-family:'Noto Sans TC',sans-serif;margin-bottom:.5rem;line-height:1.65;">
+      依第23條規定，學校知悉或接獲檢舉後，應先行保全或初步調查與事件有關之證據、資料。<br>
+      <strong style="color:#8b1a1a;">監視器錄影通常僅保存7至30天，須立即確認！</strong>
+    </div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbEvidence1" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>已確認並保全與本案相關之<strong>監視器錄影</strong>（若有），已備份或申請留存。</span>
+    </div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbEvidence2" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>已確認並保全與本案相關之<strong>數位通訊紀錄</strong>（如 LINE 截圖、FB 貼文等），已請當事人提供或截圖存檔。</span>
+    </div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbEvidence3" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>已確認並保全與本案相關之<strong>實物證據</strong>（如毀損物品、醫療診斷書等），已拍照或妥善保存。</span>
+    </div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbEvidenceNA" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>本案目前無可保全之相關證據，已記錄說明。</span>
+    </div>
+  </div>
+
+  <!-- 校安通報確認 -->
+  <div class="section" style="margin-top:1rem;">
+    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。<br>
+        <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="note-box" style="margin-top:1rem;">
+    <strong>完成後：</strong>請繼續至 3-5 審查小組會議紀錄，召開審查小組決議是否受理。
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ══ 4-1 調和或調查程序說明書 ══ -->
+<div class="form-page" id="f41">
+<div class="doc">
+  <div class="doc-title">調和或調查程序說明書</div>
+
+  <div class="section">
+    <div class="section-title">壹、目的：</div>
+    <p class="item">為協助學生處理人際關係，以培養其責任感及自尊尊人之處事態度，減輕雙方不當行為造成之創傷與衝突、促進和解及修復關係，並維護學生身心健康、促進全人發展，完善班級經營，建構友善校園。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、說明：</div>
+
+    <div class="item"><strong>一、調和或調查處理程序：</strong></div>
+    <div class="sub-item">（一）<strong>處理小組委員：</strong>處理小組委員過半數為外聘委員，外聘委員皆經過受訓，由教育部認可之專業人員，處理過程將秉持中立、公正之立場，調和或調查事件，提供支持及引導，促進雙方對話與相互理解，化解衝突，並研商解決方案，促成和解，修復關係及減少創傷。</div>
+    <div class="sub-item">（二）<strong>調和或調查會議前之個別會談：</strong>調和或調查會議進行前，將由處理小組與雙方進行個別會談，確認雙方有無意願進行調和，或直接進行調查。調和會談重點在瞭解雙方意願、感受及需要，期以共同彌補傷害及修復關係。</div>
+
+    <div class="item" style="margin-top:.5rem;"><strong>二、進入調查程序：</strong></div>
+    <div class="sub-item">（一）<strong>啟動調查訪談：</strong>指處理小組委員基於中立、公正之立場，進行行政調查，訪談時，學校將全程錄音或錄影；受訪談者不得自行錄音或錄影。</div>
+    <div class="sub-item">（二）<strong>親自出席陳述意見：</strong>當事人應配合處理小組之調查，並提供相關文件、資料或陳述意見。接受調查時，行為人應親自出席；當事人為未成年者，得由法定代理人、實際照顧者或受其委託之人員陪同。</div>
+    <div class="sub-item">（三）<strong>保密原則：</strong>處理小組進行調查，應以保密方式為之。學校及處理小組就當事人、檢舉人或協助調查之人之姓名及其他足以辨識身分之資料，應予保密。但基於調查之必要或公共利益之考量者，不在此限。</div>
+    <div class="sub-item">（四）<strong>調查結果：</strong>經訪談與物證蒐集後，將相關證據做成調查報告，以確認霸凌是否成立，並建議學校後續輔導管教與懲處措施。</div>
+
+    <div class="item" style="margin-top:.5rem;"><strong>三、進入調和程序：</strong></div>
+    <div class="sub-item">（一）<strong>調和定義：</strong>指處理小組委員基於中立、公正之立場，在雙方當事人、其法定代理人或實際照顧者均同意之前提下，善用修復式正義或其他教育輔導策略，提供支持及引導，促進雙方對話與相互理解，化解衝突，並研商解決方案，修復關係及減少創傷。</div>
+    <div class="sub-item">（二）<strong>調和會議：</strong>調和會議進行過程，雙方以說明感受、需求及期望為主，並應尊重對方發言。</div>
+    <div class="sub-item">（三）<strong>調和結果：</strong>成立後協議內容將做成調和報告，送學校防制委員會審議。調和程序為一個月，逾期未有共識則調和不成立，由處理小組進入調查。</div>
+
+    <div class="item" style="margin-top:.5rem;"><strong>四、調和原則：</strong></div>
+    <div class="sub-item">（一）<strong>尊重當事人意願：</strong>調和程序遵循當事人意願，如果不願意調和或調和不成立，案件應停止調和並進行調查。</div>
+    <div class="sub-item">（二）<strong>重視雙方感受與關係修復：</strong>調和過程雙方以說明感受、需求及期望為主，並應尊重對方發言，不得有人身攻擊之言詞。</div>
+    <div class="sub-item">（三）<strong>自由陳述表達：</strong>如調和不成立，於調和過程相關陳述或讓步，<strong>均不採為調查報告之基礎</strong>，不會影響後續調查程序。</div>
+    <div class="sub-item">（四）<strong>保密原則：</strong>本案處理過程之相關人員對於當事人在調和過程中的陳述負有保密義務。</div>
+    <div class="sub-item">（五）<strong>調和權責：</strong>事件如涉民事責任，另以調和和解書或其他私人契約方式呈現，非屬本處理小組規範權責。</div>
+  </div>
+
+  <div class="note-box">
+    <strong>注意：</strong>本說明書應於會前個別會談時提供予雙方當事人及其法定代理人或實際照顧者，並完成說明後留存。
+  </div>
+</div>
+</div>
+
+<!-- ══ 4-2 調和意願書（行為人＋被行為人各一份） ══ -->
+<div class="form-page" id="f42">
+<div class="doc">
+  <div class="doc-title">（行為人）調和意願書</div>
+  <p style="margin-bottom:1rem;line-height:1.9;">為協助學生處理人際關係，避免造成雙方的創傷與衝突、促進和解及修復關係，並維護學生身心健康。經由本校處理小組委員與您會談後，您也大致瞭解調和程序的目的及用意，若您願意進行調和程序，請勾選。</p>
+
+  <div style="margin: 1rem 0 1.5rem; font-size:1rem;">
+    <p style="margin-bottom:.6rem;">本人對進行調和程序</p>
+    <div class="ck-row" style="margin-left:1rem;font-size:1rem;"><span class="cb"></span><span style="margin-left:.4rem;">同意</span></div>
+    <div class="ck-row" style="margin-left:1rem;font-size:1rem;margin-top:.3rem;"><span class="cb"></span><span style="margin-left:.4rem;">不同意</span></div>
+  </div>
+
+  <table class="form-table">
+    <tr><td class="cell-label">當事人簽名</td><td><span class="iblock" style="min-height:2rem;"></span></td></tr>
+    <tr><td class="cell-label">法定代理人<br>或實際照顧者</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">與當事人關係</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">聯絡電話</td><td><span class="iblock"></span></td></tr>
+  </table>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+
+<div class="page-sep"><span>被行為人用</span></div>
+
+<div class="doc">
+  <div class="doc-title">（被行為人）調和意願書</div>
+  <p style="margin-bottom:1rem;line-height:1.9;">為協助學生理性溝通、積極助人及處理人際關係，避免造成雙方的創傷與衝突、促進和解及修復關係。經由本校處理小組委員與您會談後，您也大致瞭解調和程序的目的及用意，若您願意進行調和程序，請勾選。</p>
+
+  <div style="margin: 1rem 0 1.5rem; font-size:1rem;">
+    <p style="margin-bottom:.6rem;">本人對進行調和程序</p>
+    <div class="ck-row" style="margin-left:1rem;font-size:1rem;"><span class="cb"></span><span style="margin-left:.4rem;">同意</span></div>
+    <div class="ck-row" style="margin-left:1rem;font-size:1rem;margin-top:.3rem;"><span class="cb"></span><span style="margin-left:.4rem;">不同意</span></div>
+  </div>
+
+  <table class="form-table">
+    <tr><td class="cell-label">當事人簽名</td><td><span class="iblock" style="min-height:2rem;"></span></td></tr>
+    <tr><td class="cell-label">法定代理人<br>或實際照顧者</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">與當事人關係</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">聯絡電話</td><td><span class="iblock"></span></td></tr>
+  </table>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-3 調和或調查會議前之個別會談會議紀錄 ══ -->
+<div class="form-page" id="f43">
+<div class="doc">
+  <div class="doc-title">（行為人）<br>調和或調查會議前之個別會談會議紀錄</div>
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">日期</td><td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td><td class="cell-label">地點</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">處理小組委員</td><td colspan="3"><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">受訪人員</td><td colspan="3"><span class="iblock"></span></td></tr>
+  </table>
+
+  <div class="section">
+    <div class="section-title">會議內容：</div>
+    <div class="item">（一）<span class="iarea iarea-lg"></span></div>
+    <div class="item">（二）<span class="iarea"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">本次會議結論：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span>進行調和</span></div>
+      <div class="ck-row"><span class="cb"></span><span>進行調查</span></div>
+      <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">處理小組委員建議：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span>無</span></div>
+      <div class="ck-row"><span class="cb"></span><span>有：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+
+<div class="page-sep"><span>被行為人用</span></div>
+
+<div class="doc">
+  <div class="doc-title">（被行為人）<br>調和或調查會議前之個別會談會議紀錄</div>
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">日期</td><td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td><td class="cell-label">地點</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">處理小組委員</td><td colspan="3"><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">受訪人員</td><td colspan="3"><span class="iblock"></span></td></tr>
+  </table>
+  <div class="section"><div class="section-title">會議內容：</div>
+    <div class="item">（一）<span class="iarea iarea-lg"></span></div>
+    <div class="item">（二）<span class="iarea"></span></div>
+  </div>
+  <div class="section"><div class="section-title">本次會議結論：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span>進行調和</span></div>
+      <div class="ck-row"><span class="cb"></span><span>進行調查</span></div>
+      <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+  <div class="section"><div class="section-title">處理小組委員建議：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span>無</span></div>
+      <div class="ck-row"><span class="cb"></span><span>有：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-4 調和會議紀錄 ══ -->
+<div class="form-page" id="f44">
+<div class="doc">
+  <div class="doc-title">調和會議紀錄</div>
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr><td class="cell-label">一、日期</td><td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td><td class="cell-label">地點</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">處理小組委員</td><td colspan="3"><span class="iblock"></span></td></tr>
+  </table>
+
+  <div class="section">
+    <div class="section-title">四、會議內容：</div>
+    <div class="item"><strong>1、被行為人陳述之重點</strong>
+      <div style="margin-left:.5rem;">
+        <div class="ck-row" style="align-items:flex-start;">（1）<span class="iarea" style="flex:1;margin-left:.3rem;"></span></div>
+        <div class="ck-row" style="align-items:flex-start;">（2）<span class="iarea" style="flex:1;margin-left:.3rem;"></span></div>
+      </div>
+    </div>
+    <div class="item" style="margin-top:.5rem;"><strong>2、行為人陳述之重點</strong>
+      <div style="margin-left:.5rem;">
+        <div class="ck-row" style="align-items:flex-start;">（1）<span class="iarea" style="flex:1;margin-left:.3rem;"></span></div>
+        <div class="ck-row" style="align-items:flex-start;">（2）<span class="iarea" style="flex:1;margin-left:.3rem;"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">五、本次會議結論：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span><strong>調和成立</strong></span></div>
+      <div class="ck-row"><span class="cb"></span><span>尚未達成協議，但雙方均有意願繼續進行調和</span></div>
+      <div class="ck-row" style="align-items:flex-start;"><span class="cb" style="margin-top:.25rem;"></span><span>有第32條停止調和事由，進行調查程序：
+        <div style="margin-left:1rem;margin-top:.2rem;">
+          <div class="ck-row"><span class="cb"></span><span>任一方無調和意願</span></div>
+          <div class="ck-row"><span class="cb"></span><span>一方當事人、其法定代理人或實際照顧者，有運用不對等之權力或地位影響調和進行之具體事實</span></div>
+          <div class="ck-row"><span class="cb"></span><span>處理小組召開第一次調和會議之日起<strong>一個月</strong>，調和仍未成立</span></div>
+          <div class="ck-row"><span class="cb"></span><span>處理小組認顯無調和必要、調和顯無成立之可能或不能調和</span></div>
+        </div>
+      </span></div>
+      <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">六、處理小組委員建議：</div>
+    <div class="item">
+      <div class="ck-row"><span class="cb"></span><span>無</span></div>
+      <div class="ck-row"><span class="cb"></span><span>有：<span class="iline iline-lg"></span></span></div>
+    </div>
+  </div>
+
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-5 調和協議書 ══ -->
+<div class="form-page" id="f45">
+<div class="doc">
+  <div class="doc-title">調和協議書</div>
+  <p style="margin-bottom:.75rem;">本案經調和成立，協議內容如下：</p>
+  <div style="border: 1px solid var(--line); min-height: 150px; padding: .75rem; margin-bottom: 1.2rem; font-size: .9rem;">
+    <p style="color:#aaa;font-size:.78rem;font-family:'Noto Sans TC',sans-serif;">（請填寫協議內容，如：道歉方式、後續行為約束、賠償事項等）</p>
+  </div>
+
+  <div class="section-title" style="margin-bottom:.6rem;">雙方簽名</div>
+  <table class="form-table">
+    <tr>
+      <td class="cell-label">當事人（一）</td>
+      <td><span class="iblock" style="min-height:2rem;"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">法定代理人<br>或實際照顧者</td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">與當事人關係</td>
+      <td><span class="iblock"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">當事人（二）</td>
+      <td><span class="iblock" style="min-height:2rem;"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">法定代理人<br>或實際照顧者</td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">與當事人關係</td>
+      <td><span class="iblock"></span></td>
+    </tr>
+  </table>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-6 調和協議保證書 ══ -->
+<div class="form-page" id="f46">
+<div class="doc">
+  <div class="doc-title">調和協議保證書</div>
+  <p style="line-height:2; margin-bottom:1.5rem;">
+    本人　<span class="iline" style="min-width:60px;"></span>　日前因個人行為對被行為人　<span class="iline" style="min-width:60px;"></span>　誠摯的表達歉意，同時保證不再犯，並立下保證書作為證明。
+  </p>
+  <p style="margin-bottom:2rem;">此致</p>
+  <table class="form-table">
+    <tr>
+      <td class="cell-label">立書人簽名</td>
+      <td><span class="iblock" style="min-height:2.5rem;"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">法定代理人</td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">與當事人關係</td>
+      <td><span class="iblock"></span></td>
+    </tr>
+  </table>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-7 調和報告（空白版） ══ -->
+<div class="form-page" id="f47">
+<div class="doc">
+  <div class="doc-title">調和報告</div>
+
+  <div class="section">
+    <div class="section-title">壹、案由概述</div>
+    <table class="form-table" style="margin:.5rem 0;">
+      <tr>
+        <td class="cell-label">行為人</td><td><span class="iblock"></span></td>
+        <td class="cell-label">法定代理人</td><td><span class="iblock"></span></td>
+      </tr>
+      <tr>
+        <td class="cell-label">被行為人</td><td><span class="iblock"></span></td>
+        <td class="cell-label">法定代理人</td><td><span class="iblock"></span></td>
+      </tr>
+    </table>
+    <p class="item">本校校園安全事件（校安通報編號<span class="iline"></span>）案，由當事人<span class="iline iline-sm"></span>於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日提出檢舉，旨案經本校審查小組於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日召開會議決議受理，於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日組成處理小組，委員為：<span class="iline iline-lg"></span>。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調和歷程</div>
+    <div class="item"><strong>一、調和會議會前會</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>個別會談日期</th><th>參與人員</th></tr>
+        <tr><td><span class="iblock"></span></td><td>被行為人：<span class="iblock"></span>處理小組委員：<span class="iblock"></span></td></tr>
+        <tr><td><span class="iblock"></span></td><td>行為人：<span class="iblock"></span>處理小組委員：<span class="iblock"></span></td></tr>
+      </table>
+      <p style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;margin-top:.3rem;">附件1：調和意願書　　附件2：調和會議前之個別會談會議紀錄</p>
+    </div>
+    <div class="item" style="margin-top:.6rem;"><strong>二、調和會議</strong>
+      <p style="margin:.3rem 0;">旨案於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日啟動第1次調和會議，期間經歷<span class="iline iline-sm"></span>次，於第<span class="iline iline-sm"></span>次經雙方協議，調和成立。</p>
+      <table class="history-table">
+        <tr><th>次數</th><th>調和會議時間</th><th>參與人員</th></tr>
+        <tr><td style="text-align:center;">1</td><td><span class="iblock"></span></td><td>當事人：<span class="iblock"></span>處理小組委員：<span class="iblock"></span></td></tr>
+        <tr><td style="text-align:center;">2</td><td><span class="iblock"></span></td><td>當事人：<span class="iblock"></span>處理小組委員：<span class="iblock"></span></td></tr>
+        <tr><td style="text-align:center;">3</td><td><span class="iblock"></span></td><td>當事人：<span class="iblock"></span>處理小組委員：<span class="iblock"></span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、調和協議</div>
+    <p class="item">調和會議前，已向雙方說明調和程序及雙方權益，並確認雙方意願同意由處理小組進行調和，調和成立內容如下，調和會議紀錄如附件3、調和協議書如附件4：</p>
+    <div style="border:1px solid var(--line); min-height:80px; padding:.6rem; margin:.5rem 1.2rem;"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、處理建議（具體措施）：</div>
+    <div class="item">一、<span class="iarea"></span></div>
+    <div class="item">二、<span class="iarea"></span></div>
+    <div class="item">三、<span class="iarea"></span></div>
+    <div class="item">四、<span class="iarea"></span></div>
+  </div>
+
+  <div class="sign-row" style="margin-top:1.5rem;">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row" style="margin-top:.75rem;">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 4-8 參考寫法1 ══ -->
+<div class="form-page" id="f48a">
+<div class="doc">
+  <div class="variant-badge">4-8 參考寫法1（多行為人，同日完成）</div>
+  <div class="doc-title">○○市○○區○○國民小學校園事件調和報告</div>
+
+  <div class="section">
+    <div class="section-title">壹、案由概述</div>
+    <table class="form-table" style="margin:.5rem 0;">
+      <tr><td class="cell-label">被行為人</td><td>甲生</td><td class="cell-label">法定代理人</td><td>甲父</td></tr>
+      <tr><td class="cell-label">行為人</td><td>乙生</td><td class="cell-label">法定代理人</td><td>乙母</td></tr>
+      <tr><td class="cell-label">行為人</td><td>丙生</td><td class="cell-label">法定代理人</td><td>丙母</td></tr>
+    </table>
+    <p class="item">本校校園事件（校安通報序號：○○○○○○○），由被行為人甲生及法定代理人甲父於114年4月29日提出檢舉，經本校審查小組於114年5月13日召開會議決議受理，並於114年5月16日組成處理小組（3位外聘委員○○○、○○○、○○○，均為教育部各級學校生對生霸凌事件專業調和及調查人才庫）。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調和歷程</div>
+    <div class="item"><strong>一、調和會議會前會</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>個別會談日期</th><th>參與人員</th></tr>
+        <tr><td>114年5月16日</td><td>被行為人：甲生　法定代理人：甲父<br>處理小組委員：○○○、○○○、○○○</td></tr>
+        <tr><td>114年5月16日</td><td>行為人：乙生　法定代理人：乙母<br>行為人：丙生　法定代理人：丙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+      <p style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;margin-top:.3rem;">附件1：調和意願書　　附件2：調和會議前之個別會談會議紀錄</p>
+    </div>
+    <div class="item" style="margin-top:.6rem;"><strong>二、調和會議</strong>
+      <p style="margin:.3rem 0;">旨案於114年5月16日進行第1次調和會議，處理小組○○○、○○○、○○○委員與被行為人甲生與法定代理人甲父，及行為人乙生與法定代理人乙母、丙生與法定代理人丙母，進行溝通，經雙方協議，調和成立。</p>
+      <table class="history-table">
+        <tr><th>次數</th><th>調和會議時間</th><th>參與人員</th></tr>
+        <tr><td style="text-align:center;">1</td><td>114年5月16日</td><td>被行為人：甲生　法定代理人：甲父<br>行為人：乙生　法定代理人：乙母<br>行為人：丙生　法定代理人：丙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、調和協議</div>
+    <p class="item">調和會議前，已向雙方說明調和程序及雙方權益，並確認雙方意願同意由處理小組進行調和，調和成立內容如下，調和會議紀錄（如附件3）、調和協議書（如附件4）：</p>
+    <table class="history-table" style="margin:.5rem 1.2rem;">
+      <tr><td>行為人乙生保證不再對被行為人甲生取不雅的綽號。</td></tr>
+      <tr><td>雙方當事人（甲生、乙生、丙生共3位）均保證不再對對方有任何不當肢體動作。</td></tr>
+      <tr><td>雙方當事人均同意由學校進行適當之心理諮商、輔導與管教措施。</td></tr>
+      <tr><td>雙方當事人均同意放棄與本案所有民刑事請求權，且不追究任何民刑事責任。</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、處理建議（具體措施）：</div>
+    <div class="item">一、建議提供法治教育相關宣導及課程，提升學生法治知能。</div>
+    <div class="item">二、規劃社交技巧、情緒教育課程，引導學生處理人際關係技巧與策略，必要時，增加班級輔導節數，或採小團體輔導，培植學生社交、情緒處理及人際關係技巧等相關知能。</div>
+    <div class="item">三、請學校持續進行追蹤輔導，關懷每個學生適應及學習情況，給予支持協助，使其能安穩求學。</div>
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row" style="margin-top:.75rem;">中　華　民　國 114 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 4-8 參考寫法2 ══ -->
+<div class="form-page" id="f48b">
+<div class="doc">
+  <div class="variant-badge">4-8 參考寫法2（含具體分對象處理建議）</div>
+  <div class="doc-title">○○市○○區○○國小校園事件調和報告</div>
+
+  <div class="section">
+    <div class="section-title">壹、案由概述</div>
+    <table class="form-table" style="margin:.5rem 0;">
+      <tr><td class="cell-label">被行為人</td><td>甲生</td><td class="cell-label">法定代理人</td><td>甲父</td></tr>
+      <tr><td class="cell-label">行為人</td><td>乙生</td><td class="cell-label">法定代理人</td><td>乙母</td></tr>
+    </table>
+    <p class="item">本校校園安全事件（校安通報編號：○○○○○○○）案，旨案經本校審查小組於114年5月2日召開會議決議受理，於114年5月11日處理小組召開第一次會議，委員為：○○○校長（教育部生對生霸凌事件專業調和及調查人才庫）、○○○律師（教育部人才庫）及○○○老師。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調和歷程</div>
+    <div class="item"><strong>一、調和會議會前會</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>個別會談日期</th><th>參與人員</th></tr>
+        <tr><td>114年5月11日</td><td>被行為人：甲生　法定代理人：甲父<br>處理小組委員：○○○、○○○、○○○</td></tr>
+        <tr><td>114年5月11日</td><td>行為人：乙生　法定代理人：乙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+      <p style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;margin-top:.3rem;">附件1：調和意願書　　附件2：調和會議前之個別會談會議紀錄</p>
+    </div>
+    <div class="item" style="margin-top:.6rem;"><strong>二、調和會議</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>次數</th><th>調和會議時間</th><th>參與人員</th></tr>
+        <tr><td style="text-align:center;">1</td><td>114年5月11日</td><td>當事人：甲生　法定代理人：甲父<br>當事人：乙生　法定代理人：乙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、調和協議</div>
+    <p class="item">調和成立內容如下，調和會議紀錄如附件3、調和協議書如附件4：</p>
+    <table class="history-table" style="margin:.5rem 1.2rem;">
+      <tr><td>乙生保證不再罵甲生及其他同學師長不好聽的話或對甲生及其他同學師長做一些不好的動作。</td></tr>
+      <tr><td>乙生在三位處理小組委員面前對甲生誠摯道歉。</td></tr>
+      <tr><td>由學校對乙生進行後續適當輔導管教措施與高關懷課程。</td></tr>
+      <tr><td>甲生及乙生雙方同意於3日內至警察局辦理撤回刑事告訴，並同意不再就本事件另為民事請求。</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、處理建議（具體措施）：</div>
+    <div class="item"><strong>一、關於被行為人甲生：</strong>
+      <div class="sub-item">（一）建議學校在經被行為人甲生及家長同意之情形下，給予適當的心理諮商與輔導，學習與同儕和平相處方式。</div>
+      <div class="sub-item">（二）持續針對被行為人甲生的身心狀況，進行關懷與照顧，以協助盡速回歸正常學習環境，以維護受教權。</div>
+    </div>
+    <div class="item"><strong>二、關於行為人乙生：</strong>
+      <div class="sub-item">（一）啟動輔導管教機制，提升行為人乙生對不恰當言語或動作所產生法律責任的認知。</div>
+      <div class="sub-item">（二）增加專業團隊或特教諮商輔導課程，協助改善行為人乙生情緒管控。</div>
+    </div>
+    <div class="item"><strong>三、關於學校部分：</strong>
+      <div class="sub-item">（一）班導師及科任老師在班級座位安排、分組課程進行，應留意將甲生與乙生區隔，避免課堂上不必要的互動與衝突。</div>
+      <div class="sub-item">（二）由班導師安排班級關懷小天使，協助留意甲乙生間之上下課時間的互動關係。</div>
+      <div class="sub-item">（三）請學校召開個案會議，予以行為人乙生必要之身心情緒管控關懷及輔導。</div>
+      <div class="sub-item">（四）持續辦理霸凌防制之相關研習，強化校內教職員工對於校園霸凌之相關知識。</div>
+    </div>
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row" style="margin-top:.75rem;">中　華　民　國 114 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 4-8 參考寫法3 ══ -->
+<div class="form-page" id="f48c">
+<div class="doc">
+  <div class="variant-badge">4-8 參考寫法3（國中版，多行為人，網路言行）</div>
+  <div class="doc-title">○○市立○○國中校園事件調和報告</div>
+
+  <div class="section">
+    <div class="section-title">壹、案由概述</div>
+    <table class="form-table" style="margin:.5rem 0;">
+      <tr><td class="cell-label">被行為人</td><td>甲生</td><td class="cell-label">法定代理人</td><td>甲父</td></tr>
+      <tr><td class="cell-label">行為人</td><td>乙生</td><td class="cell-label">法定代理人</td><td>乙母</td></tr>
+      <tr><td class="cell-label">行為人</td><td>丙生</td><td class="cell-label">法定代理人</td><td>丙母</td></tr>
+    </table>
+    <p class="item">本校校園事件（校安通報序號：○○○○○○○），經本校審查小組於114年5月1日召開會議決議受理，並組成處理小組（3位委員：外聘○○○、外聘○○○、內聘○○○，均為教育部各級學校生對生霸凌事件專業調和及調查人才庫）。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調和歷程</div>
+    <div class="item"><strong>一、調和會議會前會</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>個別會談日期</th><th>參與人員</th></tr>
+        <tr><td>114年5月9日</td><td>被行為人：甲生　法定代理人：甲父<br>處理小組委員：○○○、○○○、○○○</td></tr>
+        <tr><td>114年5月9日</td><td>行為人：乙生　法定代理人：乙母<br>行為人：丙生　法定代理人：丙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+      <p style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;margin-top:.3rem;">附件1：調和意願書　　附件2：調和會議前之個別會談會議紀錄</p>
+    </div>
+    <div class="item" style="margin-top:.6rem;"><strong>二、調和會議</strong>
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>次數</th><th>調和會議時間</th><th>參與人員</th></tr>
+        <tr><td style="text-align:center;">1</td><td>114年5月9日</td><td>被行為人：甲生　法定代理人：甲父<br>行為人：乙生　法定代理人：乙母<br>行為人：丙生　法定代理人：丙母<br>處理小組委員：○○○、○○○、○○○</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、調和協議</div>
+    <p class="item">調和成立內容如下，調和會議紀錄（如附件3）、調和協議書（如附件4）：</p>
+    <table class="history-table" style="margin:.5rem 1.2rem;">
+      <tr><td>雙方當事人（甲生、乙生、丙生共3位）於三位處理小組委員面前相互誠摯道歉。</td></tr>
+      <tr><td>雙方當事人均保證不再於網路、群組等各種場合對對方有任何不當言行。</td></tr>
+      <tr><td>雙方當事人均同意由學校進行適當之心理諮商、輔導與管教措施。</td></tr>
+      <tr><td>雙方當事人均保證能和平相處，互相尊重，維持班上友善氛圍。</td></tr>
+      <tr><td>雙方當事人均同意放棄與本案所有民刑事請求權，且不追究任何民刑事責任。</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、處理建議（具體措施）：</div>
+    <div class="item">一、建議提供法治教育相關宣導及課程，提升學生法治知能。</div>
+    <div class="item">二、規劃社交技巧、情緒教育課程，引導學生處理人際關係技巧與策略，必要時，增加班級輔導節數，或採小團體輔導或專輔入班宣導，培植學生社交、情緒處理及人際關係技巧等相關知能。</div>
+    <div class="item">三、召開班級個案會議，共同關照當事人在班級生活情形，協助當事人學習及友善相處。</div>
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row" style="margin-top:.75rem;">中　華　民　國 114 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 5-1 學生調查訪談通知單（含電話通知記錄單） ══ -->
+<div class="form-page" id="f51">
+<div class="doc">
+  <div class="doc-title">（學校全銜）<br>校園事件調查訪談通知單</div>
+
+  <div class="law-banner">
+    <strong>⚠️ 法定必要記載（第39條第1項第3款）：</strong>通知應以書面為之，並記載「調查目的、時間、地點及不到場所生之效果」。<br>
+    <strong>不到場效果（第41條）：</strong>當事人無正當理由拒絕配合，經限期通知仍未配合，處理小組得不待其陳述，逕行作成調查報告。
+  </div>
+
+  <div class="section">
+    <div class="ck-row">一、調查訪談事由：</div>
+    <div class="item"><span class="iblock"></span></div>
+    <div class="ck-row" style="margin-top:.4rem;">二、受訪人員：<span class="iline iline-lg"></span></div>
+    <div class="ck-row" style="margin-top:.3rem;">三、調查訪談時間：民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</div>
+    <div class="ck-row" style="margin-top:.3rem;">四、地點：<span class="iline iline-lg"></span></div>
+    <div class="ck-row" style="margin-top:.3rem;">五、敬請家長填寫回執聯後，交與貴子弟於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日前繳回本校。<br>&emsp;&emsp;（聯絡人：<span class="iline"></span>　電話：<span class="iline iline-lg"></span>）</div>
+  </div>
+
+  <div class="section" style="margin-top:.75rem;">
+    <div class="section-title">六、相關法規：</div>
+    <div class="item" style="font-size:.82rem; line-height:1.7; font-family:'Noto Sans TC',sans-serif;">
+      <p style="margin-bottom:.3rem;">1. 防制準則第39條第1款：訪談時，學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。</p>
+      <p style="margin-bottom:.3rem;">2. 防制準則第39條第2款：受訪人員應配合處理小組之調查，並提供相關文件、資料或陳述意見。接受調查時，行為人應親自出席；當事人為未成年者，得由法定代理人、實際照顧者或受委託之人員陪同。</p>
+      <p style="margin-bottom:.3rem;">3. 防制準則第39條第3款：依第1款規定通知當事人及檢舉人時，應以書面為之，並記載調查目的、時間、地點及<strong>不到場所生之效果</strong>。</p>
+      <p style="margin-bottom:.3rem;">4. 防制準則第39條第4款：接受調查時，行為人應親自出席。</p>
+      <p>5. 防制準則第41條第1項：當事人或檢舉人無正當理由拒絕配合調查，經處理小組通知限期配合調查，屆期仍未配合者，<strong>處理小組得不待其陳述，逕行作成調查報告</strong>。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 回執聯 -->
+<div class="doc" style="border-top: 3px dashed var(--line); margin-top: -1px;">
+  <div class="doc-title" style="font-size:.92rem;">（學校全銜）校園事件調查訪談通知單回執聯</div>
+  <p style="font-size:.88rem; margin-bottom:.75rem;">訂於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分於本校<span class="iline"></span>樓會議室進行調查訪談，請於下列□中勾選出席意願：</p>
+  <div style="font-size:.88rem;">
+    <div class="ck-row" style="margin-bottom:.4rem;"><span class="cb"></span><span>家長願意陪同學生 <span class="iline iline-sm"></span> 出席調查訪談會議。</span></div>
+    <div style="padding-left:1.4rem; margin-bottom:.5rem;">出席家長姓名：<span class="iline"></span>　與學生之關係為<span class="iline"></span>。</div>
+    <div class="ck-row"><span class="cb"></span><span>家長無法陪同出席，同意由學生 <span class="iline iline-sm"></span> 自行出席調查訪談會議。</span></div>
+    <div style="margin-top:.75rem; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap;">
+      <span>家長簽名：<span class="iline iline-lg"></span></span>
+      <span>填寫日期：<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
+    </div>
+  </div>
+  <div class="note-box" style="margin-top:.6rem;">敬請貴家長填寫回執聯後，交與貴子弟於民國<span style="border-bottom:1px solid #999;display:inline-block;min-width:40px;"></span>年<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>月<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>日前繳回本校聯絡人。</div>
+</div>
+
+<div class="page-sep"><span>電話通知記錄單（通知當事人以外之相關人使用）</span></div>
+
+<!-- 電話通知記錄單 -->
+<div class="doc">
+  <div class="doc-title" style="font-size:.92rem;">（學校全銜）<br>校園事件調查訪談電話通知記錄單</div>
+  <div class="note-box" style="margin-bottom:.75rem;">
+    <strong>說明：</strong>依防制準則第39條第1項第3款規定，通知<strong>當事人及檢舉人以外之相關人（含證人）</strong>接受訪談時，學校可以不用書面通知，改用電話通知並留下紀錄即可。
+  </div>
+  <table class="form-table">
+    <tr>
+      <th>訪談對象姓名</th>
+      <th>電話通知日期時間</th>
+      <th>是否同意出席受訪</th>
+      <th>通知人簽章</th>
+    </tr>
+    <tr>
+      <td>行為人學生<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>被行為人學生<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+</div>
+
+<!-- ══ 5-2 處理程序延長通知函 ══ -->
+<div class="form-page" id="f52">
+<div class="doc">
+  <div style="font-size:.78rem; color:#888; text-align:right; margin-bottom:.5rem; font-family:'Noto Sans TC',sans-serif;">
+    檔號：<span class="iline"></span>　保存年限：<span class="iline"></span>　<span class="classified">密件</span>
+  </div>
+  <div class="gongwen-school">（學校全銜）函</div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gm-label">受文者：</span><span class="gm-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文日期：</span><span class="gm-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文字號：</span><span class="gm-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">速別：</span><span class="gm-value">普通</span></div>
+  </div>
+
+  <div class="section">
+    <span class="section-title">主旨：</span>有關臺端提出之疑似校園霸凌檢舉案（校安通報編號<span class="iline"></span>），本校依校園霸凌防制準則予以受理，處理時間因案情複雜，第<span class="iline iline-sm"></span>次延長一個月至<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日止，請查照。
+  </div>
+
+  <div class="section">
+    <div class="section-title">說明：</div>
+    <div class="item">一、依據臺端於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日提出之檢舉書辦理。</div>
+    <div class="item">二、有關臺端提出前項之申請調查案，本校依校園霸凌防制準則第43條第1項「處理小組應於召開第一次調和或調查會議之日起<strong>2個月內</strong>，完成調和或調查報告；必要時，得延長之，<strong>延長以二次為限，每次不得逾1個月</strong>，學校並應通知當事人。」之規定辦理。</div>
+  </div>
+
+  <div style="margin-top:1rem; font-size:.85rem;">
+    <div>正本：<span class="iline iline-lg"></span>（當事人）</div>
+    <div style="margin-top:.2rem;">副本：本校學務處</div>
+  </div>
+
+  <div class="note-box" style="margin-top:1rem;">
+    <strong>展延次數卡控：</strong>延長以二次為限，每次不得逾一個月。第一次展延後截止日：<span style="border-bottom:1px solid #999;display:inline-block;min-width:100px;"></span>；第二次（最終）截止日：<span style="border-bottom:1px solid #999;display:inline-block;min-width:100px;"></span>。
+  </div>
+</div>
+</div>
+
+<!-- ══ 5-3 調查訪談大綱 ══ -->
+<div class="form-page" id="f53">
+<div class="doc">
+  <div class="doc-title">（學校全銜）<br>校安通報編號<span class="iline"></span>調查訪談大綱（參考範例）</div>
+
+  <div class="law-banner">
+    <strong>🎙️ 法定強制錄音錄影（第39條第1款）：</strong>訪談當事人、檢舉人、證人及協助調查人員時，學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。
+  </div>
+
+  <div class="section">
+    <div class="item">（時間）現在時間是<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日上（下）午<span class="iline iline-sm"></span>點<span class="iline iline-sm"></span>分</div>
+    <div class="item">（地點）在<span class="iline iline-lg"></span></div>
+    <div class="item">（介紹）我們三位是學校聘請的處理小組委員，我是<span class="iline iline-sm"></span>委員也是召集人，左邊是<span class="iline iline-sm"></span>委員，右邊是<span class="iline iline-sm"></span>委員。</div>
+    <div class="item">（目的）因為學校很重視本案件，所以委請我們到校協助處理校安通報編號<span class="iline"></span>疑似霸凌事件的調查訪談。</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">（注意事項）</div>
+    <div class="item">一、依據防制準則第39條第1款規定：「學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。」如果您有錄音的話，也請您暫時關掉，現場錄音都有保密協定不會外流，請您放心。</div>
+    <div class="item">二、基於公平、公正、直接調查原則，處理小組成員及相關行政人員均已簽立保密同意書，處理小組對其有利及不利之情事均會一律注意，敬請受訪談者安心據實陳述，俾以協助調查小組作成正確合理之判斷。</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">訪談問題（自行補充）：</div>
+    <div class="item"><span class="iarea" style="min-height:120px;"></span></div>
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 5-4 調查報告格式（空白版） ══ -->
+<div class="form-page" id="f54">
+<div class="doc">
+  <div class="doc-title">（學校全銜）校園霸凌事件調查報告<br><span style="font-size:.85rem;font-weight:400;">（校安通報序號：<span class="iline"></span>）</span></div>
+
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr><td class="cell-label">檢舉人</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">被行為人</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">行為人</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">相關人</td><td><span class="iblock"></span></td></tr>
+  </table>
+  <div class="note-box" style="margin-bottom:.75rem;">上開人員之資料，詳見附件1：本案相關人員姓名及代號對照表</div>
+
+  <div class="section"><div class="section-title">壹、案由</div><div class="item"><span class="iarea" style="min-height:80px;"></span></div></div>
+
+  <div class="section">
+    <div class="section-title">貳、調查歷程</div>
+    <div class="item">一、<span class="iarea"></span></div>
+    <div class="item">二、本件除訪談當事人外，另訪談相關人<span class="iline"></span>，訪談內容應足以建構本件事實。</div>
+    <div class="item">三、訪談日期及對象臚列如下：
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>身分別</th><th>代號</th><th>訪談日期</th><th>地點</th><th>備註</th></tr>
+        <tr><td>被行為人</td><td>甲生</td><td><span class="iblock"></span></td><td>會議室</td><td></td></tr>
+        <tr><td>行為人</td><td>乙生</td><td><span class="iblock"></span></td><td>會議室</td><td></td></tr>
+        <tr><td>相關人</td><td>A生</td><td><span class="iblock"></span></td><td>會議室</td><td></td></tr>
+        <tr><td>相關人</td><td>B生</td><td><span class="iblock"></span></td><td>會議室</td><td></td></tr>
+        <tr><td>相關人</td><td>C生</td><td><span class="iblock"></span></td><td>會議室</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、雙方當事人陳述之重點</div>
+    <div class="item">一、被行為人訪談摘要<br><span class="iarea" style="min-height:60px;"></span></div>
+    <div class="item">二、行為人訪談摘要<br><span class="iarea" style="min-height:60px;"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、事實認定及理由</div>
+    <div class="item"><span class="iarea" style="min-height:100px;"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">伍、處理建議</div>
+    <div class="item">一、被行為人部分<br><span class="iarea"></span></div>
+    <div class="item">二、行為人部分<br><span class="iarea"></span></div>
+    <div class="item">三、學校部分<br><span class="iarea"></span></div>
+  </div>
+
+  <div class="attachment-list">附件：證據資料（均為密件，不隨調查報告送出）</div>
+
+  <div class="sign-row">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
+</div>
+
+<!-- ══ 5-5 持續性霸凌 寫法1（高中，肢體＋語言，單一行為人） ══ -->
+<div class="form-page" id="f55a">
+<div class="doc">
+  <span class="variant-badge badge-bully">5-5 寫法1｜高中・肢體＋語言・單一行為人・第4條第1項第4款</span>
+  <div class="doc-title">○○市立○○高級中學校園霸凌事件調查報告<br><span style="font-size:.82rem;font-weight:400;">（校安通報序號：○○○○○○○）</span></div>
+
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">檢舉人</td><td>甲生母親（甲生之法定代理人，以下簡稱甲母）</td></tr>
+    <tr><td class="cell-label">被行為人</td><td>甲生，本校學生</td></tr>
+    <tr><td class="cell-label">行為人</td><td>乙生，本校學生</td></tr>
+    <tr><td class="cell-label">相關人</td><td>A生、B生、C生、D生、E生，均為本校學生</td></tr>
+  </table>
+  <div class="note-box" style="margin-bottom:.75rem;">上開人員之資料詳見附件1：本案相關人員姓名及代號對照表</div>
+
+  <div class="section">
+    <div class="section-title">壹、案由</div>
+    <p class="item">本案係於民國113年5月6日，學校接獲甲母提出校園霸凌事件檢舉，內容為：「甲生於長期遭受乙生霸凌，113年4月22日乙生剪壞甲生鉛筆盒；112年9月迄今乙生取綽號、打甲生頭、踢甲生桌子，致使甲生身心俱創，躲在校園角落哭泣」。學校進行校安通報，經審查小組決議受理本案，學校於五個工作日內組成處理小組。依據準則之規定，家長自由選擇採行調查程序，處理小組遂進行專業審慎之調查並提出調查報告。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調查歷程</div>
+    <p class="item">一、處理小組基於公平、公正和直接調查原則，業於113年5月21日（星期二）召開訪談會議，均已踐行正當法律程序。</p>
+    <p class="item">二、本件除訪談當事人外，另訪談相關人A生、B生、C生、D生、E生，均為本件事發時在場之人。此5名相關人訪談內容應足以建構本件事實。</p>
+    <div class="item">三、訪談日期及對象臚列如下：
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>身分別</th><th>代號</th><th>訪談日期</th><th>地點</th><th>備註</th></tr>
+        <tr><td>被行為人</td><td>甲生</td><td>113.5.21</td><td>會議室</td><td>甲母陪同受訪</td></tr>
+        <tr><td>行為人</td><td>乙生</td><td>113.5.21</td><td>會議室</td><td>乙父陪同受訪</td></tr>
+        <tr><td>相關人</td><td>A生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>B生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>C生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>D生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>E生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、雙方當事人陳述之重點</div>
+    <div class="item"><strong>一、被行為人甲生訪談摘要</strong>
+      <div class="sub-item">（一）鉛筆盒是乙生在113年4月22日掃地時間拿剪刀剪壞的，乙生沒有說明原因理由就弄壞了。</div>
+      <div class="sub-item">（二）去年9月開始到今年4月底，乙生笑我綽號「鳳梨頭」至少10幾次、打我頭有5、6次以上很痛、踢我桌子有3到5次。</div>
+      <div class="sub-item">（三）乙生對我這些行為，我會感到難過，也會很害怕、也很生氣。</div>
+      <div class="sub-item">（四）我不想見到乙生，自己要忍耐，覺得很無奈。</div>
+    </div>
+    <div class="item" style="margin-top:.4rem;"><strong>二、行為人乙生訪談摘要</strong>
+      <div class="sub-item">（一）今年4月掃地時，我拿剪刀故意剪甲生鉛筆盒。甲生鉛筆盒是我覺得好玩，就是想弄甲生。</div>
+      <div class="sub-item">（二）我這學年有取笑甲生「鳳梨頭」，想到就講，超過10次。</div>
+      <div class="sub-item">（三）我這學年有打甲生的頭，確實有打他的頭，從後面巴，超過5次。</div>
+      <div class="sub-item">（四）我沒有踢過甲生的桌子。</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、事實認定及理由</div>
+    <p class="item">一、依據防制準則第4條第1項第4款定義，霸凌應同時具有：（一）<strong>持續</strong>：行為一再持續發生；（二）<strong>侵害態樣</strong>：以言語、肢體等方式對他人為貶抑、排擠、欺負、騷擾或戲弄等行為；（三）<strong>故意行為</strong>；（四）<strong>損害結果</strong>：產生精神上、生理上或財產上損害，或影響正常學習活動，四項要件需同時具備。</p>
+    <p class="item">二、（侵害行為）乙生確有：剪壞甲生鉛筆盒（財產損害）、取綽號訕笑（戲弄、超過10次）、打甲生頭（欺負、超過5次）、踢桌子（欺負、至少3次），均有雙方及相關人A至E生證詞互相佐證，堪信屬實。</p>
+    <p class="item">三、（故意性）乙生所有行為皆係於公開場合，明知可能之損害結果仍有意為之，具有直接行為故意。</p>
+    <p class="item">四、（持續性）乙生於112學年（112年9月至113年4月）欺負、戲弄甲生之行為合計達19次以上，明確達到「持續性」要件。</p>
+    <p class="item">五、（損害結果）甲生感到難過、害怕、生氣，躲在角落哭泣，相關人均證實甲生受到精神損害及頭痛等生理損害。</p>
+    <p class="item">六、據上論結，乙生對甲生所為同時具有霸凌四項要件，<strong>合議判定本案乙生對甲生成立校園霸凌事件</strong>（防制準則第4條第1項第4款）。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">伍、處理建議</div>
+    <div class="item">一、被行為人甲生部分
+      <div class="sub-item">（一）建議擬定甲生輔導計畫，安排心理輔導諮商課程或轉介諮商資源，以維甲生之心理健康。</div>
+    </div>
+    <div class="item">二、行為人乙生部分
+      <div class="sub-item">（一）建議採取適當管教措施，並移送學生獎懲委員會審議懲處。</div>
+      <div class="sub-item">（二）建議安排法治教育、同理心、人際關係等課程。</div>
+      <div class="sub-item">（三）建議善用修復式正義策略，減輕創傷與衝突，修復雙方關係。</div>
+    </div>
+    <div class="item">三、學校部分
+      <div class="sub-item">（一）定期辦理防制霸凌相關研習，強化教職員工知能。</div>
+      <div class="sub-item">（二）持續留意學生有無不適宜行為表現，隨時採取因應措施。</div>
+      <div class="sub-item">（三）強化班級經營與輔導管教效能，設計人際關係相關課程。</div>
+    </div>
+  </div>
+
+  <div class="attachment-list">
+    附件（均為密件，不隨調查報告送出）：附件1：相關人員代號對照表。附件2：校安通報紀錄。附件3：甲生訪談錄音。附件4：乙生訪談錄音。附件5：相關人訪談錄音。附件6：甲生被毀損鉛筆盒照片。
+  </div>
+  <div class="sign-row" style="margin-top:.75rem;">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國 113 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 5-5 持續性霸凌 寫法2（國中，網路，多行為人） ══ -->
+<div class="form-page" id="f55b">
+<div class="doc">
+  <span class="variant-badge badge-bully">5-5 寫法2｜國中・網路霸凌・多行為人・第4條第1項第4款</span>
+  <div class="doc-title">○○市立○○國民中學校園霸凌事件調查報告<br><span style="font-size:.82rem;font-weight:400;">（校安通報序號：○○○○○○○）</span></div>
+
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">申請人</td><td>甲生父親（甲生之法定代理人，以下簡稱甲父）</td></tr>
+    <tr><td class="cell-label">被行為人</td><td>甲生，本校學生</td></tr>
+    <tr><td class="cell-label">行為人</td><td>乙生、丙生，本校學生</td></tr>
+    <tr><td class="cell-label">相關人</td><td>A、B、C、D、E、F生，均為本校學生</td></tr>
+  </table>
+
+  <div class="section">
+    <div class="section-title">壹、案由</div>
+    <p class="item">本案係本校於114年4月11日接獲甲父提出校園霸凌事件申請書，內容為：「乙、丙生擅自從甲生FB下載人頭照片進行惡搞P圖，在114年2月11日於班級FB群組公開霸凌嘲笑甲生長得像狗」。學校隨即進行校安通報，組成處理小組並提出調查報告。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調查歷程</div>
+    <p class="item">一、處理小組基於公平、公正和直接調查原則，業於114年4月29日召開訪談會議，均已踐行正當法律程序。</p>
+    <p class="item">二、本件除訪談雙方當事人外，盡力邀請乙、丙生全班學生受訪，但僅有A至F生家長同意，其餘全部不同意。處理小組合議認為現有受訪內容與物證，已足以建構本件事實。</p>
+    <div class="item">三、訪談日期及對象臚列如下：
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>身分別</th><th>代號</th><th>訪談日期</th><th>地點</th><th>備註</th></tr>
+        <tr><td>被行為人</td><td>甲生</td><td>114.4.29</td><td>校史室</td><td>甲父陪同受訪</td></tr>
+        <tr><td>行為人</td><td>乙生</td><td>114.4.29</td><td>校史室</td><td>家長同意受訪</td></tr>
+        <tr><td>行為人</td><td>丙生</td><td>114.4.29</td><td>校史室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>A-F生</td><td>114.4.29</td><td>校史室</td><td>家長同意受訪</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、雙方當事人陳述之重點</div>
+    <div class="item"><strong>一、被行為人甲生及甲父陳述</strong>：乙生以「小飛俠」代號、丙生以「青蛙王子」代號，在班級FB群組留言「幫他（指甲生）變成狗」、「長得很像狗」，乙生並P圖上傳甲生像狗之照片，留言「果然很像一隻狗」。甲生自114年2月12日開始恐懼上學，內心受到極大傷害，出現哭泣、人際挫折、自我形象低落，甚至以拔頭髮自殘，並就醫診斷罹患焦慮症。</div>
+    <div class="item" style="margin-top:.4rem;"><strong>二、行為人乙生陳述</strong>：確有上傳P圖及留言，當時「不懂事，亂玩」。</div>
+    <div class="item"><strong>三、行為人丙生陳述</strong>：「為了挺朋友（乙生），覺得這樣很厲害，當初不是有心的。」</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、事實認定及理由</div>
+    <p class="item">一、（侵害行為）乙、丙生在全班20人可見之公開網路FB群組，以文字及圖畫對甲生為貶抑、戲弄之侵害行為，均有雙方陳述及FB截圖佐證。</p>
+    <p class="item">二、（故意性）乙生自承係「惡搞」甲生，丙生自承係「捉弄」甲生，相關人A至F生均確認係嘲笑甲生之意圖，具有直接行為故意。</p>
+    <p class="item">三、（持續性）乙、丙生在公開網路平台之欺負、戲弄行為，具有持續反覆被觀看、複製及對外傳播之狀態，且由於網路散播速度快而廣，無法追回，使甲生持續處於敵意環境，達到「持續性」要件。</p>
+    <p class="item">四、（損害結果）甲生出現拒學、懼學、焦慮症等身心損害，已影響正常學習活動之進行。</p>
+    <p class="item">五、據上論結，<strong>合議判定本案乙、丙生對甲生成立校園霸凌事件</strong>（防制準則第4條第1項第4款）。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">伍、處理建議</div>
+    <div class="item">一、被行為人甲生：安排輔導諮商資源，維護身心健康。</div>
+    <div class="item">二、行為人乙、丙生：採取適當輔導管教措施，移送獎懲會審議，安排法治教育等課程，善用修復式正義策略。</div>
+    <div class="item">三、學校：定期辦理防制研習，加強校園霸凌防制教育，強化班級經營效能。</div>
+  </div>
+
+  <div class="attachment-list">附件（均為密件）：附件1–代號對照表、附件2–校安通報紀錄、附件3–FB群組截圖、附件4–校安通報紀錄、附件5–甲生自殘照片、附件6–就醫診斷證明、附件7至11–各當事人訪談錄音。</div>
+  <div class="sign-row" style="margin-top:.75rem;">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國 114 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 5-6 故意傷害 寫法1（高中，宿舍肢體衝突，不成立霸凌→成立第71條） ══ -->
+<div class="form-page" id="f56a">
+<div class="doc">
+  <span class="variant-badge badge-injury">5-6 寫法1｜高中・宿舍肢體衝突・不成立霸凌→成立第71條故意傷害</span>
+  <div class="doc-title">○○巿○○區○○高級中學校園霸凌事件調查報告<br><span style="font-size:.82rem;font-weight:400;">（校安通報序號：○○○○○○）</span></div>
+
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">檢舉人</td><td>甲生父親（甲生之法定代理人，以下簡稱甲父）</td></tr>
+    <tr><td class="cell-label">被行為人</td><td>甲生，本校學生</td></tr>
+    <tr><td class="cell-label">行為人</td><td>乙生，本校學生</td></tr>
+    <tr><td class="cell-label">相關人</td><td>A生、B生，均為本校學生</td></tr>
+  </table>
+
+  <div class="section">
+    <div class="section-title">壹、案由</div>
+    <p class="item">本案係於113年5月7日，學校接獲甲父提出檢舉，內容為：「甲生疑似遭同班乙生肢體霸凌，宿舍管理員丙不處理衝突事件，讓乙生有機會毆打甲生」。學校進行校安通報，經審查小組決議受理本案，組成處理小組。家長自由選擇採行調查程序，處理小組進行專業審慎之調查並提出調查報告。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調查歷程</div>
+    <p class="item">一、處理小組基於公平、公正和直接調查原則，業於113年5月21日召開訪談會議，均已踐行正當法律程序。</p>
+    <p class="item">二、本件除訪談當事人外，並有訪談相關人A生、B生，另調閱相關監視器畫面，依現有事證已足建構本件事實。</p>
+    <div class="item">三、訪談日期及對象：
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>身分別</th><th>代號</th><th>訪談日期</th><th>地點</th><th>備註</th></tr>
+        <tr><td>被行為人</td><td>甲生</td><td>113.5.21</td><td>會議室</td><td>甲父陪同受訪</td></tr>
+        <tr><td>行為人</td><td>乙生</td><td>113.5.21</td><td>會議室</td><td>乙父陪同受訪</td></tr>
+        <tr><td>相關人</td><td>A生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+        <tr><td>相關人</td><td>B生</td><td>113.5.21</td><td>會議室</td><td>家長同意受訪</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、雙方當事人陳述之重點</div>
+    <div class="item"><strong>一、甲生陳述</strong>：113年5月6日晚上10時許，乙生問要不要打架，其他幹部制止後仍出手毆打，造成眼睛與胸口受傷，有驗傷證明。事後乙生在甲生調監視器時再度進入值勤室，揚言「監視器有沒有錄到？沒有錄到，我就繼續打」並繼續打甲生數下。</div>
+    <div class="item" style="margin-top:.4rem;"><strong>二、乙生陳述</strong>：雙方因言語誤會起衝突，甲生罵「俗辣」後情緒失控，推了甲生的肩膀，甲生越過A生再來推他，他才推回去。事後坦承對甲生造成影響，表示願意道歉。</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、事實認定及理由</div>
+    <p class="item">一、乙生毆打甲生，致甲生眼睛、胸口受傷，具「欺負」之侵害態樣，且具有直接故意，已造成生理及精神損害。</p>
+    <p class="item">二、惟本件乙生所有行為均係發生於113年5月6日晚上10時許，係短時間內因衝突所為，<strong>不符「持續性」要件，不成立霸凌（第4條第1項第4款）</strong>。</p>
+    <p class="item">三、次按防制準則第71條規定：「學生於校園內、外個人或集體故意傷害他人之身體或健康者，學校應準用本準則規定辦理。」乙生出手毆打甲生致其受有眼睛、胸口傷害，客觀上屬傷害行為，主觀上具有傷害故意，符合刑法第277條傷害罪要件，<strong>合議判定成立故意傷害事件（第71條）</strong>。</p>
+    <p class="item">四、另乙生以「沒有錄到，我就繼續打」言論恫嚇甲生，係以加害身體之事恐嚇他人，屬偏差行為，採取管教輔導懲處時應一併參酌。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">伍、處理建議</div>
+    <div class="item">一、被行為人甲生：尊重甲生需求及意願，提供心理諮商與輔導協助。</div>
+    <div class="item">二、行為人乙生：依第71條準用第45條，提供心理輔導並採適當管教措施，移送獎懲會懲處。在尊重雙方意願下，善用修復式正義策略。</div>
+    <div class="item">三、學校：定期辦理防制研習，加強校園霸凌防制教育，強化班級與宿舍管理效能。</div>
+  </div>
+
+  <div class="attachment-list">附件（均為密件）：附件1–代號對照表、附件2–校安通報、附件3-5–各當事人訪談錄音、附件6–宿舍監視器檔案、附件7–甲生診斷證明書。</div>
+  <div class="sign-row" style="margin-top:.75rem;">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國 113 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 5-6 故意傷害 寫法2（國小，踢門腦震盪，不成立霸凌→成立第71條） ══ -->
+<div class="form-page" id="f56b">
+<div class="doc">
+  <span class="variant-badge badge-injury">5-6 寫法2｜國小・踢門腦震盪・不成立霸凌→成立第71條故意傷害</span>
+  <div class="doc-title">○○巿○○區○○國民小學校園霸凌事件調查報告<br><span style="font-size:.82rem;font-weight:400;">（校安通報序號：○○○○○○○）</span></div>
+
+  <table class="form-table" style="margin-bottom:.75rem;">
+    <tr><td class="cell-label">檢舉人</td><td>甲生（被行為人）</td></tr>
+    <tr><td class="cell-label">行為人</td><td>乙生，本校學生</td></tr>
+    <tr><td class="cell-label">相關人</td><td>A生、B生、C生、D生、E師，均為本校師生</td></tr>
+  </table>
+
+  <div class="section">
+    <div class="section-title">壹、案由</div>
+    <p class="item">本案係於114年3月21日，學校接獲甲生提出檢舉，內容為：「114年3月17日中午在自然教室，我在門後看公告，A生提醒乙生我在門後，乙生就用力踼門，讓我的頭撞到門，接著撞到牆壁。」學校隨即進行校安通報，經審查小組於114年3月25日決議受理本案，組成處理小組並提出調查報告。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">貳、調查歷程</div>
+    <p class="item">一、處理小組基於公平、公正和直接調查原則，業於114年4月7日、4月14日召開調查訪談會議，均已踐行正當法律程序。</p>
+    <p class="item">二、本件除訪談當事人外，並有訪談相關人A至D生及E師，另調閱114年3月17日相關監視器畫面，依現有事證已足建構本件事實。</p>
+    <div class="item">三、訪談日期及對象：
+      <table class="history-table" style="margin-top:.4rem;">
+        <tr><th>身分別</th><th>代號</th><th>訪談日期</th><th>地點</th><th>備註</th></tr>
+        <tr><td>被行為人</td><td>甲生</td><td>114.4.7</td><td>會議室</td><td>家長陪同受訪</td></tr>
+        <tr><td>行為人</td><td>乙生</td><td>114.4.7</td><td>會議室</td><td>家長陪同受訪</td></tr>
+        <tr><td>相關人</td><td>A-D生、E師</td><td>114.4.14</td><td>會議室</td><td>家長同意受訪</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、雙方當事人陳述之重點</div>
+    <div class="item"><strong>一、被行為人甲生陳述（事件1）</strong>：A生提醒乙生門後有甲生後，乙生仍故意踼門，門撞到甲生頭前額，頭後方再撞牆壁。隔天就醫，診斷為腦震盪，並留有兩份診斷證明書。</div>
+    <div class="item" style="margin-top:.3rem;"><strong>二、行為人乙生陳述</strong>：稱不知道門後有人，因抬自然實驗器材需用腳推門。乙父則對甲生站在門後提出質疑。</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">肆、事實認定及理由</div>
+    <p class="item">一、（事件1認定）監視器畫面顯示A生壓門後往門後方看，乙生亦將頭部伸向門旁，再以右腳用力踼門；相關人A生作證「乙生知道有人在後面，乙生又去踼門，有些大力，造成甲生頭去撞到牆」；甲生診斷證明書（腦震盪）與監視器畫面及受傷時間密接，可互相印證。<strong>應可認定甲生被乙生踼門並致腦震盪屬實</strong>。</p>
+    <p class="item">二、（事件2）相關人均無人見過乙生用拳頭敲甲生頭頂，且甲生無積極人證物證佐證，<strong>應認定事件2不成立</strong>。</p>
+    <p class="item">三、（不成立霸凌）乙生踢門行為係發生於114年3月17日上午10時14分單一短暫事件，<strong>不符「持續性」要件，不成立霸凌（第4條第1項第4款）</strong>。</p>
+    <p class="item">四、（成立第71條）乙生明知甲生在門後，仍以右腳大力踼門，客觀上屬傷害行為，主觀上具有傷害故意，甲生並受有腦震盪之傷害結果，符合刑法第277條傷害罪要件，<strong>合議判定成立故意傷害事件（第71條）</strong>。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">伍、處理建議</div>
+    <div class="item">一、被行為人甲生：尊重甲生需求及意願，提供心理諮商與輔導協助。</div>
+    <div class="item">二、行為人乙生：依第71條準用第45條，建議召開國民小學學生獎勵與管教委員會，對乙生提供心理輔導並採適當管教措施。在尊重雙方意願下，善用修復式正義策略。</div>
+    <div class="item">三、學校：定期辦理防制研習，加強校園霸凌防制教育，持續留意學生不適宜行為，強化班級經營效能。</div>
+  </div>
+
+  <div class="attachment-list">附件（均為密件）：附件1–代號對照表、附件2–校安通報、附件3–甲生及家長訪談錄音、附件4、5–甲生診斷證明書、附件6–乙生訪談錄音、附件7–監視器檔案、附件8–相關人訪談錄音。</div>
+  <div class="sign-row" style="margin-top:.75rem;">
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+    <div class="sign-item"><div class="sign-line"></div>處理小組委員</div>
+  </div>
+  <div class="date-row">中　華　民　國 114 年　　月　　日</div>
+</div>
+</div>
+
+<!-- ══ 6-1 防制委員會會議紀錄 ══ -->
+<div class="form-page" id="f61">
+<div class="doc">
+  <div class="doc-title">
+    <span class="iline iline-sm"></span>○○學年度第<span class="iline iline-sm"></span>學期<br>
+    校園霸凌防制委員會第<span class="iline iline-sm"></span>次會議紀錄
+  </div>
+
+  <div class="quorum-notice">
+    <strong>⚠️ 開會門檻（防制準則第36條第4項）：</strong>須二分之一以上委員出席始得開會；出席委員過半數同意始得決議。<br>
+    本次委員會總人數：<span class="iline iline-sm"></span>人，出席：<span class="iline iline-sm"></span>人，請假：<span class="iline iline-sm"></span>人。
+  </div>
+
+  <table class="form-table" style="margin-bottom:1rem;">
+    <tr>
+      <td class="cell-label">會議時間</td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+    </tr>
+    <tr><td class="cell-label">會議地點</td><td><span class="iblock"></span></td></tr>
+    <tr>
+      <td class="cell-label">主持人</td>
+      <td style="display:flex; gap:2rem;">
+        <span>姓名：<span class="iline" style="min-width:80px;"></span></span>
+        <span>紀錄：<span class="iline" style="min-width:80px;"></span></span>
+      </td>
+    </tr>
+    <tr><td class="cell-label">出席委員</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">列席人員</td><td><span class="iblock"></span></td></tr>
+  </table>
+
+  <div class="section"><span class="section-title">壹、主席致詞：</span>（略）</div>
+
+  <div class="section">
+    <div class="section-title">貳、業務單位報告：</div>
+    <div class="item">一、本次會議召開目的係為討論，本校於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日之校安通報編號<span class="iline"></span>之疑似霸凌案件調查說明、目前處理情形。</div>
+    <div class="item">二、依據防制準則第39條第8款及第40條第2項規定，學校及處理小組就當事人、檢舉人、證人或協助調查之人之姓名及其他足以辨識身分之資料，應予保密，保密義務適用於學校參與調和、調查處理校園霸凌事件之所有人員。</div>
+    <div class="item">三、<strong>處理小組報告：</strong><span class="iarea" style="min-height:60px;"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">參、討論事項：</div>
+    <div class="item">
+      <strong>案由：</strong>有關疑似校園霸凌事件（校安通報編號<span class="iline"></span>）案進行審議，提請討論。
+    </div>
+    <div class="item">
+      <strong>說明：</strong>
+      <div style="margin-top:.3rem;">
+        一、本校於<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日接獲<span class="iline iline-sm"></span>生檢舉書，<span class="iline iline-sm"></span>生提供佐證資料提請疑似遭受校園霸凌事件處理。
+      </div>
+      <div style="margin-top:.25rem;">二、本校處理流程：</div>
+      <div style="padding-left:1.2rem;">
+        （一）<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日召開審查小組會議決議受理，並於<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日組成處理小組，由<span class="iline"></span>委員、<span class="iline"></span>委員與<span class="iline"></span>委員擔任，其中<span class="iline"></span>委員、<span class="iline"></span>委員為教育部生對生人才庫成員，符合防制準則相關規定。
+      </div>
+      <div style="padding-left:1.2rem;">
+        （二）處理小組委員於<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日召開第一次
+        <label style="display:inline-flex;align-items:center;gap:.3rem;margin:0 .3rem;"><span class="cb"></span>調和</label>／
+        <label style="display:inline-flex;align-items:center;gap:.3rem;margin:0 .3rem;"><span class="cb"></span>調查</label>
+        會議，於<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日完成報告。
+      </div>
+      <div style="padding-left:1.2rem;">三、針對旨案調和／調查報告提請審議。</div>
+    </div>
+    <div class="item" style="margin-top:.5rem;">
+      <strong>決議：</strong>
+      <div style="margin-top:.3rem;">一、防制委員會人數<span class="iline iline-sm"></span>位，出席<span class="iline iline-sm"></span>位，請假<span class="iline iline-sm"></span>位，符合防制準則第36條第4項二分之一以上委員出席。防制委員會<span class="iline iline-sm"></span>位出席委員同意通過處理小組調和／調查報告，達出席委員過半數之同意。</div>
+      <div style="margin-top:.3rem;">二、依據防制準則第<label style="display:inline-flex;align-items:center;gap:.2rem;margin:0 .2rem;"><span class="cb"></span>35條（調和）</label>／<label style="display:inline-flex;align-items:center;gap:.2rem;margin:0 .2rem;"><span class="cb"></span>45條（調查）</label>規定，決議下列事項：</div>
+      <div style="padding-left:1.2rem; margin-top:.25rem;">
+        <div class="ck-row"><span class="cb"></span><span>依第38條第1項規定予以處置。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>提供心理諮商與輔導或其他協助。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>採取適當管教措施。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>移送權責單位依法定程序予以懲處。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>霸凌情節重大者，依第61條規定，請求警政、社政機關（構）或司法機關協助。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section"><span class="section-title">肆、臨時動議：</span>無。</div>
+  <div class="section"><span class="section-title">伍、散會：</span><span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分。</div>
+</div>
+</div>
+
+<!-- ══ 6-2 調查或調和報告會簽移送懲處單位 ══ -->
+<div class="form-page" id="f62">
+<div class="doc">
+  <div style="display:flex; justify-content:space-between; font-size:.88rem; margin-bottom:1rem;">
+    <span>簽　於<span class="iline"></span>處</span>
+    <span>中華民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
+  </div>
+
+  <div class="section">
+    <span class="section-title">主旨：</span>檢送本校校園霸凌防制委員會於校安通報編號<span class="iline"></span>案之調查／調和報告1份，請學務處依決議事項辦理相關事宜。
+  </div>
+
+  <div class="section">
+    <div class="section-title">說明：</div>
+    <div class="item">一、依據<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日召開第<span class="iline iline-sm"></span>次校園霸凌防制委員會會議決議事項辦理。（請參見附件）</div>
+    <div class="item">二、法規依據：
+      <div style="padding-left:1rem; font-size:.88rem; margin-top:.2rem;">
+        <div>防制準則第45條第1項第3款：「採取適當管教措施。」</div>
+        <div>防制準則第45條第4項：「移送權責單位依法定程序予以懲處。」</div>
+        <div>防制準則第45條第3項：「權責單位非有正當理由，不得違反防制委員會前項之決議。」</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="section-title">擬辦：</span>惠請學務處依相關學校章則召開（相關）會議議處。
+  </div>
+
+  <div style="margin-top:1.5rem; text-align:right; font-size:.9rem;">
+    <div>敬會</div>
+    <div style="margin-top:.3rem;">學務處　<span class="iline iline-sm"></span></div>
+  </div>
+
+  <div style="margin-top:1.2rem; display:flex; justify-content:flex-end; gap:3rem; font-size:.88rem;">
+    <div class="sign-item"><div class="sign-line"></div>承辦人</div>
+    <div class="sign-item"><div class="sign-line"></div>主任</div>
+    <div class="sign-item"><div class="sign-line"></div>校長</div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 6-3 被行為人結果通知函 ══ -->
+<div class="form-page" id="f63">
+<div class="doc">
+  <div style="font-size:.78rem; color:#888; text-align:right; margin-bottom:.4rem; font-family:'Noto Sans TC',sans-serif;">
+    檔號：<span class="iline"></span>　保存年限：<span class="iline"></span>　<span class="classified">密件</span>
+  </div>
+  <div class="gongwen-school">（學校全銜）函</div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gm-label">受文者：</span><span class="gm-value"><span class="iline iline-lg"></span>君（被行為人）</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文日期：</span><span class="gm-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文字號：</span><span class="gm-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">附件：</span><span class="gm-value">調和／調查報告書（代號版）、陳情書</span></div>
+  </div>
+
+  <div class="section">
+    <span class="section-title">主旨：</span>有關本校疑似校園霸凌事件（校安通報編號<span class="iline"></span>）之處理結果，請查照。
+  </div>
+
+  <div class="section">
+    <div class="section-title">說明：</div>
+    <div class="item">一、依據防制準則第46條第2項：「學校依前項規定作成終局實體處理後，應於<strong>10個工作日內</strong>以書面載明事實及理由，通知行為人及被行為人，並一併提供調和報告或調查報告。」</div>
+    <div class="item">二、本案經校園霸凌防制委員會審議通過調和／調查報告，並決議如下：
+      <div style="padding-left:1rem; margin-top:.2rem;">
+        <div class="ck-row"><span class="cb"></span><span>依第38條第1項規定予以處置。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>提供心理諮商與輔導或其他協助。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>採取適當管教措施。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>移送權責單位依法定程序予以懲處。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+      </div>
+    </div>
+    <div class="item">三、本案業經本校做出終局實體處理為：<span class="iarea" style="min-height:50px;margin-top:.2rem;"></span></div>
+
+    <!-- 救濟提示 -->
+    <div class="relief-box" style="margin: .75rem 1.2rem 0;">
+      <div class="relief-head relief-head-victim">🛡️ 被行為人救濟方式（第49條）</div>
+      <div class="relief-body">
+        四、依據防制準則第49條規定，被行為人、其法定代理人或實際照顧者，不服學校之終局實體處理者，於收受終局實體處理之<strong>次日起30日內</strong>，得填具陳情書向<span class="iline" style="min-width:80px;"></span>教育局（處）陳情；陳情，同一事件以一次為限。
+      </div>
+    </div>
+
+    <div class="item" style="margin-top:.75rem;">五、檢送本案調和／調查報告（姓名以代號呈現，依第47條辦理）、陳情書。</div>
+  </div>
+
+  <div style="margin-top:1rem; font-size:.85rem;">
+    <div>正本：<span class="iline iline-lg"></span>君（被行為人）</div>
+    <div style="margin-top:.2rem;">抄本：本校學務處</div>
+  </div>
+
+  <div class="note-box" style="margin-top:1rem;">
+    <strong>⚠️ 隱私保護（第47條）：</strong>附件報告中涉及當事人、檢舉人、證人及協助調查人之真實姓名，均須以代號呈現，不得附上原始文書。
+  </div>
+</div>
+</div>
+
+<!-- ══ 6-4 行為人結果通知函 ══ -->
+<div class="form-page" id="f64">
+<div class="doc">
+  <div style="font-size:.78rem; color:#888; text-align:right; margin-bottom:.4rem; font-family:'Noto Sans TC',sans-serif;">
+    檔號：<span class="iline"></span>　保存年限：<span class="iline"></span>　<span class="classified">密件</span>
+  </div>
+  <div class="gongwen-school">（學校全銜）函</div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gm-label">受文者：</span><span class="gm-value"><span class="iline iline-lg"></span>君（行為人）</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文日期：</span><span class="gm-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文字號：</span><span class="gm-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">附件：</span><span class="gm-value">調和／調查報告書（代號版）、學生獎懲通知書、學生申訴書</span></div>
+  </div>
+
+  <div class="section">
+    <span class="section-title">主旨：</span>有關本校疑似校園霸凌事件（校安通報編號<span class="iline"></span>）之處理結果，請查照。
+  </div>
+
+  <div class="section">
+    <div class="section-title">說明：</div>
+    <div class="item">一、依據防制準則第46條第2項：「學校作成終局實體處理後，應於<strong>10個工作日內</strong>以書面載明事實及理由，通知行為人及被行為人，並一併提供調和報告或調查報告。」第3項：「學校應告知行為人不服終局實體處理之救濟方法、期間及其受理機關。」</div>
+    <div class="item">二、本案經校園霸凌防制委員會審議通過調和／調查報告，並決議如下：
+      <div style="padding-left:1rem; margin-top:.2rem;">
+        <div class="ck-row"><span class="cb"></span><span>依第38條第1項規定予以處置。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>提供心理諮商與輔導或其他協助。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>採取適當管教措施。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>移送權責單位依法定程序予以懲處。</span></div>
+        <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+      </div>
+    </div>
+    <div class="item">三、本案業經本校做出終局實體處理為：<span class="iarea" style="min-height:50px;margin-top:.2rem;"></span></div>
+
+    <!-- 救濟提示（行為人版，三種學制分流） -->
+    <div class="relief-box" style="margin: .75rem 1.2rem 0;">
+      <div class="relief-head relief-head-perp">⚠️ 行為人救濟方式（第48條）— 依學制勾選填寫</div>
+      <div class="relief-body">
+        四、依據防制準則第48條：「行為人不服學校於行政程序中所為之決定或處置者，僅得於對學校之終局實體處理不服，而依各級學校學生申訴相關規定提起申訴時，一併聲明之。」
+        <div style="margin-top:.5rem; font-weight:700; font-size:.8rem; color:#5c3a00;">申訴期限（依學制選擇）：</div>
+        <div class="ck-row" style="margin-top:.3rem;">
+          <span class="cb"></span>
+          <span><strong>國中小：</strong>應於收受或知悉原措施之次日起 <strong>40日內</strong>，以書面向學校提出申訴。（依高級中等以下學校學生申訴及再申訴評議委員會組織及運作辦法第55條）</span>
+        </div>
+        <div class="ck-row" style="margin-top:.3rem;">
+          <span class="cb"></span>
+          <span><strong>高中：</strong>應於收受或知悉原措施之次日起 <strong>30日內</strong>，以書面向學校提出申訴。（依同辦法第5條）</span>
+        </div>
+        <div class="ck-row" style="margin-top:.3rem;">
+          <span class="cb"></span>
+          <span><strong>專科以上：</strong>應於收到或接受相關懲處之次日起一定期日內，以書面向學校申評會提起申訴（期日由學校明定，不得少於10日或超過30日）。（依大學及專科學校學生申訴案處理原則第6點）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="item" style="margin-top:.75rem;">五、檢送本案調和／調查報告（姓名以代號呈現）、學生獎懲通知書、學生申訴書。</div>
+  </div>
+
+  <div style="margin-top:1rem; font-size:.85rem;">
+    <div>正本：<span class="iline iline-lg"></span>君（行為人）</div>
+    <div style="margin-top:.2rem;">抄本：本校學務處</div>
+  </div>
+
+  <div class="note-box" style="margin-top:1rem;">
+    <strong>⚠️ 隱私保護（第47條）：</strong>附件報告中涉及當事人、檢舉人、證人及協助調查人之真實姓名，均須以代號呈現，不得附上原始文書。
+  </div>
+</div>
+</div>
+
+<!-- ══ 6-5 報教育局備查 ══ -->
+<div class="form-page" id="f65">
+<div class="doc">
+  <div class="gongwen-school">（學校全銜）函</div>
+  <div class="gongwen-meta">
+    <div class="gongwen-meta-row"><span class="gm-label">受文者：</span><span class="gm-value"><span class="iline iline-lg"></span>市（縣）政府教育局（處）</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文日期：</span><span class="gm-value">中華民國　　　年　　月　　日</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">發文字號：</span><span class="gm-value"></span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">速別：</span><span class="gm-value">普通</span></div>
+    <div class="gongwen-meta-row"><span class="gm-label">附件：</span><span class="gm-value">如說明三</span></div>
+  </div>
+
+  <div class="section">
+    <span class="section-title">主旨：</span>有關本校校園事件（校安通報序號：<span class="iline"></span>），經本校作成終局實體處理，詳如說明，敬請鈞局同意備查。
+  </div>
+
+  <div class="section">
+    <div class="section-title">說明：</div>
+    <div class="item">一、依據校園霸凌防制準則第62條規定：「學校作成終局實體處理後，應將<strong>處理情形、調和報告、調查報告、防制委員會及學校之會議紀錄</strong>，報學校所屬主管機關備查。」</div>
+    <div class="item">二、本案業經本校做出終局實體處理為：<span class="iarea" style="min-height:60px; margin-top:.2rem;"></span></div>
+    <div class="item">三、檢陳本案下列資料各1份：
+      <div style="padding-left:1rem; margin-top:.3rem;">
+        <div class="ck-row"><span class="cb"></span><span>處理情形說明</span></div>
+        <div class="ck-row"><span class="cb"></span><span>調查報告</span></div>
+        <div class="ck-row"><span class="cb"></span><span>調和報告</span></div>
+        <div class="ck-row"><span class="cb"></span><span>防制委員會會議紀錄</span></div>
+        <div class="ck-row"><span class="cb"></span><span>學校相關會議紀錄（如：獎懲委員會紀錄）</span></div>
+        <div class="ck-row"><span class="cb"></span><span>其他：<span class="iline iline-lg"></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem; font-size:.85rem;">
+    <div>正本：<span class="iline iline-lg"></span>市（縣）政府教育局（處）</div>
+    <div style="margin-top:.2rem;">抄本：本校<span class="iline"></span>處</div>
+  </div>
+
+  <div class="note-box" style="margin-top:1rem;">
+    <strong>備查清單提醒（第62條）：</strong>處理情形、調和報告（若有）、調查報告、防制委員會會議紀錄、學校相關會議紀錄，共五項，缺一不可。
+  </div>
+</div>
+</div>
+
+<!-- ══ 盲點補強：STAGE 08 結案歸檔檢核表 Modal ══ -->
+<div id="modal-archive" style="display:none;position:fixed;inset:0;background:rgba(26,26,46,.6);z-index:999;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)closeArchiveModal()">
+  <div style="background:#fff;border-radius:6px;max-width:540px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.25);overflow:hidden;animation:modalIn .2s ease;">
+    <div style="background:#1a5c2e;color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;gap:.6rem;">
+      <span style="font-size:1.2rem;">📁</span>
+      <div>
+        <div style="font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;">結案歸檔檢核表</div>
+        <div style="font-size:.75rem;opacity:.8;">依第40條、第47條規定，結案前須完成以下歸檔確認</div>
+      </div>
+    </div>
+    <div style="padding:1.5rem;">
+      <div style="font-size:.85rem;line-height:1.8;color:#3a3a5c;margin-bottom:1rem;">
+        案件結案前，請確認以下歸檔事項均已完成：
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;cursor:pointer;">
+          <input type="checkbox" id="arc1" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
+          <span>📼 <strong>訪談錄音／錄影檔案</strong>已妥善留存，保存期限至少 <strong>3年</strong>（若有相關爭訟，應保存至救濟程序確定後至少6個月）。（第40條）</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;cursor:pointer;">
+          <input type="checkbox" id="arc2" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
+          <span>🔒 <strong>記載真實姓名之原始文書</strong>（如原始調查報告、訪談逐字稿）已實體封存，不得流出。（第47條）</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88mm;cursor:pointer;">
+          <input type="checkbox" id="arc3" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
+          <span>📋 <strong>對外文書均已完成匿名化</strong>（報告、通知函中姓名已全數轉為代號），符合第47條規定。</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;cursor:pointer;">
+          <input type="checkbox" id="arc4" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
+          <span>📤 <strong>報教育局備查（6-5）</strong>已完成發文，含處理情形、調和／調查報告、防制委員會及學校會議紀錄。（第62條）</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;cursor:pointer;">
+          <input type="checkbox" id="arc5" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
+          <span>🧑‍🏫 <strong>輔導追蹤計畫</strong>（輔導內容、分工、期程）已訂定，輔導人員符合迴避規定（第59條：處理小組委員應迴避）。</span>
+        </label>
+      </div>
+      <div style="margin-top:1rem;padding:.75rem;background:#f0faf4;border-radius:4px;font-size:.8rem;color:#1a5c2e;display:none;" id="arc-ok-msg">
+        ✅ 所有歸檔項目已確認，可正式結案。
+      </div>
+    </div>
+    <div style="padding:1rem 1.5rem;background:#f5f3ee;display:flex;gap:.75rem;justify-content:flex-end;">
+      <button onclick="closeArchiveModal()" style="padding:.5rem 1.2rem;background:transparent;border:1px solid #c5bfb0;color:#3a3a5c;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;">取消</button>
+      <button id="arc-confirm-btn" onclick="confirmArchive()" disabled style="padding:.5rem 1.5rem;background:#1a5c2e;color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;opacity:.45;">確認結案</button>
+    </div>
+  </div>
+</div>
+
+    </div><!-- /formPages -->
+  </main>
+
+</div><!-- /layout -->
+
+<script>
+
+// ── 盲點補強：結案歸檔 Modal
+function openArchiveModal() {
+  const modal = document.getElementById('modal-archive');
+  modal.style.display = 'flex';
+  updateArchiveBtn();
+}
+function closeArchiveModal() {
+  document.getElementById('modal-archive').style.display = 'none';
+}
+function updateArchiveBtn() {
+  const cbs = ['arc1','arc2','arc3','arc4','arc5'];
+  const allChecked = cbs.every(id => document.getElementById(id)?.checked);
+  const btn = document.getElementById('arc-confirm-btn');
+  const msg = document.getElementById('arc-ok-msg');
+  if (btn) btn.disabled = !allChecked;
+  if (btn) btn.style.opacity = allChecked ? '1' : '.45';
+  if (msg) msg.style.display = allChecked ? 'block' : 'none';
+}
+function confirmArchive() {
+  closeArchiveModal();
+  alert('✅ 結案歸檔完成！\n案件狀態已更新為「已結案」。\n（實際系統將呼叫 GAS 更新 cases 工作表）');
+}
+document.addEventListener('change', function(e) {
+  if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
+});
+
+// ── 導覽狀態
+let currentId = null;
+
+function show(id, name, stage) {
+  // 隱藏所有
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  // 顯示目標
+  const page = document.getElementById(id);
+  if (page) page.classList.add('active');
+  currentId = id;
+
+  // 更新導覽高亮
+  event.currentTarget.classList.add('active');
+
+  // 更新標題與麵包屑
+  document.getElementById('currentFormName').textContent = name;
+  document.getElementById('breadcrumb').innerHTML =
+    `<span>${stage}階段</span> › ${name}`;
+
+  // 捲回頂部
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function toggleStage(id) {
+  const items = document.getElementById(id);
+  const arrow = document.getElementById('arr-' + id);
+  const isOpen = items.classList.contains('open');
+  items.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+// 預設開啟受理階段、顯示 3-1
+window.onload = function() {
+  // 自動選中第一個導覽項目
+  const first = document.querySelector('.nav-item');
+  if (first) {
+    first.click();
+    // 手動補充 event 不存在的情況
+  }
+};
+
+// 覆蓋以修正 event 參考問題
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
