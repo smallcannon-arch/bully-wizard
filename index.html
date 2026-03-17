@@ -10,7 +10,7 @@
 :root {
   --ink: #1a1a2e; --paper: #f5f3ee; --warm: #ede9e0; --line: #c5bfb0;
   --accent: #8b1a1a; --ok: #1a5c2e; --info: #1a3a5c;
-  --sidebar-w: 200px;
+  --sidebar-w: 230px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -44,8 +44,8 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 }
 .stage-group { }
 .stage-head {
-  padding: .55rem .8rem;
-  font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  padding: .6rem .9rem;
+  font-size: .82rem; font-weight: 700; letter-spacing: .04em;
   color: #fff; background: var(--ink-soft, #3a3a5c);
   border-bottom: 1px solid rgba(255,255,255,.1);
   cursor: pointer;
@@ -60,16 +60,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .stage-arrow.open { transform: rotate(90deg); }
 
 .nav-item {
-  padding: .4rem .9rem .4rem 1rem;
-  font-size: .78rem; color: var(--ink-soft, #3a3a5c);
+  padding: .45rem .9rem .45rem 1rem;
+  font-size: .88rem; color: var(--ink-soft, #3a3a5c);
   cursor: pointer; border-bottom: 1px solid var(--paper);
-  line-height: 1.4;
+  line-height: 1.5;
   transition: background .12s;
   display: flex; align-items: center; gap: .4rem;
 }
 .nav-item:hover { background: var(--paper); }
 .nav-item.active { background: var(--paper); font-weight: 600; color: var(--ink); border-left: 3px solid var(--ink); padding-left: calc(1rem - 3px); }
-.nav-num { font-size: .68rem; color: var(--line); font-family: monospace; min-width: 2.4em; }
+.nav-num { font-size: .76rem; color: var(--line); font-family: monospace; min-width: 2.6em; }
 .stage-items { display: none; }
 .stage-items.open { display: block; }
 
@@ -188,6 +188,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <h1>🏫 校園霸凌防制準則 — 表單系統（生對生 v1）</h1>
   <div class="top-bar-right">
     <span id="currentFormName" style="color:rgba(255,255,255,.6);">請選擇表單</span>
+    <button class="print-btn" id="wordBtn" onclick="downloadWord()" style="background:#2c5c3c;">⬇️ 下載 Word</button>
     <button class="print-btn" onclick="window.print()">🖨️ 列印此表單</button>
   </div>
 </div>
@@ -2459,7 +2460,89 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <script>
 
-// ── 盲點補強：結案歸檔 Modal
+// ── 下載 Word 功能
+function downloadWord() {
+  const activePage = document.querySelector('.form-page.active');
+  if (!activePage) { alert('請先選擇一份表單'); return; }
+
+  const formName = document.getElementById('currentFormName').textContent || '霸凌表單';
+
+  // 取得目前表單的 HTML 內容
+  const docHtml = activePage.querySelector('.doc') ?
+    Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
+    activePage.innerHTML;
+
+  // 建立可被 Word 開啟的 HTML 檔案（Word 支援讀取 .doc 格式的 HTML）
+  const wordContent = `
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<title>${formName}</title>
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
+<![endif]-->
+<style>
+  @page { size: A4; margin: 2cm 2.5cm; }
+  body { font-family: "微軟正黑體", "Microsoft JhengHei", "Noto Serif TC", serif; font-size: 12pt; line-height: 1.9; color: #1a1a2e; }
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0; font-size: 11pt; }
+  th, td { border: 1pt solid #1a1a2e; padding: 4pt 6pt; vertical-align: top; }
+  th { background: #f0ece4; font-weight: bold; text-align: center; }
+  .doc-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 12pt; letter-spacing: 2pt; }
+  .section-title { font-weight: bold; }
+  .item { margin-left: 16pt; margin-bottom: 3pt; }
+  .sub-item { margin-left: 32pt; margin-bottom: 2pt; }
+  .note-box { background: #f8f6f0; border-left: 3pt solid #c5bfb0; padding: 6pt 8pt; font-size: 10pt; color: #555; margin-top: 8pt; }
+  .law-banner { background: #1a3a5c; color: white; padding: 6pt 8pt; margin-bottom: 8pt; font-size: 10pt; }
+  .quorum-notice { background: #ddeeff; border: 1pt solid #a0c0e0; padding: 6pt 8pt; margin-bottom: 8pt; font-size: 10pt; }
+  .iline { display: inline-block; border-bottom: 1pt solid #999; min-width: 60pt; }
+  .iline-sm { min-width: 25pt; }
+  .iline-lg { min-width: 120pt; }
+  .iblock { display: block; border-bottom: 1pt solid #999; min-height: 14pt; width: 100%; }
+  .iarea { display: block; min-height: 36pt; border-bottom: 1pt dashed #ddd; }
+  .cb { display: inline-block; width: 10pt; height: 10pt; border: 1.5pt solid #1a1a2e; }
+  .sign-row { display: flex; gap: 2rem; margin-top: 12pt; text-align: center; justify-content: center; }
+  .sign-item { text-align: center; min-width: 80pt; }
+  .sign-line { border-bottom: 1pt solid #1a1a2e; min-height: 18pt; }
+  .date-row { text-align: center; margin-top: 10pt; }
+  .gongwen-school { font-size: 13pt; font-weight: bold; text-align: center; border-bottom: 2pt solid #1a1a2e; padding-bottom: 4pt; margin-bottom: 8pt; }
+  .classified { border: 1.5pt solid #1a1a2e; padding: 0 4pt; font-size: 9pt; font-weight: bold; }
+  .history-table th, .history-table td { border: 1pt solid #1a1a2e; padding: 3pt 5pt; }
+  .relief-box { border: 1.5pt solid #c5bfb0; margin-top: 8pt; }
+  .relief-head { padding: 4pt 8pt; font-size: 10pt; font-weight: bold; }
+  .relief-head-victim { background: #ddeeff; color: #1a3a5c; }
+  .relief-head-perp { background: #fff3cd; color: #5c3a00; }
+  .relief-body { padding: 6pt 8pt; font-size: 10pt; }
+  .variant-badge { font-size: 9pt; border: 1pt solid #c5bfb0; padding: 1pt 6pt; margin-bottom: 4pt; }
+  .page-sep { border-top: 2pt dashed #c5bfb0; margin: 16pt 0; }
+  input[type="checkbox"] { display: none; }
+  .ck-row::before { content: "□ "; }
+</style>
+</head>
+<body>
+${docHtml}
+</body>
+</html>`;
+
+  // 建立 Blob 並下載
+  const blob = new Blob([wordContent], {
+    type: 'application/msword;charset=utf-8'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  // 清理檔名（移除特殊字元）
+  const safeName = formName.replace(/[\/\\:*?"<>|]/g, '_');
+  a.download = `${safeName}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
 function openArchiveModal() {
   const modal = document.getElementById('modal-archive');
   modal.style.display = 'flex';
@@ -2488,7 +2571,7 @@ document.addEventListener('change', function(e) {
 // ── 導覽狀態
 let currentId = null;
 
-function show(id, name, stage) {
+function show(id, name, stage, el) {
   // 隱藏所有
   document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -2498,8 +2581,9 @@ function show(id, name, stage) {
   if (page) page.classList.add('active');
   currentId = id;
 
-  // 更新導覽高亮
-  event.currentTarget.classList.add('active');
+  // 更新導覽高亮（用傳入的 el 或 event.currentTarget）
+  const navEl = el || (typeof event !== 'undefined' && event.currentTarget);
+  if (navEl) navEl.classList.add('active');
 
   // 更新標題與麵包屑
   document.getElementById('currentFormName').textContent = name;
@@ -2520,11 +2604,10 @@ function toggleStage(id) {
 
 // 預設開啟受理階段、顯示 3-1
 window.onload = function() {
-  // 自動選中第一個導覽項目
   const first = document.querySelector('.nav-item');
   if (first) {
-    first.click();
-    // 手動補充 event 不存在的情況
+    show('f31', '3-1 簽請組成防制委員會', '受理', first);
+    first.classList.add('active');
   }
 };
 
