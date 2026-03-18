@@ -72,13 +72,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .empty-state { text-align: center; padding: 4rem 1rem; color: #aaa; }
 .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
 
-/* ── Modal 共用 (修改：增加最大高度與彈性排版) ── */
+/* ── Modal 共用 ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,.55); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
 .modal-overlay.show { display: flex; }
 .modal-box { background: #fff; border-radius: 6px; max-width: 500px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden; animation: fadeUp .2s ease; display: flex; flex-direction: column; max-height: 90vh; }
 @keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 .modal-head { background: var(--ink); color: #fff; padding: 1rem 1.5rem; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; flex-shrink: 0; }
-/* (修改：讓中間內容可以滾動) */
 .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
 .field label { display: block; font-size: .8rem; font-weight: 500; color: #555; margin-bottom: .3rem; }
 .field input, .field select { width: 100%; padding: .45rem .75rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Noto Sans TC', sans-serif; font-size: .9rem; outline: none; }
@@ -103,6 +102,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </head>
 <body>
 
+<!-- 登入遮罩 -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <h2>🏫 校園霸凌事件處理系統</h2>
@@ -153,6 +153,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 </main>
 
+<!-- 新增案件 Modal -->
 <div class="modal-overlay" id="newCaseModal">
   <div class="modal-box">
     <div class="modal-head">新增案件</div>
@@ -189,6 +190,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 </div>
 
+<!-- 推進階段 Modal -->
 <div class="modal-overlay" id="advanceModal">
   <div class="modal-box advance-modal-box">
     <div class="modal-head advance-modal-head">✅ 推進階段</div>
@@ -210,6 +212,17 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 </div>
 
+<!-- 系統專屬美化彈窗 -->
+<div class="modal-overlay" id="sysAlertModal" style="z-index: 9999;">
+  <div class="modal-box" style="max-width: 420px; text-align: center;">
+    <div class="modal-head" style="background: var(--info); font-size: 1.1rem;" id="sysAlertTitle">系統提示</div>
+    <div class="modal-body" style="padding: 2.5rem 1.5rem; font-size: .95rem; color: #333; line-height: 1.6; white-space: pre-wrap;" id="sysAlertMsg"></div>
+    <div class="modal-foot" style="justify-content: center; background: #fff; border-top: 1px solid var(--paper);">
+      <button class="btn btn-primary" style="min-width: 120px;" onclick="closeSysAlert()">確定</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── 設定
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec'; 
@@ -217,6 +230,15 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJA
 let currentEmail = '';
 let currentToken = '';
 let casesCache = [];
+
+function customAlert(msg, title = '系統提示') {
+  document.getElementById('sysAlertTitle').textContent = title;
+  document.getElementById('sysAlertMsg').textContent = msg;
+  document.getElementById('sysAlertModal').classList.add('show');
+}
+function closeSysAlert() {
+  document.getElementById('sysAlertModal').classList.remove('show');
+}
 
 function handleCredential(response) {
   const base64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -317,7 +339,7 @@ async function createCase() {
 
   if (!name || !awareDate) {
     confirmBtn.disabled = false; confirmBtn.textContent = '建立案件';
-    alert('請填寫案件名稱與知悉日期'); return;
+    customAlert('請填寫案件名稱與知悉日期', '⚠️ 填寫未完整'); return;
   }
 
   try {
@@ -327,8 +349,9 @@ async function createCase() {
     });
     if (!result.ok) throw new Error(result.error);
     closeNewCaseModal(); await loadCases();
-    alert(`✅ 案件已建立！目前僅起算24小時校安/社政通報。\n如需成案(起算20工作日審查小組期限)，請點選卡片上的「推進」進行勾選確認。`);
-  } catch (e) { alert('建立失敗：' + e.message);
+    customAlert(`✅ 案件已建立！\n目前僅起算24小時校安/社政通報。\n如需成案(起算20工作日審查小組期限)，請點選卡片上的「推進」進行勾選確認。`, '🎉 新增成功');
+  } catch (e) { 
+    customAlert('建立失敗：\n' + e.message, '❌ 發生錯誤');
   } finally { confirmBtn.disabled = false; confirmBtn.textContent = '建立案件'; }
 }
 
@@ -347,13 +370,13 @@ let _advanceCaseId = '', _advanceCurrentStage = '', _advanceSelectedMilestone = 
 
 function openAdvanceModal(caseId, caseName, stage) {
   _advanceCaseId = caseId; _advanceCurrentStage = stage; _advanceSelectedMilestone = '';
-  document.getElementById('dateField').style.display = 'block';
+  document.getElementById('advanceDoneDateField').style.display = 'block';
   document.getElementById('milestoneTitle').style.display = 'block';
 
   const list = document.getElementById('milestoneList');
   if (stage === 'PRE_STAGE' || stage === 'STAGE_01') {
     document.getElementById('milestoneTitle').style.display = 'none';
-    document.getElementById('dateField').style.display = 'none';
+    document.getElementById('advanceDoneDateField').style.display = 'none';
     list.innerHTML = `<div style="background:#f0faf4;border-radius:4px;padding:.75rem;border-left:3px solid #a8d5b5;margin-bottom:1rem;">
       <div style="font-size:.82rem;font-weight:700;color:#1a5c2e;margin-bottom:.5rem;">📋 確認成案條件 → 啟動 20 工作日審查倒數</div>
       <div style="font-size:.78rem;font-weight:600;color:#555;margin-bottom:.3rem;">請勾選法定成案要件（單選）：</div>
@@ -414,7 +437,10 @@ function closeAdvanceModal() { document.getElementById('advanceModal').classList
 async function confirmAdvance() {
   let doneDate = document.getElementById('advanceDoneDate').value;
   if (_advanceCurrentStage === 'PRE_STAGE' || _advanceCurrentStage === 'STAGE_01') doneDate = document.getElementById('s01_complain_date')?.value;
-  if (!doneDate || !_advanceSelectedMilestone) return alert('資料未齊全');
+  if (!doneDate || !_advanceSelectedMilestone) {
+    customAlert('資料未齊全，請確實選擇日期與里程碑選項。', '⚠️ 填寫未完整'); 
+    return;
+  }
 
   const btn = document.getElementById('advanceConfirmBtn'); btn.disabled = true; btn.textContent = '處理中…';
   const ex = document.getElementById('extInvestCheckbox')?.checked || false;
@@ -423,8 +449,11 @@ async function confirmAdvance() {
     const next = window._adv_target || NEXT_STAGE[_advanceCurrentStage] || _advanceCurrentStage;
     const result = await callGAS('bully_advance_stage', { case_id: _advanceCaseId, milestone: _advanceSelectedMilestone, done_date: doneDate, stage: next, status: next === 'CLOSED' ? '已結案' : '進行中', request_extension: ex });
     if (!result.ok) throw new Error(result.error);
-    closeAdvanceModal(); await loadCases(); alert(`✅ 推進成功！`);
-  } catch(e) { alert('推進失敗：' + e.message); } finally { btn.disabled = false; btn.textContent = '確認推進'; }
+    closeAdvanceModal(); await loadCases(); 
+    customAlert(`✅ 推進成功！目前已進入下一個法定階段。`, '🎉 更新完成');
+  } catch(e) { 
+    customAlert('推進失敗：\n' + e.message, '❌ 發生錯誤'); 
+  } finally { btn.disabled = false; btn.textContent = '確認推進'; }
 }
 
 window.onload = function() {
