@@ -23,7 +23,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .user-info { color: rgba(255,255,255,.7); }
 .btn-logout { background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; padding: .3rem .8rem; border-radius: 20px; cursor: pointer; font-size: .78rem; font-family: 'Noto Sans TC', sans-serif; }
 
-/* ── 登入遮罩（已將 max-width 放寬至 540px，讓文字不換行） ── */
+/* ── 登入遮罩 ── */
 .login-overlay { position: fixed; inset: 0; background: var(--paper); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 1.5rem; }
 .login-box { background: #fff; border-radius: 12px; padding: 2.5rem 2.5rem; text-align: center; max-width: 540px; width: 92%; box-shadow: 0 8px 40px rgba(0,0,0,.15); }
 .login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; margin-bottom: .6rem; color: var(--ink); }
@@ -72,17 +72,18 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .empty-state { text-align: center; padding: 4rem 1rem; color: #aaa; }
 .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
 
-/* ── Modal 共用 ── */
+/* ── Modal 共用 (修改：增加最大高度與彈性排版) ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,.55); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
 .modal-overlay.show { display: flex; }
-.modal-box { background: #fff; border-radius: 6px; max-width: 500px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden; animation: fadeUp .2s ease; }
+.modal-box { background: #fff; border-radius: 6px; max-width: 500px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden; animation: fadeUp .2s ease; display: flex; flex-direction: column; max-height: 90vh; }
 @keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
-.modal-head { background: var(--ink); color: #fff; padding: 1rem 1.5rem; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; }
-.modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.modal-head { background: var(--ink); color: #fff; padding: 1rem 1.5rem; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; flex-shrink: 0; }
+/* (修改：讓中間內容可以滾動) */
+.modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
 .field label { display: block; font-size: .8rem; font-weight: 500; color: #555; margin-bottom: .3rem; }
 .field input, .field select { width: 100%; padding: .45rem .75rem; border: 1px solid var(--line); border-radius: 4px; font-family: 'Noto Sans TC', sans-serif; font-size: .9rem; outline: none; }
 .field input:focus, .field select:focus { border-color: var(--ink); }
-.modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; }
+.modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; flex-shrink: 0; }
 .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-msg { text-align: center; padding: 3rem; color: #aaa; }
