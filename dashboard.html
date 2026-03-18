@@ -459,6 +459,25 @@ async function confirmDelete(caseId, caseName) {
   }
 }
 
+
+// ── 載入中 Toast
+function showLoadingToast(msg) {
+  let toast = document.getElementById('loadingToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'loadingToast';
+    toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:.75rem 1.5rem;border-radius:40px;font-size:.88rem;font-family:Noto Sans TC,sans-serif;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.35);z-index:9999;';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></span>${msg}`;
+  toast.style.display = 'flex';
+}
+
+function hideLoadingToast() {
+  const toast = document.getElementById('loadingToast');
+  if (toast) toast.style.display = 'none';
+}
+
 // ── 頁面載入
 window.onload = function() {
   // 如果已有 token（頁面刷新時），直接載入
