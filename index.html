@@ -209,6 +209,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
       </div>
       <div class="stage-items open" id="s1">
+        <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>受理前確認清單</strong></div>
         <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
         <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
         <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
@@ -218,7 +219,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         <div class="nav-item" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
         <div class="nav-item" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
         <div class="nav-item" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
-        <div class="nav-item" onclick="show('f_stage01_confirm','STAGE01 送出前確認清單','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>送出前確認清單</strong></div>
       </div>
     </div>
 
@@ -996,7 +996,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <!-- ══ 盲點補強：受理階段送出前強制確認 ══ -->
 <div class="form-page" id="f_stage01_confirm">
 <div class="doc">
-  <div class="doc-title">✅ 受理階段送出前確認清單</div>
+  <div class="doc-title">✅ 受理前確認清單（建案前必讀）</div>
 
   <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;">
     <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
