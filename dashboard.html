@@ -7,932 +7,216 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
-
-:root {
-  --ink: #1a1a2e; --paper: #f5f3ee; --warm: #ede9e0; --line: #c5bfb0;
-  --accent: #8b1a1a; --ok: #1a5c2e; --warn: #7a4a00; --info: #1a3a5c;
-  --ok-light: #d4edda; --warn-light: #fff3cd; --accent-pale: #fdf0f0;
-}
+:root { --ink: #1a1a2e; --paper: #f5f3ee; --warm: #ede9e0; --line: #c5bfb0; --accent: #8b1a1a; --ok: #1a5c2e; --warn: #7a4a00; --info: #1a3a5c; --ok-light: #d4edda; --warn-light: #fff3cd; --accent-pale: #fdf0f0; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 15px; }
-
-/* ── 頂部 ── */
-.header {
-  background: var(--ink); color: #fff;
-  padding: 0 1.5rem; height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,.3);
-}
+.header { background: var(--ink); color: #fff; padding: 0 1.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
 .header h1 { font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; }
-.header-right { display: flex; align-items: center; gap: 1rem; font-size: .85rem; }
-.user-info { color: rgba(255,255,255,.7); }
-.btn-logout { background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; padding: .3rem .8rem; border-radius: 20px; cursor: pointer; font-size: .78rem; font-family: 'Noto Sans TC', sans-serif; }
-
-/* ── 登入遮罩 ── */
-.login-overlay {
-  position: fixed; inset: 0; background: var(--ink);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 999; flex-direction: column; gap: 1.5rem;
-}
-.login-box {
-  background: #fff; border-radius: 12px; padding: 2.5rem 2.5rem;
-  text-align: center; max-width: 440px; width: 92%;
-  box-shadow: 0 8px 40px rgba(0,0,0,.4);
-}
-.login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; margin-bottom: .6rem; color: var(--ink); white-space: nowrap; }
-.login-box p { font-size: .88rem; color: #888; margin-bottom: 1.8rem; line-height: 1.6; white-space: nowrap; }
+.login-overlay { position: fixed; inset: 0; background: var(--ink); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 1.5rem; }
+.login-box { background: #fff; border-radius: 12px; padding: 2.5rem; text-align: center; max-width: 440px; width: 92%; box-shadow: 0 8px 40px rgba(0,0,0,.4); }
 .login-overlay.hidden { display: none; }
-
-/* ── 主內容 ── */
 .main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
-
-/* ── 操作列 ── */
-.toolbar {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.5rem; flex-wrap: wrap; gap: .75rem;
-}
-.toolbar h2 { font-family: 'Noto Serif TC', serif; font-size: 1.1rem; }
-.btn {
-  padding: .45rem 1.1rem; border-radius: 4px; font-size: .88rem;
-  font-family: 'Noto Sans TC', sans-serif; font-weight: 500;
-  cursor: pointer; border: none; transition: opacity .15s;
-}
-.btn:hover { opacity: .88; }
-.btn-primary { background: var(--ink); color: #fff; }
-.btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--ink-soft, #3a3a5c); }
-.btn-danger { background: var(--accent); color: #fff; }
-
-/* ── 統計卡片 ── */
+.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: .75rem; }
 .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-.stat-card {
-  background: #fff; border: 1px solid var(--line); border-radius: 4px;
-  padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: .25rem;
-}
-.stat-num { font-family: 'Noto Serif TC', serif; font-size: 2rem; font-weight: 700; line-height: 1; }
-.stat-label { font-size: .78rem; color: var(--ink-soft, #3a3a5c); }
-.stat-red { border-left: 4px solid #c0392b; }
-.stat-yellow { border-left: 4px solid #e6a817; }
-.stat-green { border-left: 4px solid var(--ok); }
-.stat-all { border-left: 4px solid var(--line); }
-
-/* ── 案件卡片 ── */
+.stat-card { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 1rem 1.2rem; border-left: 4px solid var(--line); }
 .case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
-.case-card {
-  background: #fff; border: 1px solid var(--line); border-radius: 4px;
-  overflow: hidden; transition: box-shadow .15s; cursor: pointer;
-}
-.case-card:hover { box-shadow: 0 4px 16px rgba(26,26,46,.1); }
-.case-card-head {
-  padding: .7rem 1rem; display: flex; align-items: center; gap: .5rem;
-  border-bottom: 1px solid var(--paper);
-}
-.light-dot {
-  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-}
-.light-red { background: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.2); }
-.light-yellow { background: #e6a817; box-shadow: 0 0 0 3px rgba(230,168,23,.2); }
-.light-green { background: var(--ok); box-shadow: 0 0 0 3px rgba(26,92,46,.2); }
-.light-none { background: var(--line); }
-.case-name { font-weight: 600; font-size: .9rem; flex: 1; }
-.case-card-body { padding: .75rem 1rem; font-size: .82rem; color: #555; line-height: 1.7; }
-.case-card-foot {
-  padding: .5rem 1rem; background: var(--paper);
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: .75rem; color: var(--line);
-}
-.stage-badge {
-  font-size: .7rem; padding: 2px 8px; border-radius: 20px;
-  background: var(--warm); color: var(--ink-soft, #3a3a5c);
-  border: 1px solid var(--line);
-}
-.deadline-tag {
-  font-size: .75rem; padding: 2px 8px; border-radius: 20px;
-}
-.dl-red { background: var(--accent-pale); color: var(--accent); border: 1px solid #e8b0b0; }
-.dl-yellow { background: var(--warn-light); color: var(--warn); border: 1px solid #f0d080; }
-.dl-green { background: var(--ok-light); color: var(--ok); border: 1px solid #a8d5b5; }
-
-.empty-state { text-align: center; padding: 4rem 1rem; color: #aaa; }
-.empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
-.empty-state p { font-size: .9rem; }
-
-/* ── 新增案件 Modal ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(26,26,46,.55);
-  display: none; align-items: center; justify-content: center;
-  z-index: 500; padding: 1rem;
-}
+.case-card { background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; cursor: pointer; }
+.case-card-head { padding: .7rem 1rem; display: flex; align-items: center; gap: .5rem; border-bottom: 1px solid var(--paper); }
+.light-dot { width: 10px; height: 10px; border-radius: 50%; }
+.light-red { background: #c0392b; } .light-yellow { background: #e6a817; } .light-green { background: var(--ok); }
+.case-card-foot { padding: .5rem 1rem; background: var(--paper); display: flex; align-items: center; justify-content: space-between; font-size: .75rem; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,.55); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
 .modal-overlay.show { display: flex; }
-.modal-box {
-  background: #fff; border-radius: 6px; max-width: 500px; width: 100%;
-  box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden;
-  animation: fadeUp .2s ease;
-}
-@keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
-.modal-head { background: var(--ink); color: #fff; padding: 1rem 1.5rem; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; }
-.modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-.field label { display: block; font-size: .8rem; font-weight: 500; color: #555; margin-bottom: .3rem; }
-.field input, .field select {
-  width: 100%; padding: .45rem .75rem;
-  border: 1px solid var(--line); border-radius: 4px;
-  font-family: 'Noto Sans TC', sans-serif; font-size: .9rem;
-  outline: none;
-}
-.field input:focus, .field select:focus { border-color: var(--ink); }
-.modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; }
-
-/* ── 載入動畫 ── */
-.spinner {
-  display: inline-block; width: 20px; height: 20px;
-  border: 2px solid var(--line); border-top-color: var(--ink);
-  border-radius: 50%; animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-msg { text-align: center; padding: 3rem; color: #aaa; }
-
-/* ── 推進階段 Modal */
-.advance-modal-overlay {
-  position: fixed; inset: 0; background: rgba(26,26,46,.55);
-  display: none; align-items: center; justify-content: center;
-  z-index:600; padding:1rem;
-}
-.advance-modal-overlay.show { display: flex; }
-.advance-modal-box {
-  background: #fff; border-radius: 6px; max-width: 480px; width: 100%;
-  box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden;
-  animation: fadeUp .2s ease;
-}
-.advance-modal-head { background: #1a5c2e; color: #fff; padding: 1rem 1.5rem; font-family: "Noto Serif TC",serif; font-size: 1rem; font-weight: 700; }
-.advance-modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-.advance-modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; }
-.milestone-btn {
-  display: block; width: 100%; padding: .5rem .75rem; margin-bottom: .4rem;
-  background: #f5f3ee; border: 1px solid var(--line); border-radius: 4px;
-  text-align: left; font-family: "Noto Sans TC",sans-serif; font-size: .85rem;
-  cursor: pointer; transition: background .12s;
-}
-.milestone-btn:hover { background: var(--warm); }
+.modal-box { background: #fff; border-radius: 6px; max-width: 500px; width: 100%; overflow: hidden; }
+.milestone-btn { display: block; width: 100%; padding: .6rem .75rem; margin-bottom: .4rem; background: #f5f3ee; border: 1px solid var(--line); border-radius: 4px; text-align: left; cursor: pointer; font-size: .85rem; }
 .milestone-btn.selected { background: #ddeeff; border-color: #a0c0e0; font-weight: 600; }
-
-@media (max-width: 600px) {
-  .stat-row { grid-template-columns: repeat(2, 1fr); }
-  .case-grid { grid-template-columns: 1fr; }
-}
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<!-- 登入遮罩 -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <h2>🏫 校園霸凌事件處理系統</h2>
-    <p>請使用 Google 帳號登入以存取案件資料。</p>
-    <div id="g_id_onload"
-      data-client_id="708047059390-2qhkln2rq34enarpa3ipucukm7bbl97m.apps.googleusercontent.com"
-      data-callback="handleCredential"
-      data-auto_prompt="false">
-    </div>
-    <div style="display:flex;justify-content:center;margin-top:.5rem;">
-      <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="filled_blue"
-        data-text="sign_in_with"
-        data-shape="rectangular"
-        data-locale="zh-TW">
-      </div>
-    </div>
-    <div style="margin-top:1rem;border-top:1px solid #eee;padding-top:.85rem;">
-      <a href="./index.html" style="font-size:.8rem;color:#888;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.3rem;">
-        📋 僅瀏覽表單系統（不需登入）
-      </a>
-    </div>
+    <p>請使用 Google 帳號登入</p>
+    <div id="g_id_onload" data-client_id="708047059390-2qhkln2rq34enarpa3ipucukm7bbl97m.apps.googleusercontent.com" data-callback="handleCredential" data-auto_prompt="false"></div>
+    <div class="g_id_signin" data-type="standard"></div>
   </div>
 </div>
 
-<!-- 頁首 -->
 <header class="header">
   <h1>🏫 校園霸凌事件處理系統</h1>
-  <div class="header-right">
-    <span class="user-info" id="userEmail"></span>
-    <button class="btn-logout" onclick="logout()">登出</button>
-  </div>
+  <div id="userEmail" style="font-size:.8rem;opacity:.7;"></div>
 </header>
 
-<!-- 主內容 -->
 <main class="main">
-
-  <!-- 操作列 -->
   <div class="toolbar">
-    <h2>案件列表</h2>
-    <div style="display:flex;gap:.5rem;">
-      <button class="btn btn-ghost" onclick="loadCases()">🔄 重新整理</button>
-      <button class="btn btn-primary" onclick="openNewCaseModal()">＋ 新增案件</button>
-    </div>
+    <h2 style="font-family:'Noto Serif TC',serif;">案件列表</h2>
+    <button class="btn" style="background:var(--ink);color:#fff;padding:.5rem 1rem;border-radius:4px;cursor:pointer;" onclick="openNewCaseModal()">＋ 新增案件</button>
   </div>
-
-  <!-- 統計卡片 -->
   <div class="stat-row" id="statRow">
-    <div class="stat-card stat-all"><div class="stat-num" id="statAll">—</div><div class="stat-label">總案件數</div></div>
-    <div class="stat-card stat-red"><div class="stat-num" id="statRed" style="color:#c0392b;">—</div><div class="stat-label">🔴 緊急（≤3天）</div></div>
-    <div class="stat-card stat-yellow"><div class="stat-num" id="statYellow" style="color:#e6a817;">—</div><div class="stat-label">🟡 注意（4–7天）</div></div>
-    <div class="stat-card stat-green"><div class="stat-num" id="statGreen" style="color:var(--ok);">—</div><div class="stat-label">🟢 正常（>7天）</div></div>
+    <div class="stat-card">案件總數：<span id="statAll">-</span></div>
+    <div class="stat-card" style="border-left-color:#c0392b">🔴 緊急：<span id="statRed">-</span></div>
+    <div class="stat-card" style="border-left-color:#e6a817">🟡 注意：<span id="statYellow">-</span></div>
+    <div class="stat-card" style="border-left-color:var(--ok)">🟢 正常：<span id="statGreen">-</span></div>
   </div>
-
-  <!-- 案件卡片區 -->
-  <div id="caseArea">
-    <div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>
-  </div>
-
+  <div id="caseArea"></div>
 </main>
 
 <!-- 新增案件 Modal -->
 <div class="modal-overlay" id="newCaseModal">
   <div class="modal-box">
-    <div class="modal-head">新增案件</div>
-    <div class="modal-body">
-      <div class="field">
-        <label>案件編號（校安通報序號）</label>
-        <input type="text" id="newCaseId" placeholder="例：1234567，留空則自動產生" maxlength="40">
-        <div style="font-size:.75rem;color:#aaa;margin-top:.25rem;font-family:'Noto Sans TC',sans-serif;">建議填入校安通報序號，方便後續追蹤對應</div>
-      </div>
-      <div class="field">
-        <label>案件名稱 *</label>
-        <input type="text" id="newCaseName" placeholder="例：114學年第1學期 甲班事件">
-      </div>
-      <div class="field">
-        <label>學校名稱</label>
-        <input type="text" id="newSchool" placeholder="例：內湖國小">
-      </div>
-      <div class="field">
-        <label>案件類型</label>
-        <select id="newCaseType">
-          <option value="生對生">生對生</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>知悉/接獲檢舉日期 *</label>
-        <input type="date" id="newReportDate">
-      </div>
+    <div style="background:var(--ink);color:#fff;padding:1rem;">新增案件</div>
+    <div style="padding:1.5rem;">
+      <label style="display:block;font-size:.8rem;margin-bottom:.3rem;">案件名稱 *</label>
+      <input type="text" id="newCaseName" style="width:100%;padding:.5rem;margin-bottom:1rem;border:1px solid var(--line);">
+      <label style="display:block;font-size:.8rem;margin-bottom:.3rem;">知悉日期 *</label>
+      <input type="date" id="newAwareDate" style="width:100%;padding:.5rem;border:1px solid var(--line);">
+      <p style="font-size:.72rem;color:var(--accent);margin-top:.5rem;">※ 僅起算24小時校安通報。成案與審查期限需於建立後點擊「推進」勾選要件。</p>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeNewCaseModal()">取消</button>
-      <button class="btn btn-primary" id="createCaseBtn" onclick="createCase()">建立案件</button>
+    <div style="padding:1rem;background:var(--warm);text-align:right;">
+      <button onclick="closeNewCaseModal()" style="margin-right:.5rem;">取消</button>
+      <button onclick="createCase()" id="createBtn">建立案件</button>
     </div>
   </div>
 </div>
 
-<!-- 回退階段 Modal -->
-<div class="advance-modal-overlay" id="rollbackModal">
-  <div class="advance-modal-box">
-    <div class="advance-modal-head" style="background:#6e2c2c;">⬅️ 回退上一步</div>
-    <div class="advance-modal-body">
-      <div id="rollbackInfo" style="font-size:.88rem;line-height:1.8;color:#3a3a5c;"></div>
-      <div style="background:#fff3cd;border:1px solid #f0d080;border-radius:4px;padding:.75rem;font-size:.82rem;color:#5c3a00;line-height:1.65;">
-        ⚠️ 此動作將回退案件階段，並刪除本次推進所產生的截止日紀錄。<br>
-        <strong>此動作無法復原，請確認後再執行。</strong>
+<!-- 推進階段 Modal (雙向道升級版) -->
+<div class="modal-overlay" id="advanceModal">
+  <div class="modal-box" style="max-width:460px;">
+    <div id="advHead" style="background:var(--ok);color:#fff;padding:1rem;">✅ 推進階段</div>
+    <div style="padding:1.5rem;">
+      <div id="milestoneList"></div>
+      <div id="dateField" style="margin-top:1rem;">
+        <label id="dateLabel" style="display:block;font-size:.8rem;margin-bottom:.3rem;">完成日期 *</label>
+        <input type="date" id="advanceDate" style="width:100%;padding:.5rem;border:1px solid var(--line);">
       </div>
+      <div id="advancePreview" style="display:none;margin-top:1rem;padding:.75rem;background:#f0faf4;border-radius:4px;font-size:.82rem;line-height:1.6;"></div>
     </div>
-    <div class="advance-modal-foot">
-      <button class="btn btn-ghost" onclick="closeRollbackModal()">取消</button>
-      <button class="btn" style="background:#6e2c2c;color:#fff;" onclick="confirmRollback()">確認回退</button>
-    </div>
-  </div>
-</div>
-
-<!-- 推進階段 Modal -->
-<div class="advance-modal-overlay" id="advanceModal">
-  <div class="advance-modal-box">
-    <div class="advance-modal-head">✅ 推進階段</div>
-    <div class="advance-modal-body">
-      <div>
-        <div style="font-size:.8rem;font-weight:500;color:#555;margin-bottom:.5rem;">選擇已完成的里程碑：</div>
-        <div id="milestoneList"></div>
-      </div>
-      <div class="field">
-        <label style="font-size:.8rem;font-weight:500;color:#555;">完成日期 *</label>
-        <input type="date" id="advanceDoneDate" style="width:100%;padding:.45rem .75rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;">
-      </div>
-      <div id="advancePreview" style="display:none;background:#f0faf4;border-radius:4px;padding:.75rem;font-size:.82rem;color:#1a5c2e;line-height:1.7;"></div>
-    </div>
-    <div class="advance-modal-foot">
-      <button class="btn btn-ghost" onclick="closeAdvanceModal()">取消</button>
-      <button class="btn btn-primary" id="advanceConfirmBtn" onclick="confirmAdvance()" disabled style="opacity:.45;">確認推進</button>
+    <div style="padding:1rem;background:var(--warm);text-align:right;">
+      <button onclick="closeAdvanceModal()">取消</button>
+      <button id="advConfirmBtn" onclick="confirmAdvance()" disabled>確認推進</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── 設定
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec'; // 部署後填入
-const GOOGLE_CLIENT_ID = '708047059390-2qhkln2rq34enarpa3ipucukm7bbl97m.apps.googleusercontent.com'; // 同上方 data-client_id
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
+let currentEmail = '', currentToken = '', casesCache = [];
 
-// ── 狀態
-let currentEmail = '';
-let currentToken = '';
-let casesCache = [];
-
-// ── OAuth2 回調
 function handleCredential(response) {
-  const payload = parseJwt(response.credential);
-  currentEmail = payload.email;
-  currentToken = response.credential;
-  // 存入 sessionStorage，同 session 內回來不需重新登入
-  sessionStorage.setItem('bully_email', currentEmail);
-  sessionStorage.setItem('bully_token', currentToken);
+  const payload = JSON.parse(atob(response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+  currentEmail = payload.email; currentToken = response.credential;
   document.getElementById('userEmail').textContent = currentEmail;
   document.getElementById('loginOverlay').classList.add('hidden');
   loadCases();
 }
 
-function parseJwt(token) {
-  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-  return JSON.parse(atob(base64));
-}
-
-function logout() {
-  currentEmail = '';
-  currentToken = '';
-  casesCache = [];
-  sessionStorage.removeItem('bully_email');
-  sessionStorage.removeItem('bully_token');
-  document.getElementById('loginOverlay').classList.remove('hidden');
-  document.getElementById('userEmail').textContent = '';
-  document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><p>請重新登入</p></div>';
-}
-
-// ── API 呼叫
 async function callGAS(action, data = {}) {
-  // 攤平 data 到頂層，讓 GAS 端直接用 params.xxx 讀取
-  const body = JSON.stringify({ action, email: currentEmail, ...data });
-  const res = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' }, // GAS 需要 text/plain 避免 CORS preflight
-    body
-  });
+  const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action, email: currentEmail, ...data }) });
   return await res.json();
 }
 
-// ── 載入案件列表
 async function loadCases() {
-  document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>';
-
-  try {
-    const result = await callGAS('bully_list');
-    if (!result.ok) throw new Error(result.error);
-    casesCache = result.cases;
-    renderCases(casesCache);
-  } catch (e) {
-    document.getElementById('caseArea').innerHTML = `<div class="loading-msg"><p style="color:#c0392b;">載入失敗：${e.message}</p></div>`;
-  }
+  document.getElementById('caseArea').innerHTML = '<p>載入中...</p>';
+  const result = await callGAS('bully_list');
+  casesCache = result.cases || [];
+  renderCases(casesCache);
 }
 
-// ── 渲染案件卡片
 function renderCases(cases) {
-  // 統計
-  const active = cases.filter(c => c.status === '進行中');
-  const red    = active.filter(c => c.deadline?.light === 'red').length;
-  const yellow = active.filter(c => c.deadline?.light === 'yellow').length;
-  const green  = active.filter(c => c.deadline?.light === 'green').length;
-  document.getElementById('statAll').textContent    = active.length;
-  document.getElementById('statRed').textContent    = red;
-  document.getElementById('statYellow').textContent = yellow;
-  document.getElementById('statGreen').textContent  = green;
+  const active = cases.filter(c => c.status !== '已結案');
+  document.getElementById('statAll').textContent = active.length;
+  document.getElementById('statRed').textContent = active.filter(c => c.deadline?.light==='red').length;
+  document.getElementById('statYellow').textContent = active.filter(c => c.deadline?.light==='yellow').length;
+  document.getElementById('statGreen').textContent = active.filter(c => c.deadline?.light==='green').length;
 
-  if (cases.length === 0) {
-    document.getElementById('caseArea').innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📋</div>
-        <p>尚無案件。點選「新增案件」開始建立。</p>
-      </div>`;
-    return;
-  }
-
-  const stageLabels = {
-    'STAGE_01': '01 知悉受理',
-    'STAGE_02': '02 審查小組',
-    'STAGE_03': '03 處理小組',
-    'STAGE_04': '04 會前會',
-    'STAGE_05A': '05A 調和',
-    'STAGE_05B': '05B 調查',
-    'STAGE_06': '06 防制委員會',
-    'STAGE_07': '07 終局處理',
-    'STAGE_08': '08 輔導追蹤',
-  };
-
-  const cards = cases.map(c => {
-    const dl = c.deadline;
-    const lightClass = dl ? `light-${dl.light}` : 'light-none';
-    const dlTag = dl ? `<span class="deadline-tag dl-${dl.light}">${
-      dl.days_left < 0 ? `逾期 ${-dl.days_left} 天` : `${dl.days_left} 天`
-    } | ${dl.milestone}</span>` : '';
-
-    const updatedDate = c.updated_at
-      ? new Date(c.updated_at).toLocaleDateString('zh-TW')
-      : '—';
-
-    return `
-    <div class="case-card" onclick="openCase('${c.case_id}')">
+  const stageLabels = { 'PRE_STAGE':'00 通報列管', 'STAGE_01':'01 知悉受理', 'STAGE_02':'02 審查小組', 'STAGE_03':'03 處理小組', 'STAGE_04':'04 會前會', 'STAGE_05A':'05A 調和', 'STAGE_05B':'05B 調查', 'STAGE_06':'06 防制委員會', 'STAGE_07':'07 終局處理', 'STAGE_08':'08 輔導追蹤' };
+  
+  document.getElementById('caseArea').innerHTML = `<div class="case-grid">${cases.map(c => `
+    <div class="case-card" onclick="location.href='./index.html?case_id=${c.case_id}&email=${currentEmail}'">
       <div class="case-card-head">
-        <div class="light-dot ${lightClass}"></div>
-        <div class="case-name">${c.case_name}</div>
-        <span class="stage-badge">${stageLabels[c.stage] || c.stage}</span>
+        <div class="light-dot light-${c.deadline?.light || 'none'}"></div>
+        <div style="flex:1;font-weight:600;">${c.case_name}</div>
+        <span style="font-size:.7rem;background:#eee;padding:2px 6px;">${stageLabels[c.stage] || c.stage}</span>
       </div>
-      <div class="case-card-body">
-        <div>🏫 ${c.school || '（未填學校）'}</div>
-        <div>📋 ${c.case_type} | ${c.status}</div>
-        ${dl ? `<div style="margin-top:.3rem;">${dlTag}</div>` : ''}
+      <div style="padding:1rem;font-size:.8rem;color:#555;">
+        截止任務：${c.deadline?.milestone || '無'} <br>
+        剩餘天數：${c.deadline ? c.deadline.days_left + ' 天' : '-'}
       </div>
       <div class="case-card-foot">
-        <span>更新：${updatedDate}</span>
-        <div style="display:flex;gap:.4rem;">
-          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;color:#888;" onclick="event.stopPropagation();openRollbackModal('${c.case_id}','${c.case_name}','${c.stage}')">← 回退</button>
-          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:#1a5c2e;" onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.case_name}','${c.stage}')">推進 →</button>
-          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;" onclick="event.stopPropagation();confirmDelete('${c.case_id}','${c.case_name}')">刪除</button>
-        </div>
+        <span>${new Date(c.updated_at).toLocaleDateString()}</span>
+        <button onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.stage}')" style="background:var(--ok);color:#fff;border:none;padding:2px 8px;border-radius:4px;cursor:pointer;">推進 →</button>
       </div>
-    </div>`;
-  });
-
-  document.getElementById('caseArea').innerHTML = `<div class="case-grid">${cards.join('')}</div>`;
+    </div>`).join('')}</div>`;
 }
 
-// ── 開啟案件（跳轉至表單頁）
-function openCase(caseId) {
-  // 跳轉到表單系統，帶入 case_id 參數
-  window.location.href = `./index.html?case_id=${caseId}&email=${encodeURIComponent(currentEmail)}`;
-}
-
-// ── 新增案件
-function openNewCaseModal() {
-  document.getElementById('newCaseModal').classList.add('show');
-  document.getElementById('newReportDate').value = new Date().toISOString().split('T')[0];
-}
-
-function closeNewCaseModal() {
-  document.getElementById('newCaseModal').classList.remove('show');
-  const btn = document.getElementById('createCaseBtn');
-  if (btn) { btn.disabled = false; btn.textContent = '建立案件'; }
-}
+function openNewCaseModal() { document.getElementById('newCaseModal').classList.add('show'); document.getElementById('newAwareDate').value = new Date().toISOString().split('T')[0]; }
+function closeNewCaseModal() { document.getElementById('newCaseModal').classList.remove('show'); }
 
 async function createCase() {
-  const confirmBtn = document.querySelector('#newCaseModal .btn-primary');
-  confirmBtn.disabled = true;
-  confirmBtn.textContent = '建立中…';
-  showLoadingToast('正在建立案件並計算法定期限，請稍候…');
-
-  const customId = document.getElementById('newCaseId').value.trim();
-  const name = document.getElementById('newCaseName').value.trim();
-  const school = document.getElementById('newSchool').value.trim();
-  const caseType = document.getElementById('newCaseType').value;
-  const reportDate = document.getElementById('newReportDate').value;
-
-  if (!name) {
-    confirmBtn.disabled = false; confirmBtn.textContent = '建立案件';
-    hideLoadingToast(); alert('請填寫案件名稱'); return;
-  }
-  if (!reportDate) {
-    confirmBtn.disabled = false; confirmBtn.textContent = '建立案件';
-    hideLoadingToast(); alert('請填寫知悉日期'); return;
-  }
-
-  try {
-    // 一次呼叫完成：save + 計算兩筆期限 + 存入 deadlines
-    const result = await callGAS('bully_save_with_deadlines', {
-      case_id: customId || undefined,
-      case_name: name,
-      school,
-      case_type: caseType,
-      stage: 'STAGE_01',
-      status: '進行中',
-      report_date: reportDate,
-      data_json: JSON.stringify({ report_date: reportDate })
-    });
-    if (!result.ok) throw new Error(result.error);
-
-    closeNewCaseModal();
-    hideLoadingToast();
-    await loadCases();
-    alert(`✅ 案件「${name}」已建立！\n案件編號：${result.case_id}`);
-
-  } catch (e) {
-    hideLoadingToast();
-    alert('建立失敗：' + e.message);
-  } finally {
-    confirmBtn.disabled = false;
-    confirmBtn.textContent = '建立案件';
-  }
+  const name = document.getElementById('newCaseName').value, date = document.getElementById('newAwareDate').value;
+  if(!name || !date) return alert('請填寫完整');
+  await callGAS('bully_save_with_deadlines', { case_name: name, report_date: date, stage: 'PRE_STAGE', status: '通報列管中' });
+  closeNewCaseModal(); loadCases();
 }
 
-// ── STAGE 回退對應表
-const STAGE_PREV = {
-  'STAGE_02': 'STAGE_01',
-  'STAGE_03': 'STAGE_02',
-  'STAGE_04': 'STAGE_03',
-  'STAGE_05A': 'STAGE_04',
-  'STAGE_05B': 'STAGE_04',
-  'STAGE_06': 'STAGE_05A',  // 預設從調和回退
-  'STAGE_07': 'STAGE_06',
-  'STAGE_08': 'STAGE_07'
-};
-
-let _rollbackCaseId = '';
-let _rollbackCaseName = '';
-let _rollbackCurrentStage = '';
-
-function openRollbackModal(caseId, caseName, stage) {
-  const prevStage = STAGE_PREV[stage];
-  if (!prevStage) {
-    alert('此案件已在最初階段，無法回退。');
-    return;
-  }
-  _rollbackCaseId = caseId;
-  _rollbackCaseName = caseName;
-  _rollbackCurrentStage = stage;
-
-  document.getElementById('rollbackInfo').innerHTML = `
-    📋 案件：<strong>${caseName}</strong><br>
-    📍 目前階段：<strong>${STAGE_LABELS[stage] || stage}</strong><br>
-    ⬅️ 回退至：<strong>${STAGE_LABELS[prevStage] || prevStage}</strong><br>
-    🗑️ 本階段產生的截止日紀錄將一併刪除
-  `;
-  document.getElementById('rollbackModal').classList.add('show');
-}
-
-function closeRollbackModal() {
-  document.getElementById('rollbackModal').classList.remove('show');
-}
-
-async function confirmRollback() {
-  const prevStage = STAGE_PREV[_rollbackCurrentStage];
-  if (!prevStage) return;
-
-  const btn = document.querySelector('#rollbackModal .btn[style*="6e2c2c"]');
-  btn.disabled = true;
-  btn.textContent = '回退中…';
-  showLoadingToast('正在回退階段並清除相關期限紀錄…');
-
-  try {
-    const result = await callGAS('bully_rollback_stage', {
-      case_id: _rollbackCaseId,
-      from_stage: _rollbackCurrentStage,
-      to_stage: prevStage
-    });
-
-    if (!result.ok) throw new Error(result.error);
-
-    closeRollbackModal();
-    hideLoadingToast();
-    await loadCases();
-    alert(`✅ 案件已回退至「${STAGE_LABELS[prevStage] || prevStage}」\n已刪除 ${result.deleted_count || 0} 筆期限紀錄`);
-
-  } catch(e) {
-    hideLoadingToast();
-    alert('回退失敗：' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '確認回退';
-  }
-}
-
-// ── 推進階段
-// STAGE_01 特殊：分兩組，通報（必要）+ 檢舉（三選一）
-const STAGE01_REPORT = '24小時通報主管機關（第17條）';
-const STAGE01_COMPLAIN = [
-  '接獲檢舉——書面檢舉（第18條）',
-  '接獲檢舉——言詞檢舉（第18條）',
-  '視同檢舉——機關/媒體通報（第18條）'
-];
-
-const STAGE_MILESTONES = {
-  'STAGE_01': [
-    '24小時通報主管機關（第17條）',
-    '接獲檢舉——書面檢舉（第18條）',
-    '接獲檢舉——言詞檢舉（第18條）',
-    '視同檢舉——機關/媒體通報（第18條）'
-  ],
+const MILESTONES = {
+  'PRE_STAGE': ['接獲檢舉(書面/言詞/校內發現)', '視同檢舉(機關/媒體移送)', '撤回檢舉但核可職權續查'],
   'STAGE_02': ['決議受理', '決議不受理'],
-  'STAGE_03': ['處理小組組成完成', '第一次調和/調查會議召開'],
-  'STAGE_04': ['第一次調和會議召開（進入調和）', '第一次調查會議召開（進入調查）'],
-  'STAGE_05A': ['調和成立（結案進審議）', '調和不成立（切換調查）'],
-  'STAGE_05B': ['調查報告完成', '第一次展延', '第二次展延（最終）'],
-  'STAGE_06': ['防制委員會決議通過'],
-  'STAGE_07': ['作成終局實體處理', '書面通知雙方當事人'],
-  'STAGE_08': ['結案歸檔']
+  'STAGE_04': ['第一次調和會議召開(進調和)', '第一次調查會議召開(進調查)'],
+  'STAGE_05A': ['調和成立', '調和不成立(切換調查)'],
+  'STAGE_05B': ['調查報告完成', '雙方產生調和意願(轉回調和)', '申請展延']
 };
+const NEXT_STAGE = { 'PRE_STAGE':'STAGE_01', 'STAGE_01':'STAGE_02', 'STAGE_02':'STAGE_03', 'STAGE_03':'STAGE_04', 'STAGE_04':'STAGE_05A', 'STAGE_05A':'STAGE_06', 'STAGE_05B':'STAGE_06' };
 
-const STAGE_NEXT = {
-  'STAGE_01': 'STAGE_02',
-  'STAGE_02': 'STAGE_03',
-  'STAGE_03': 'STAGE_04',
-  // STAGE_04 分流：依里程碑選擇
-  'STAGE_04': 'STAGE_05A',       // 預設調和，可被 milestone 覆蓋
-  'STAGE_05A': 'STAGE_06',
-  'STAGE_05B': 'STAGE_06',
-  'STAGE_06': 'STAGE_07',
-  'STAGE_07': 'STAGE_08',
-  'STAGE_08': 'STAGE_08'
-};
+let _advId = '', _advStage = '', _advMile = '';
 
-// 依里程碑內容決定下一個 stage（覆蓋 STAGE_NEXT 預設值）
-const MILESTONE_STAGE_OVERRIDE = {
-  '第一次調查會議召開（進入調查）': 'STAGE_05B',
-  '調和不成立（切換調查）': 'STAGE_05B',
-  '決議不受理': 'CLOSED',
-  '結案歸檔': 'CLOSED'
-};
-
-const STAGE_LABELS = {
-  'STAGE_01':'01 知悉受理','STAGE_02':'02 審查小組','STAGE_03':'03 處理小組',
-  'STAGE_04':'04 會前會','STAGE_05A':'05A 調和','STAGE_05B':'05B 調查',
-  'STAGE_06':'06 防制委員會','STAGE_07':'07 終局處理','STAGE_08':'08 輔導追蹤'
-};
-
-let _advanceCaseId = '';
-let _advanceCaseName = '';
-let _advanceCurrentStage = '';
-let _advanceSelectedMilestone = '';
-
-function openAdvanceModal(caseId, caseName, stage) {
-  _advanceCaseId = caseId;
-  _advanceCaseName = caseName;
-  _advanceCurrentStage = stage;
-  _advanceSelectedMilestone = '';
-
-  const list = document.getElementById('milestoneList');
-
-  if (stage === 'STAGE_01') {
-    // STAGE_01：單一卡片，完成通報並立案，一次推進至 STAGE_02
-    list.innerHTML = `
-      <div style="background:#f0faf4;border-radius:4px;padding:.75rem;border-left:3px solid #a8d5b5;">
-        <div style="font-size:.82rem;font-weight:700;color:#1a5c2e;margin-bottom:.3rem;">📋 完成校安通報並立案 → 推進至 STAGE_02</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:.75rem;line-height:1.6;">
-          依第17條完成24小時通報後，以「接獲檢舉日期」為起算點（第25條），啟動20工作日審查倒數。
-        </div>
-        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem;">
-          <div>
-            <label style="font-size:.75rem;color:#555;display:block;margin-bottom:.2rem;">知悉日期 *</label>
-            <input type="date" id="s01_aware_date" style="padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;">
-          </div>
-          <div>
-            <label style="font-size:.75rem;color:#555;display:block;margin-bottom:.2rem;">通報日期 *</label>
-            <input type="date" id="s01_report_date" style="padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;">
-          </div>
-          <div>
-            <label style="font-size:.75rem;color:#555;display:block;margin-bottom:.2rem;">接獲檢舉日期 *</label>
-            <input type="date" id="s01_complain_date" onchange="checkStage01Ready()" style="padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;">
-          </div>
-        </div>
-        <div style="font-size:.78rem;font-weight:600;color:#555;margin-bottom:.3rem;">檢舉方式（三選一）：</div>
-        ${STAGE01_COMPLAIN.map(m =>
-          `<button class="milestone-btn" data-complain="${m}" onclick="selectStage01Complain(this,'${m}')">${m}</button>`
-        ).join('')}
-      </div>
-    `;
-    window._stage01_complain = '';
-  } else {
-    const milestones = STAGE_MILESTONES[stage] || [];
-    if (milestones.length === 0) {
-      list.innerHTML = '<p style="font-size:.85rem;color:#aaa;">此階段無可推進的里程碑</p>';
-    } else {
-      list.innerHTML = milestones.map(m =>
-        `<button class="milestone-btn" onclick="selectMilestone('${m}',this)">${m}</button>`
-      ).join('');
-    }
-  }
-
-  document.getElementById('advanceDoneDate').value = new Date().toISOString().split('T')[0];
+function openAdvanceModal(id, stage) {
+  _advId = id; _advStage = stage; _advMile = '';
+  const list = MILESTONES[stage] || ['完成此階段任務'];
+  document.getElementById('milestoneList').innerHTML = list.map(m => `<button class="milestone-btn" onclick="selectMile('${m}', this)">${m}</button>`).join('');
+  document.getElementById('advanceDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('advancePreview').style.display = 'none';
-  document.getElementById('advanceConfirmBtn').disabled = true;
-  document.getElementById('advanceConfirmBtn').style.opacity = '.45';
+  document.getElementById('advConfirmBtn').disabled = true;
   document.getElementById('advanceModal').classList.add('show');
 }
 
-// 動作A：儲存通報紀錄（不推進）
-async function saveReportRecord() {
-  const awareDate = document.getElementById('s01_aware_date')?.value;
-  const reportDate = document.getElementById('s01_report_date')?.value;
-  if (!awareDate || !reportDate) { alert('請填寫知悉日期和通報日期'); return; }
-
-  // 計算是否在24小時內
-  const awareDt = new Date(awareDate);
-  const reportDt = new Date(reportDate);
-  const diffHours = (reportDt - awareDt) / 3600000;
-  const onTime = diffHours <= 24;
-
-  try {
-    await callGAS('bully_save', {
-      case_id: _advanceCaseId,
-      case_name: document.getElementById('userEmail') ? undefined : '',
-      data_json: JSON.stringify({
-        aware_date: awareDate,
-        report_date: reportDate,
-        report_on_time: onTime
-      })
-    });
-    const btn = document.querySelector('[onclick="saveReportRecord()"]');
-    if (btn) {
-      btn.textContent = onTime ? '✅ 通報完成（符合24小時規定）' : '⚠️ 通報完成（超過24小時，請說明原因）';
-      btn.style.background = onTime ? '#1a5c2e' : '#8b1a1a';
-      btn.disabled = true;
-    }
-  } catch(e) {
-    alert('儲存失敗：' + e.message);
-  }
-}
-
-// 動作B：選擇檢舉方式（觸發推進）
-function selectStage01Complain(el, milestone) {
-  window._stage01_complain = milestone;
-  document.querySelectorAll('[data-complain]').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  checkStage01Ready();
-}
-
-function checkStage01Ready() {
-  const awareDate    = document.getElementById('s01_aware_date')?.value;
-  const reportDate   = document.getElementById('s01_report_date')?.value;
-  const complainDate = document.getElementById('s01_complain_date')?.value;
-  const milestone    = window._stage01_complain;
-
-  if (!awareDate || !reportDate || !complainDate || !milestone) {
-    document.getElementById('advancePreview').style.display = 'none';
-    document.getElementById('advanceConfirmBtn').disabled = true;
-    document.getElementById('advanceConfirmBtn').style.opacity = '.45';
-    return;
-  }
-
-  // 計算是否在24小時內
-  const diffHours = (new Date(reportDate) - new Date(awareDate)) / 3600000;
-  const onTime = diffHours <= 24;
-  const timeWarning = onTime ? '' : `<br><span style="color:#8b1a1a;font-size:.78rem;">⚠️ 通報距知悉超過24小時，請備註說明原因</span>`;
-
-  _advanceSelectedMilestone = milestone;
-  const preview = document.getElementById('advancePreview');
-  preview.style.display = 'block';
-  preview.innerHTML = `
-    📅 知悉日期：<strong>${awareDate}</strong>　通報日期：<strong>${reportDate}</strong>${timeWarning}<br>
-    ✅ 檢舉方式：<strong>${milestone}</strong><br>
-    📅 接獲檢舉日期：<strong>${complainDate}</strong>（20工作日倒數起算點）<br>
-    📍 推進至：<strong>02 審查小組</strong>
-  `;
-  document.getElementById('advanceConfirmBtn').disabled = false;
-  document.getElementById('advanceConfirmBtn').style.opacity = '1';
-}
-
-function selectMilestone(milestone, el) {
-  _advanceSelectedMilestone = milestone;
-  window._advanceSelectedMilestone = milestone;
+function selectMile(m, btn) {
+  _advMile = m;
   document.querySelectorAll('.milestone-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  updateAdvancePreview();
-}
+  btn.classList.add('selected');
+  
+  let next = NEXT_STAGE[_advStage] || _advStage;
+  if (m === '第一次調查會議召開(進調查)') next = 'STAGE_05B';
+  if (m === '調和不成立(切換調查)') next = 'STAGE_05B';
+  if (m === '雙方產生調和意願(轉回調和)') next = 'STAGE_05A';
+  if (m === '決議不受理') next = 'CLOSED';
 
-function updateAdvancePreview() {
-  const milestone = _advanceSelectedMilestone || window._advanceSelectedMilestone;
-  if (!milestone) return;
-  const currentStage = _advanceCurrentStage || window._advanceCurrentStage;
-  const nextStage = STAGE_NEXT[currentStage] || currentStage;
   const preview = document.getElementById('advancePreview');
   preview.style.display = 'block';
-  const override = MILESTONE_STAGE_OVERRIDE[milestone];
-  const effectiveNext = override || nextStage;
-  const isClose = effectiveNext === 'CLOSED';
-  const warningHtml = milestone === '決議不受理'
-    ? '<br><span style="color:#8b1a1a;font-size:.8rem;">⚠️ 防呆提醒：請先確認是否審酌第71條故意傷害情形</span>'
-    : milestone === '調和不成立（切換調查）'
-    ? '<br><span style="color:#1a3a5c;font-size:.8rem;">🔒 證據排除防火牆：調和過程陳述不得作為調查依據（第31條第2項）</span>'
-    : '';
+  
+  // 雙向道證據防火牆邏輯
+  let warning = '';
+  if (m === '調和不成立(切換調查)') {
+    warning = '<br><b style="color:var(--accent)">🔒 證據排除防火牆：調和內容不得作為調查依據。</b><br>⚠️ 剩餘時間可能不足，建議同步申請展延。';
+  } else if (m === '雙方產生調和意願(轉回調和)') {
+    warning = '<br><b style="color:var(--info)">💡 提醒：調查事證可用於輔助調和進行。</b>';
+  }
 
-  preview.innerHTML = `
-    ✅ 完成里程碑：<strong>${milestone}</strong><br>
-    📍 階段推進至：<strong>${isClose ? '結案' : (STAGE_LABELS[effectiveNext] || effectiveNext)}</strong><br>
-    ${isClose ? '' : '📅 系統將自動計算下一個法定截止日'}
-    ${warningHtml}
-  `;
-  document.getElementById('advanceConfirmBtn').disabled = false;
-  document.getElementById('advanceConfirmBtn').style.opacity = '1';
-}
-
-function closeAdvanceModal() {
-  document.getElementById('advanceModal').classList.remove('show');
+  preview.innerHTML = `📍 預計推進至：<b>${next}</b> ${warning}`;
+  document.getElementById('advConfirmBtn').disabled = false;
+  window._targetStage = next;
 }
 
 async function confirmAdvance() {
-  // STAGE_01 使用檢舉日期；其他階段使用 advanceDoneDate
-  let doneDate;
-  if (_advanceCurrentStage === 'STAGE_01') {
-    doneDate = document.getElementById('s01_complain_date')?.value;
-    if (!doneDate) { alert('請填寫接獲檢舉日期'); return; }
-  } else {
-    doneDate = document.getElementById('advanceDoneDate').value;
-    if (!doneDate) { alert('請填寫完成日期'); return; }
-  }
-  if (!_advanceSelectedMilestone) { alert('請選擇里程碑'); return; }
-
-  const btn = document.getElementById('advanceConfirmBtn');
-  btn.disabled = true;
-  btn.textContent = '處理中…';
-  showLoadingToast('正在更新階段並計算下一個截止日…');
-
-  try {
-    // 依里程碑決定下一個 stage
-    const milestoneOverride = MILESTONE_STAGE_OVERRIDE[_advanceSelectedMilestone];
-    const nextStage = milestoneOverride || STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage;
-
-    // 不受理/結案：特殊處理
-    if (nextStage === 'CLOSED') {
-      const result = await callGAS('bully_advance_stage', {
-        case_id: _advanceCaseId,
-        milestone: _advanceSelectedMilestone,
-        done_date: doneDate,
-        stage: _advanceCurrentStage,
-        status: _advanceSelectedMilestone === '決議不受理' ? '不受理結案' : '已結案'
-      });
-      if (!result.ok) throw new Error(result.error);
-      closeAdvanceModal();
-      hideLoadingToast();
-      await loadCases();
-      alert(_advanceSelectedMilestone === '決議不受理'
-        ? '📋 案件已標記為「不受理結案」\n\n⚠️ 提醒：請確認是否已審酌第71條故意傷害情形，並於20工作日內書面通知檢舉人。'
-        : '✅ 案件已結案歸檔');
-      return;
-    }
-
-    const result = await callGAS('bully_advance_stage', {
-      case_id: _advanceCaseId,
-      milestone: _advanceSelectedMilestone,
-      done_date: doneDate,
-      stage: nextStage
-    });
-
-    if (!result.ok) throw new Error(result.error);
-
-    closeAdvanceModal();
-    hideLoadingToast();
-    await loadCases();
-
-    let msg = `✅ 已推進至「${STAGE_LABELS[nextStage] || nextStage}」`;
-    if (result.next_deadline) {
-      msg += `\n\n📅 下一個截止日：\n${result.next_deadline.milestone}\n${result.next_deadline.due_date}（剩 ${result.next_deadline.days_left} 天）`;
-    }
-    alert(msg);
-
-  } catch(e) {
-    hideLoadingToast();
-    alert('推進失敗：' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '確認推進';
-  }
+  const date = document.getElementById('advanceDate').value;
+  await callGAS('bully_advance_stage', { case_id: _advId, milestone: _advMile, done_date: date, stage: window._targetStage });
+  document.getElementById('advanceModal').classList.remove('show');
+  loadCases();
 }
-
-// ── 刪除案件
-async function confirmDelete(caseId, caseName) {
-  if (!confirm(`確定要刪除案件「${caseName}」嗎？\n（資料將標記為已刪除，不會永久移除）`)) return;
-  try {
-    const result = await callGAS('bully_delete', { case_id: caseId });
-    if (!result.ok) throw new Error(result.error);
-    await loadCases();
-  } catch (e) {
-    alert('刪除失敗：' + e.message);
-  }
-}
-
-
-// ── 載入中 Toast
-function showLoadingToast(msg) {
-  let toast = document.getElementById('loadingToast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'loadingToast';
-    toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:.75rem 1.5rem;border-radius:40px;font-size:.88rem;font-family:Noto Sans TC,sans-serif;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.35);z-index:9999;';
-    document.body.appendChild(toast);
-  }
-  toast.innerHTML = `<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></span>${msg}`;
-  toast.style.display = 'flex';
-}
-
-function hideLoadingToast() {
-  const toast = document.getElementById('loadingToast');
-  if (toast) toast.style.display = 'none';
-}
-
-// ── 頁面載入
-window.onload = function() {
-  // 先檢查 sessionStorage，有的話直接登入不需重選帳號
-  const savedEmail = sessionStorage.getItem('bully_email');
-  const savedToken = sessionStorage.getItem('bully_token');
-  if (savedEmail && savedToken) {
-    currentEmail = savedEmail;
-    currentToken = savedToken;
-    document.getElementById('userEmail').textContent = currentEmail;
-    document.getElementById('loginOverlay').classList.add('hidden');
-    loadCases();
-  }
-  // 沒有的話等 Google One Tap 回調
-};
+function closeAdvanceModal() { document.getElementById('advanceModal').classList.remove('show'); }
 </script>
 </body>
 </html>
