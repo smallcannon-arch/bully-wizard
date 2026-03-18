@@ -224,6 +224,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <div class="modal-head">新增案件</div>
     <div class="modal-body">
       <div class="field">
+        <label>案件編號（校安通報序號）</label>
+        <input type="text" id="newCaseId" placeholder="例：1234567，留空則自動產生" maxlength="40">
+        <div style="font-size:.75rem;color:#aaa;margin-top:.25rem;font-family:'Noto Sans TC',sans-serif;">建議填入校安通報序號，方便後續追蹤對應</div>
+      </div>
+      <div class="field">
         <label>案件名稱 *</label>
         <input type="text" id="newCaseName" placeholder="例：114學年第1學期 甲班事件">
       </div>
@@ -244,7 +249,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeNewCaseModal()">取消</button>
-      <button class="btn btn-primary" onclick="createCase()">建立案件</button>
+      <button class="btn btn-primary" id="createCaseBtn" onclick="createCase()">建立案件</button>
     </div>
   </div>
 </div>
@@ -285,7 +290,8 @@ function logout() {
 
 // ── API 呼叫
 async function callGAS(action, data = {}) {
-  const body = JSON.stringify({ action, email: currentEmail, data });
+  // 攤平 data 到頂層，讓 GAS 端直接用 params.xxx 讀取
+  const body = JSON.stringify({ action, email: currentEmail, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' }, // GAS 需要 text/plain 避免 CORS preflight
@@ -388,9 +394,16 @@ function openNewCaseModal() {
 
 function closeNewCaseModal() {
   document.getElementById('newCaseModal').classList.remove('show');
+  const btn = document.getElementById('createCaseBtn');
+  if (btn) { btn.disabled = false; btn.textContent = '建立案件'; }
 }
 
 async function createCase() {
+  const btn = document.getElementById('createCaseBtn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = '建立中...';
+  const customId = document.getElementById('newCaseId').value.trim();
   const name = document.getElementById('newCaseName').value.trim();
   const school = document.getElementById('newSchool').value.trim();
   const caseType = document.getElementById('newCaseType').value;
@@ -400,37 +413,18 @@ async function createCase() {
   if (!reportDate) { alert('請填寫知悉日期'); return; }
 
   try {
-    const result = await callGAS('bully_save', {
+    // 一次呼叫完成：save + 計算兩筆期限 + 存入 deadlines
+    const result = await callGAS('bully_save_with_deadlines', {
       case_name: name,
       school,
       case_type: caseType,
       stage: 'STAGE_01',
       status: '進行中',
+      report_date: reportDate,
       data_json: JSON.stringify({ report_date: reportDate })
     });
 
     if (!result.ok) throw new Error(result.error);
-
-    // 計算 24h 和 20工作日期限並存入 deadlines
-    await callGAS('bully_calc', { type: 'calendar_days', start_date: reportDate, value: 1 })
-      .then(dl => callGAS('bully_deadline_save', {
-        case_id: result.case_id,
-        milestone: '24小時通報主管機關',
-        start_date: reportDate,
-        deadline_type: 'calendar_days',
-        deadline_value: 1,
-        due_date: dl.due_date
-      }));
-
-    await callGAS('bully_calc', { type: 'workdays', start_date: reportDate, value: 20 })
-      .then(dl => callGAS('bully_deadline_save', {
-        case_id: result.case_id,
-        milestone: '審查小組通知是否受理（20工作日）',
-        start_date: reportDate,
-        deadline_type: 'workdays',
-        deadline_value: 20,
-        due_date: dl.due_date
-      }));
 
     closeNewCaseModal();
     await loadCases();
@@ -438,6 +432,9 @@ async function createCase() {
 
   } catch (e) {
     alert('建立失敗：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '建立案件';
   }
 }
 
