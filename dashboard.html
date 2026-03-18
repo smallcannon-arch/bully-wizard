@@ -23,11 +23,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .user-info { color: rgba(255,255,255,.7); }
 .btn-logout { background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; padding: .3rem .8rem; border-radius: 20px; cursor: pointer; font-size: .78rem; font-family: 'Noto Sans TC', sans-serif; }
 
-/* ── 登入遮罩（修正：按鈕置中、還原原始精美樣式） ── */
+/* ── 登入遮罩（已將 max-width 放寬至 540px，讓文字不換行） ── */
 .login-overlay { position: fixed; inset: 0; background: var(--paper); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 1.5rem; }
-.login-box { background: #fff; border-radius: 12px; padding: 2.5rem 2.5rem; text-align: center; max-width: 440px; width: 92%; box-shadow: 0 8px 40px rgba(0,0,0,.15); }
-.login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; margin-bottom: .6rem; color: var(--ink); white-space: nowrap; }
-.login-box p { font-size: .88rem; color: #888; margin-bottom: 1.8rem; line-height: 1.6; white-space: nowrap; }
+.login-box { background: #fff; border-radius: 12px; padding: 2.5rem 2.5rem; text-align: center; max-width: 540px; width: 92%; box-shadow: 0 8px 40px rgba(0,0,0,.15); }
+.login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; margin-bottom: .6rem; color: var(--ink); }
+.login-box p { font-size: .88rem; color: #888; margin-bottom: 1.8rem; line-height: 1.6; }
 .login-overlay.hidden { display: none; }
 
 /* ── 主內容 ── */
