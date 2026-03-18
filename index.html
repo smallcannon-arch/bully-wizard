@@ -185,7 +185,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <!-- 頂部列 -->
 <div class="top-bar">
-  <h1>🏫 校園霸凌防制準則 — 表單系統（生對生 v1）</h1>
+  <div style="display:flex;align-items:center;gap:.75rem;flex:1;min-width:0;">
+    <button id="backBtn" onclick="goBack()" style="display:none;padding:.28rem .8rem;border-radius:20px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:.75rem;cursor:pointer;white-space:nowrap;">← 返回儀表板</button>
+    <h1 style="white-space:nowrap;">🏫 校園霸凌防制準則 — 表單系統（生對生 v1）</h1>
+    <div id="caseInfoBar" style="display:none;font-size:.78rem;color:rgba(255,255,255,.6);border-left:1px solid rgba(255,255,255,.2);padding-left:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+  </div>
   <div class="top-bar-right">
     <span id="currentFormName" style="color:rgba(255,255,255,.6);">請選擇表單</span>
     <button class="print-btn" id="wordBtn" onclick="downloadWord()" style="background:#2c5c3c;">⬇️ 下載 Word</button>
@@ -2571,6 +2575,63 @@ document.addEventListener('change', function(e) {
   if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
 });
 
+// ── 案件串接：從 URL 讀取 case_id
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
+
+function getUrlParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function goBack() {
+  window.location.href = './dashboard.html';
+}
+
+async function loadCaseFromUrl() {
+  const caseId = getUrlParam('case_id');
+  const email = getUrlParam('email');
+  if (!caseId || !email) return;
+
+  // 顯示返回按鈕
+  document.getElementById('backBtn').style.display = 'inline-block';
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'bully_load', email, data: { case_id: caseId } })
+    });
+    const result = await res.json();
+    if (!result.ok) return;
+
+    const c = result.case;
+    const stageLabels = {
+      'STAGE_01':'01 知悉受理','STAGE_02':'02 審查小組','STAGE_03':'03 處理小組',
+      'STAGE_04':'04 會前會','STAGE_05A':'05A 調和','STAGE_05B':'05B 調查',
+      'STAGE_06':'06 防制委員會','STAGE_07':'07 終局處理','STAGE_08':'08 輔導追蹤'
+    };
+
+    // 顯示案件資訊列
+    const bar = document.getElementById('caseInfoBar');
+    bar.style.display = 'block';
+    bar.innerHTML = `📋 ${c.case_name}　🏫 ${c.school || ''}　📍 ${stageLabels[c.stage] || c.stage}`;
+
+    // 同步跳到對應階段的表單
+    const stageToForm = {
+      'STAGE_01':'f31','STAGE_02':'f35','STAGE_03':'f39',
+      'STAGE_04':'f43','STAGE_05A':'f41','STAGE_05B':'f51',
+      'STAGE_06':'f61','STAGE_07':'f63','STAGE_08':'f65'
+    };
+    const targetForm = stageToForm[c.stage];
+    if (targetForm) {
+      const navItem = document.querySelector(`[onclick*="${targetForm}"]`);
+      if (navItem) show(targetForm, navItem.textContent.trim(), '', navItem);
+    }
+
+  } catch(e) {
+    console.warn('案件載入失敗:', e.message);
+  }
+}
+
 // ── 導覽狀態
 let currentId = null;
 
@@ -2612,6 +2673,8 @@ window.onload = function() {
     show('f31', '3-1 簽請組成防制委員會', '受理', first);
     first.classList.add('active');
   }
+  // 從 URL 載入案件資訊
+  loadCaseFromUrl();
 };
 
 // nav-item active 狀態已由 show() 統一管理，無需額外 listener
