@@ -36,12 +36,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   z-index: 999; flex-direction: column; gap: 1.5rem;
 }
 .login-box {
-  background: #fff; border-radius: 8px; padding: 2.5rem 2rem;
-  text-align: center; max-width: 360px; width: 90%;
+  background: #fff; border-radius: 12px; padding: 2.5rem 2.5rem;
+  text-align: center; max-width: 440px; width: 92%;
   box-shadow: 0 8px 40px rgba(0,0,0,.4);
 }
-.login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.2rem; margin-bottom: .5rem; color: var(--ink); }
-.login-box p { font-size: .85rem; color: #888; margin-bottom: 1.5rem; line-height: 1.6; }
+.login-box h2 { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; margin-bottom: .6rem; color: var(--ink); white-space: nowrap; }
+.login-box p { font-size: .88rem; color: #888; margin-bottom: 1.8rem; line-height: 1.6; white-space: nowrap; }
 .login-overlay.hidden { display: none; }
 
 /* ── 主內容 ── */
@@ -163,7 +163,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <h2>🏫 校園霸凌事件處理系統</h2>
-    <p>請使用學校 Google 帳號登入，以存取您的案件資料。</p>
+    <p>請使用 Google 帳號登入以存取案件資料。</p>
     <div id="g_id_onload"
       data-client_id="708047059390-2qhkln2rq34enarpa3ipucukm7bbl97m.apps.googleusercontent.com"
       data-callback="handleCredential"
@@ -297,7 +297,7 @@ async function loadCases() {
   document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>';
 
   try {
-    const result = await callGAS('list');
+    const result = await callGAS('bully_list');
     if (!result.ok) throw new Error(result.error);
     casesCache = result.cases;
     renderCases(casesCache);
@@ -398,7 +398,7 @@ async function createCase() {
   if (!reportDate) { alert('請填寫知悉日期'); return; }
 
   try {
-    const result = await callGAS('save', {
+    const result = await callGAS('bully_save', {
       case_name: name,
       school,
       case_type: caseType,
@@ -410,8 +410,8 @@ async function createCase() {
     if (!result.ok) throw new Error(result.error);
 
     // 計算 24h 和 20工作日期限並存入 deadlines
-    await callGAS('calc_deadline', { type: 'calendar_days', start_date: reportDate, value: 1 })
-      .then(dl => callGAS('save_deadline', {
+    await callGAS('bully_calc', { type: 'calendar_days', start_date: reportDate, value: 1 })
+      .then(dl => callGAS('bully_deadline_save', {
         case_id: result.case_id,
         milestone: '24小時通報主管機關',
         start_date: reportDate,
@@ -420,8 +420,8 @@ async function createCase() {
         due_date: dl.due_date
       }));
 
-    await callGAS('calc_deadline', { type: 'workdays', start_date: reportDate, value: 20 })
-      .then(dl => callGAS('save_deadline', {
+    await callGAS('bully_calc', { type: 'workdays', start_date: reportDate, value: 20 })
+      .then(dl => callGAS('bully_deadline_save', {
         case_id: result.case_id,
         milestone: '審查小組通知是否受理（20工作日）',
         start_date: reportDate,
@@ -443,7 +443,7 @@ async function createCase() {
 async function confirmDelete(caseId, caseName) {
   if (!confirm(`確定要刪除案件「${caseName}」嗎？\n（資料將標記為已刪除，不會永久移除）`)) return;
   try {
-    const result = await callGAS('delete', { case_id: caseId });
+    const result = await callGAS('bully_delete', { case_id: caseId });
     if (!result.ok) throw new Error(result.error);
     await loadCases();
   } catch (e) {
