@@ -399,42 +399,72 @@ function closeNewCaseModal() {
 }
 
 async function createCase() {
-  const btn = document.getElementById('createCaseBtn');
-  if (btn.disabled) return;
-  btn.disabled = true;
-  btn.textContent = '建立中...';
+  const confirmBtn = document.querySelector('#newCaseModal .btn-primary');
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = '建立中…';
+  showLoadingToast('正在建立案件並計算法定期限，請稍候…');
+
   const customId = document.getElementById('newCaseId').value.trim();
   const name = document.getElementById('newCaseName').value.trim();
   const school = document.getElementById('newSchool').value.trim();
   const caseType = document.getElementById('newCaseType').value;
   const reportDate = document.getElementById('newReportDate').value;
 
-  if (!name) { alert('請填寫案件名稱'); return; }
-  if (!reportDate) { alert('請填寫知悉日期'); return; }
+  if (!name) {
+    confirmBtn.disabled = false; confirmBtn.textContent = '建立案件';
+    hideLoadingToast(); alert('請填寫案件名稱'); return;
+  }
+  if (!reportDate) {
+    confirmBtn.disabled = false; confirmBtn.textContent = '建立案件';
+    hideLoadingToast(); alert('請填寫知悉日期'); return;
+  }
 
   try {
-    // 一次呼叫完成：save + 計算兩筆期限 + 存入 deadlines
-    const result = await callGAS('bully_save_with_deadlines', {
+    // Step 1: 儲存案件
+    const result = await callGAS('bully_save', {
+      case_id: customId || undefined,
       case_name: name,
       school,
       case_type: caseType,
       stage: 'STAGE_01',
       status: '進行中',
-      report_date: reportDate,
       data_json: JSON.stringify({ report_date: reportDate })
     });
-
     if (!result.ok) throw new Error(result.error);
 
+    // Step 2: 計算並儲存 24小時通報期限
+    const dl1 = await callGAS('bully_calc', { type: 'calendar_days', start_date: reportDate, value: 1 });
+    await callGAS('bully_deadline_save', {
+      case_id: result.case_id,
+      milestone: '24小時通報主管機關',
+      start_date: reportDate,
+      deadline_type: 'calendar_days',
+      deadline_value: 1,
+      due_date: dl1.due_date
+    });
+
+    // Step 3: 計算並儲存 20工作日期限
+    const dl2 = await callGAS('bully_calc', { type: 'workdays', start_date: reportDate, value: 20 });
+    await callGAS('bully_deadline_save', {
+      case_id: result.case_id,
+      milestone: '審查小組通知是否受理（20工作日）',
+      start_date: reportDate,
+      deadline_type: 'workdays',
+      deadline_value: 20,
+      due_date: dl2.due_date
+    });
+
     closeNewCaseModal();
+    hideLoadingToast();
     await loadCases();
     alert(`✅ 案件「${name}」已建立！\n案件編號：${result.case_id}`);
 
   } catch (e) {
+    hideLoadingToast();
     alert('建立失敗：' + e.message);
   } finally {
-    btn.disabled = false;
-    btn.textContent = '建立案件';
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = '建立案件';
   }
 }
 
