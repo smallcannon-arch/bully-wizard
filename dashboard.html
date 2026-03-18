@@ -151,6 +151,30 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-msg { text-align: center; padding: 3rem; color: #aaa; }
 
+/* ── 推進階段 Modal */
+.advance-modal-overlay {
+  position: fixed; inset: 0; background: rgba(26,26,46,.55);
+  display: none; align-items: center; justify-content: center;
+  z-index:600; padding:1rem;
+}
+.advance-modal-overlay.show { display: flex; }
+.advance-modal-box {
+  background: #fff; border-radius: 6px; max-width: 480px; width: 100%;
+  box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden;
+  animation: fadeUp .2s ease;
+}
+.advance-modal-head { background: #1a5c2e; color: #fff; padding: 1rem 1.5rem; font-family: "Noto Serif TC",serif; font-size: 1rem; font-weight: 700; }
+.advance-modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.advance-modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; }
+.milestone-btn {
+  display: block; width: 100%; padding: .5rem .75rem; margin-bottom: .4rem;
+  background: #f5f3ee; border: 1px solid var(--line); border-radius: 4px;
+  text-align: left; font-family: "Noto Sans TC",sans-serif; font-size: .85rem;
+  cursor: pointer; transition: background .12s;
+}
+.milestone-btn:hover { background: var(--warm); }
+.milestone-btn.selected { background: #ddeeff; border-color: #a0c0e0; font-weight: 600; }
+
 @media (max-width: 600px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
   .case-grid { grid-template-columns: 1fr; }
@@ -250,6 +274,28 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeNewCaseModal()">取消</button>
       <button class="btn btn-primary" id="createCaseBtn" onclick="createCase()">建立案件</button>
+    </div>
+  </div>
+</div>
+
+<!-- 推進階段 Modal -->
+<div class="advance-modal-overlay" id="advanceModal">
+  <div class="advance-modal-box">
+    <div class="advance-modal-head">✅ 推進階段</div>
+    <div class="advance-modal-body">
+      <div>
+        <div style="font-size:.8rem;font-weight:500;color:#555;margin-bottom:.5rem;">選擇已完成的里程碑：</div>
+        <div id="milestoneList"></div>
+      </div>
+      <div class="field">
+        <label style="font-size:.8rem;font-weight:500;color:#555;">完成日期 *</label>
+        <input type="date" id="advanceDoneDate" style="width:100%;padding:.45rem .75rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;">
+      </div>
+      <div id="advancePreview" style="display:none;background:#f0faf4;border-radius:4px;padding:.75rem;font-size:.82rem;color:#1a5c2e;line-height:1.7;"></div>
+    </div>
+    <div class="advance-modal-foot">
+      <button class="btn btn-ghost" onclick="closeAdvanceModal()">取消</button>
+      <button class="btn btn-primary" id="advanceConfirmBtn" onclick="confirmAdvance()" disabled style="opacity:.45;">確認推進</button>
     </div>
   </div>
 </div>
@@ -372,7 +418,10 @@ function renderCases(cases) {
       </div>
       <div class="case-card-foot">
         <span>更新：${updatedDate}</span>
-        <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;" onclick="event.stopPropagation();confirmDelete('${c.case_id}','${c.case_name}')">刪除</button>
+        <div style="display:flex;gap:.4rem;">
+          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:#1a5c2e;" onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.case_name}','${c.stage}')">推進 →</button>
+          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;" onclick="event.stopPropagation();confirmDelete('${c.case_id}','${c.case_name}')">刪除</button>
+        </div>
       </div>
     </div>`;
   });
@@ -444,6 +493,131 @@ async function createCase() {
   } finally {
     confirmBtn.disabled = false;
     confirmBtn.textContent = '建立案件';
+  }
+}
+
+// ── 推進階段
+const STAGE_MILESTONES = {
+  'STAGE_01': ['24小時通報主管機關', '決議受理'],
+  'STAGE_02': ['決議受理'],
+  'STAGE_03': ['第一次調和/調查會議'],
+  'STAGE_04': ['第一次調和/調查會議'],
+  'STAGE_05A': ['第一次展延', '第二次展延'],
+  'STAGE_05B': ['第一次展延', '第二次展延'],
+  'STAGE_06': ['防制委員會決議'],
+  'STAGE_07': ['作成終局實體處理'],
+  'STAGE_08': []
+};
+
+const STAGE_NEXT = {
+  'STAGE_01': 'STAGE_02',
+  'STAGE_02': 'STAGE_03',
+  'STAGE_03': 'STAGE_04',
+  'STAGE_04': 'STAGE_05A',
+  'STAGE_05A': 'STAGE_06',
+  'STAGE_05B': 'STAGE_06',
+  'STAGE_06': 'STAGE_07',
+  'STAGE_07': 'STAGE_08',
+  'STAGE_08': 'STAGE_08'
+};
+
+const STAGE_LABELS = {
+  'STAGE_01':'01 知悉受理','STAGE_02':'02 審查小組','STAGE_03':'03 處理小組',
+  'STAGE_04':'04 會前會','STAGE_05A':'05A 調和','STAGE_05B':'05B 調查',
+  'STAGE_06':'06 防制委員會','STAGE_07':'07 終局處理','STAGE_08':'08 輔導追蹤'
+};
+
+let _advanceCaseId = '';
+let _advanceCaseName = '';
+let _advanceCurrentStage = '';
+let _advanceSelectedMilestone = '';
+
+function openAdvanceModal(caseId, caseName, stage) {
+  _advanceCaseId = caseId;
+  _advanceCaseName = caseName;
+  _advanceCurrentStage = stage;
+  _advanceSelectedMilestone = '';
+
+  // 填入里程碑選項
+  const milestones = STAGE_MILESTONES[stage] || [];
+  const list = document.getElementById('milestoneList');
+  if (milestones.length === 0) {
+    list.innerHTML = '<p style="font-size:.85rem;color:#aaa;">此階段無可推進的里程碑</p>';
+  } else {
+    list.innerHTML = milestones.map(m =>
+      `<button class="milestone-btn" onclick="selectMilestone('${m}',this)">${m}</button>`
+    ).join('');
+  }
+
+  // 預設今天
+  document.getElementById('advanceDoneDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('advancePreview').style.display = 'none';
+  document.getElementById('advanceConfirmBtn').disabled = true;
+  document.getElementById('advanceConfirmBtn').style.opacity = '.45';
+  document.getElementById('advanceModal').classList.add('show');
+}
+
+function selectMilestone(milestone, el) {
+  _advanceSelectedMilestone = milestone;
+  document.querySelectorAll('.milestone-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  updateAdvancePreview();
+}
+
+function updateAdvancePreview() {
+  if (!_advanceSelectedMilestone) return;
+  const nextStage = STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage;
+  const preview = document.getElementById('advancePreview');
+  preview.style.display = 'block';
+  preview.innerHTML = `
+    ✅ 完成里程碑：<strong>${_advanceSelectedMilestone}</strong><br>
+    📍 階段推進至：<strong>${STAGE_LABELS[nextStage] || nextStage}</strong><br>
+    📅 系統將自動計算下一個法定截止日
+  `;
+  document.getElementById('advanceConfirmBtn').disabled = false;
+  document.getElementById('advanceConfirmBtn').style.opacity = '1';
+}
+
+function closeAdvanceModal() {
+  document.getElementById('advanceModal').classList.remove('show');
+}
+
+async function confirmAdvance() {
+  const doneDate = document.getElementById('advanceDoneDate').value;
+  if (!doneDate) { alert('請填寫完成日期'); return; }
+  if (!_advanceSelectedMilestone) { alert('請選擇里程碑'); return; }
+
+  const btn = document.getElementById('advanceConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = '處理中…';
+  showLoadingToast('正在更新階段並計算下一個截止日…');
+
+  try {
+    const result = await callGAS('bully_advance_stage', {
+      case_id: _advanceCaseId,
+      milestone: _advanceSelectedMilestone,
+      done_date: doneDate,
+      stage: STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage
+    });
+
+    if (!result.ok) throw new Error(result.error);
+
+    closeAdvanceModal();
+    hideLoadingToast();
+    await loadCases();
+
+    let msg = `✅ 已推進至「${STAGE_LABELS[result.stage] || result.stage}」`;
+    if (result.next_deadline) {
+      msg += `\n\n📅 下一個截止日：\n${result.next_deadline.milestone}\n${result.next_deadline.due_date}（剩 ${result.next_deadline.days_left} 天）`;
+    }
+    alert(msg);
+
+  } catch(e) {
+    hideLoadingToast();
+    alert('推進失敗：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '確認推進';
   }
 }
 
