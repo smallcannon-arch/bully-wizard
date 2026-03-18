@@ -663,22 +663,41 @@ function openAdvanceModal(caseId, caseName, stage) {
   const list = document.getElementById('milestoneList');
 
   if (stage === 'STAGE_01') {
-    // STAGE_01 特殊：通報（必要）+ 檢舉（三選一）
+    // STAGE_01：兩個獨立動作
+    // 動作A：通報（只標記，不推進）
+    // 動作B：檢舉立案（觸發推進至STAGE_02）
     list.innerHTML = `
-      <div style="font-size:.78rem;color:#1a3a5c;background:#ddeeff;border-radius:4px;padding:.5rem .75rem;margin-bottom:.5rem;">
-        📋 STAGE_01 需完成兩件事才能推進：<br>
-        ① 24小時通報（必要）② 接獲檢舉（三選一）
+      <div style="background:#f8f6f0;border-radius:4px;padding:.75rem;margin-bottom:.75rem;border-left:3px solid #c5bfb0;">
+        <div style="font-size:.82rem;font-weight:700;color:#3a3a5c;margin-bottom:.4rem;">動作 A：確認已完成24小時通報（不推進）</div>
+        <div style="font-size:.78rem;color:#888;margin-bottom:.5rem;">依第17條，知悉後24小時內通報主管機關。完成後僅標記，案件停留在STAGE_01。</div>
+        <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+          <div>
+            <label style="font-size:.75rem;color:#555;">知悉日期</label>
+            <input type="date" id="s01_aware_date" style="display:block;padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;margin-top:.2rem;">
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:#555;">通報日期</label>
+            <input type="date" id="s01_report_date" style="display:block;padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;margin-top:.2rem;">
+          </div>
+        </div>
+        <button onclick="saveReportRecord()" style="margin-top:.6rem;padding:.3rem .9rem;background:#3a3a5c;color:#fff;border:none;border-radius:4px;font-size:.78rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
+          ✅ 確認已完成24小時通報
+        </button>
       </div>
-      <div style="font-size:.8rem;font-weight:600;color:#555;margin:.4rem 0 .2rem;">① 通報（必要）</div>
-      <button class="milestone-btn" id="btn_report" onclick="selectStage01('report',this)">
-        ✅ 24小時通報主管機關（第17條）
-      </button>
-      <div style="font-size:.8rem;font-weight:600;color:#555;margin:.5rem 0 .2rem;">② 接獲檢舉（三選一）</div>
-      ${STAGE01_COMPLAIN.map(m =>
-        `<button class="milestone-btn" data-complain="${m}" onclick="selectStage01('complain',this,'${m}')">${m}</button>`
-      ).join('')}
+
+      <div style="background:#f0faf4;border-radius:4px;padding:.75rem;border-left:3px solid #a8d5b5;">
+        <div style="font-size:.82rem;font-weight:700;color:#1a5c2e;margin-bottom:.4rem;">動作 B：檢舉立案 → 推進至STAGE_02（啟動20工作日倒數）</div>
+        <div style="font-size:.78rem;color:#888;margin-bottom:.5rem;">依第25條，以「接獲檢舉日期」為起算點，20工作日內審查小組須決議。</div>
+        <div style="margin-bottom:.5rem;">
+          <label style="font-size:.75rem;color:#555;display:block;margin-bottom:.2rem;">接獲檢舉日期 *</label>
+          <input type="date" id="s01_complain_date" style="padding:.3rem .5rem;border:1px solid #c5bfb0;border-radius:4px;font-size:.82rem;width:160px;">
+        </div>
+        <div style="font-size:.78rem;font-weight:600;color:#555;margin-bottom:.3rem;">檢舉方式（三選一）：</div>
+        ${STAGE01_COMPLAIN.map(m =>
+          `<button class="milestone-btn" data-complain="${m}" onclick="selectStage01Complain(this,'${m}')">${m}</button>`
+        ).join('')}
+      </div>
     `;
-    window._stage01_report = false;
     window._stage01_complain = '';
   } else {
     const milestones = STAGE_MILESTONES[stage] || [];
@@ -698,33 +717,64 @@ function openAdvanceModal(caseId, caseName, stage) {
   document.getElementById('advanceModal').classList.add('show');
 }
 
-function selectStage01(type, el, milestone) {
-  if (type === 'report') {
-    window._stage01_report = !window._stage01_report;
-    el.classList.toggle('selected', window._stage01_report);
-  } else {
-    window._stage01_complain = milestone;
-    document.querySelectorAll('[data-complain]').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
+// 動作A：儲存通報紀錄（不推進）
+async function saveReportRecord() {
+  const awareDate = document.getElementById('s01_aware_date')?.value;
+  const reportDate = document.getElementById('s01_report_date')?.value;
+  if (!awareDate || !reportDate) { alert('請填寫知悉日期和通報日期'); return; }
+
+  // 計算是否在24小時內
+  const awareDt = new Date(awareDate);
+  const reportDt = new Date(reportDate);
+  const diffHours = (reportDt - awareDt) / 3600000;
+  const onTime = diffHours <= 24;
+
+  try {
+    await callGAS('bully_save', {
+      case_id: _advanceCaseId,
+      case_name: document.getElementById('userEmail') ? undefined : '',
+      data_json: JSON.stringify({
+        aware_date: awareDate,
+        report_date: reportDate,
+        report_on_time: onTime
+      })
+    });
+    const btn = document.querySelector('[onclick="saveReportRecord()"]');
+    if (btn) {
+      btn.textContent = onTime ? '✅ 通報完成（符合24小時規定）' : '⚠️ 通報完成（超過24小時，請說明原因）';
+      btn.style.background = onTime ? '#1a5c2e' : '#8b1a1a';
+      btn.disabled = true;
+    }
+  } catch(e) {
+    alert('儲存失敗：' + e.message);
   }
-  // 兩個都勾選才能推進
-  if (window._stage01_report && window._stage01_complain) {
-    _advanceSelectedMilestone = window._stage01_complain; // 期限起算用檢舉里程碑
-    const preview = document.getElementById('advancePreview');
-    preview.style.display = 'block';
-    preview.innerHTML = `
-      ✅ 通報：24小時通報主管機關<br>
-      ✅ 檢舉：<strong>${window._stage01_complain}</strong><br>
-      📍 階段推進至：<strong>02 審查小組</strong><br>
-      📅 觸發：審查小組通知是否受理（20工作日）倒數
-    `;
-    document.getElementById('advanceConfirmBtn').disabled = false;
-    document.getElementById('advanceConfirmBtn').style.opacity = '1';
-  } else {
+}
+
+// 動作B：選擇檢舉方式（觸發推進）
+function selectStage01Complain(el, milestone) {
+  window._stage01_complain = milestone;
+  document.querySelectorAll('[data-complain]').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const complainDate = document.getElementById('s01_complain_date')?.value;
+  if (!complainDate) {
     document.getElementById('advancePreview').style.display = 'none';
     document.getElementById('advanceConfirmBtn').disabled = true;
     document.getElementById('advanceConfirmBtn').style.opacity = '.45';
+    return;
   }
+
+  _advanceSelectedMilestone = milestone;
+  const preview = document.getElementById('advancePreview');
+  preview.style.display = 'block';
+  preview.innerHTML = `
+    ✅ 檢舉方式：<strong>${milestone}</strong><br>
+    📅 接獲檢舉日期：<strong>${complainDate}</strong><br>
+    📍 推進至：<strong>02 審查小組</strong><br>
+    ⏱ 觸發：審查小組通知是否受理（20工作日）起算
+  `;
+  document.getElementById('advanceConfirmBtn').disabled = false;
+  document.getElementById('advanceConfirmBtn').style.opacity = '1';
 }
 
 function selectMilestone(milestone, el) {
@@ -766,8 +816,15 @@ function closeAdvanceModal() {
 }
 
 async function confirmAdvance() {
-  const doneDate = document.getElementById('advanceDoneDate').value;
-  if (!doneDate) { alert('請填寫完成日期'); return; }
+  // STAGE_01 使用檢舉日期；其他階段使用 advanceDoneDate
+  let doneDate;
+  if (_advanceCurrentStage === 'STAGE_01') {
+    doneDate = document.getElementById('s01_complain_date')?.value;
+    if (!doneDate) { alert('請填寫接獲檢舉日期'); return; }
+  } else {
+    doneDate = document.getElementById('advanceDoneDate').value;
+    if (!doneDate) { alert('請填寫完成日期'); return; }
+  }
   if (!_advanceSelectedMilestone) { alert('請選擇里程碑'); return; }
 
   const btn = document.getElementById('advanceConfirmBtn');
