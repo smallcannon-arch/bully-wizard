@@ -333,6 +333,9 @@ function handleCredential(response) {
   const payload = parseJwt(response.credential);
   currentEmail = payload.email;
   currentToken = response.credential;
+  // 存入 sessionStorage，同 session 內回來不需重新登入
+  sessionStorage.setItem('bully_email', currentEmail);
+  sessionStorage.setItem('bully_token', currentToken);
   document.getElementById('userEmail').textContent = currentEmail;
   document.getElementById('loginOverlay').classList.add('hidden');
   loadCases();
@@ -347,6 +350,8 @@ function logout() {
   currentEmail = '';
   currentToken = '';
   casesCache = [];
+  sessionStorage.removeItem('bully_email');
+  sessionStorage.removeItem('bully_token');
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('userEmail').textContent = '';
   document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><p>請重新登入</p></div>';
@@ -850,8 +855,17 @@ function hideLoadingToast() {
 
 // ── 頁面載入
 window.onload = function() {
-  // 如果已有 token（頁面刷新時），直接載入
-  // 否則等 OAuth 回調
+  // 先檢查 sessionStorage，有的話直接登入不需重選帳號
+  const savedEmail = sessionStorage.getItem('bully_email');
+  const savedToken = sessionStorage.getItem('bully_token');
+  if (savedEmail && savedToken) {
+    currentEmail = savedEmail;
+    currentToken = savedToken;
+    document.getElementById('userEmail').textContent = currentEmail;
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadCases();
+  }
+  // 沒有的話等 Google One Tap 回調
 };
 </script>
 </body>
