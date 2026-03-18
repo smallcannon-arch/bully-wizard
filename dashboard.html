@@ -278,6 +278,24 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 </div>
 
+<!-- 回退階段 Modal -->
+<div class="advance-modal-overlay" id="rollbackModal">
+  <div class="advance-modal-box">
+    <div class="advance-modal-head" style="background:#6e2c2c;">⬅️ 回退上一步</div>
+    <div class="advance-modal-body">
+      <div id="rollbackInfo" style="font-size:.88rem;line-height:1.8;color:#3a3a5c;"></div>
+      <div style="background:#fff3cd;border:1px solid #f0d080;border-radius:4px;padding:.75rem;font-size:.82rem;color:#5c3a00;line-height:1.65;">
+        ⚠️ 此動作將回退案件階段，並刪除本次推進所產生的截止日紀錄。<br>
+        <strong>此動作無法復原，請確認後再執行。</strong>
+      </div>
+    </div>
+    <div class="advance-modal-foot">
+      <button class="btn btn-ghost" onclick="closeRollbackModal()">取消</button>
+      <button class="btn" style="background:#6e2c2c;color:#fff;" onclick="confirmRollback()">確認回退</button>
+    </div>
+  </div>
+</div>
+
 <!-- 推進階段 Modal -->
 <div class="advance-modal-overlay" id="advanceModal">
   <div class="advance-modal-box">
@@ -419,6 +437,7 @@ function renderCases(cases) {
       <div class="case-card-foot">
         <span>更新：${updatedDate}</span>
         <div style="display:flex;gap:.4rem;">
+          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;color:#888;" onclick="event.stopPropagation();openRollbackModal('${c.case_id}','${c.case_name}','${c.stage}')">← 回退</button>
           <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:#1a5c2e;" onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.case_name}','${c.stage}')">推進 →</button>
           <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;" onclick="event.stopPropagation();confirmDelete('${c.case_id}','${c.case_name}')">刪除</button>
         </div>
@@ -496,29 +515,114 @@ async function createCase() {
   }
 }
 
+// ── STAGE 回退對應表
+const STAGE_PREV = {
+  'STAGE_02': 'STAGE_01',
+  'STAGE_03': 'STAGE_02',
+  'STAGE_04': 'STAGE_03',
+  'STAGE_05A': 'STAGE_04',
+  'STAGE_05B': 'STAGE_04',
+  'STAGE_06': 'STAGE_05A',  // 預設從調和回退
+  'STAGE_07': 'STAGE_06',
+  'STAGE_08': 'STAGE_07'
+};
+
+let _rollbackCaseId = '';
+let _rollbackCaseName = '';
+let _rollbackCurrentStage = '';
+
+function openRollbackModal(caseId, caseName, stage) {
+  const prevStage = STAGE_PREV[stage];
+  if (!prevStage) {
+    alert('此案件已在最初階段，無法回退。');
+    return;
+  }
+  _rollbackCaseId = caseId;
+  _rollbackCaseName = caseName;
+  _rollbackCurrentStage = stage;
+
+  document.getElementById('rollbackInfo').innerHTML = `
+    📋 案件：<strong>${caseName}</strong><br>
+    📍 目前階段：<strong>${STAGE_LABELS[stage] || stage}</strong><br>
+    ⬅️ 回退至：<strong>${STAGE_LABELS[prevStage] || prevStage}</strong><br>
+    🗑️ 本階段產生的截止日紀錄將一併刪除
+  `;
+  document.getElementById('rollbackModal').classList.add('show');
+}
+
+function closeRollbackModal() {
+  document.getElementById('rollbackModal').classList.remove('show');
+}
+
+async function confirmRollback() {
+  const prevStage = STAGE_PREV[_rollbackCurrentStage];
+  if (!prevStage) return;
+
+  const btn = document.querySelector('#rollbackModal .btn[style*="6e2c2c"]');
+  btn.disabled = true;
+  btn.textContent = '回退中…';
+  showLoadingToast('正在回退階段並清除相關期限紀錄…');
+
+  try {
+    const result = await callGAS('bully_rollback_stage', {
+      case_id: _rollbackCaseId,
+      from_stage: _rollbackCurrentStage,
+      to_stage: prevStage
+    });
+
+    if (!result.ok) throw new Error(result.error);
+
+    closeRollbackModal();
+    hideLoadingToast();
+    await loadCases();
+    alert(`✅ 案件已回退至「${STAGE_LABELS[prevStage] || prevStage}」\n已刪除 ${result.deleted_count || 0} 筆期限紀錄`);
+
+  } catch(e) {
+    hideLoadingToast();
+    alert('回退失敗：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '確認回退';
+  }
+}
+
 // ── 推進階段
 const STAGE_MILESTONES = {
-  'STAGE_01': ['24小時通報主管機關', '決議受理'],
-  'STAGE_02': ['決議受理'],
-  'STAGE_03': ['第一次調和/調查會議'],
-  'STAGE_04': ['第一次調和/調查會議'],
-  'STAGE_05A': ['第一次展延', '第二次展延'],
-  'STAGE_05B': ['第一次展延', '第二次展延'],
-  'STAGE_06': ['防制委員會決議'],
-  'STAGE_07': ['作成終局實體處理'],
-  'STAGE_08': []
+  'STAGE_01': [
+    '24小時通報主管機關（第17條）',
+    '接獲檢舉——書面檢舉（第18條）',
+    '接獲檢舉——言詞檢舉（第18條）',
+    '視同檢舉——機關/媒體通報（第18條）'
+  ],
+  'STAGE_02': ['決議受理', '決議不受理'],
+  'STAGE_03': ['處理小組組成完成', '第一次調和/調查會議召開'],
+  'STAGE_04': ['第一次調和會議召開（進入調和）', '第一次調查會議召開（進入調查）'],
+  'STAGE_05A': ['調和成立（結案進審議）', '調和不成立（切換調查）'],
+  'STAGE_05B': ['調查報告完成', '第一次展延', '第二次展延（最終）'],
+  'STAGE_06': ['防制委員會決議通過'],
+  'STAGE_07': ['作成終局實體處理', '書面通知雙方當事人'],
+  'STAGE_08': ['結案歸檔']
 };
 
 const STAGE_NEXT = {
   'STAGE_01': 'STAGE_02',
   'STAGE_02': 'STAGE_03',
   'STAGE_03': 'STAGE_04',
-  'STAGE_04': 'STAGE_05A',
+  // STAGE_04 分流：依里程碑選擇
+  'STAGE_04': 'STAGE_05A',       // 預設調和，可被 milestone 覆蓋
   'STAGE_05A': 'STAGE_06',
   'STAGE_05B': 'STAGE_06',
   'STAGE_06': 'STAGE_07',
   'STAGE_07': 'STAGE_08',
   'STAGE_08': 'STAGE_08'
+};
+
+// 依里程碑內容決定下一個 stage（覆蓋 STAGE_NEXT 預設值）
+const MILESTONE_STAGE_OVERRIDE = {
+  '第一次調查會議召開（進入調查）': 'STAGE_05B',
+  '調和不成立（切換調查）': 'STAGE_05B',
+  '決議不受理': 'CLOSED',
+  '結案歸檔': 'CLOSED'
 };
 
 const STAGE_LABELS = {
@@ -559,20 +663,33 @@ function openAdvanceModal(caseId, caseName, stage) {
 
 function selectMilestone(milestone, el) {
   _advanceSelectedMilestone = milestone;
+  window._advanceSelectedMilestone = milestone;
   document.querySelectorAll('.milestone-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   updateAdvancePreview();
 }
 
 function updateAdvancePreview() {
-  if (!_advanceSelectedMilestone) return;
-  const nextStage = STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage;
+  const milestone = _advanceSelectedMilestone || window._advanceSelectedMilestone;
+  if (!milestone) return;
+  const currentStage = _advanceCurrentStage || window._advanceCurrentStage;
+  const nextStage = STAGE_NEXT[currentStage] || currentStage;
   const preview = document.getElementById('advancePreview');
   preview.style.display = 'block';
+  const override = MILESTONE_STAGE_OVERRIDE[milestone];
+  const effectiveNext = override || nextStage;
+  const isClose = effectiveNext === 'CLOSED';
+  const warningHtml = milestone === '決議不受理'
+    ? '<br><span style="color:#8b1a1a;font-size:.8rem;">⚠️ 防呆提醒：請先確認是否審酌第71條故意傷害情形</span>'
+    : milestone === '調和不成立（切換調查）'
+    ? '<br><span style="color:#1a3a5c;font-size:.8rem;">🔒 證據排除防火牆：調和過程陳述不得作為調查依據（第31條第2項）</span>'
+    : '';
+
   preview.innerHTML = `
-    ✅ 完成里程碑：<strong>${_advanceSelectedMilestone}</strong><br>
-    📍 階段推進至：<strong>${STAGE_LABELS[nextStage] || nextStage}</strong><br>
-    📅 系統將自動計算下一個法定截止日
+    ✅ 完成里程碑：<strong>${milestone}</strong><br>
+    📍 階段推進至：<strong>${isClose ? '結案' : (STAGE_LABELS[effectiveNext] || effectiveNext)}</strong><br>
+    ${isClose ? '' : '📅 系統將自動計算下一個法定截止日'}
+    ${warningHtml}
   `;
   document.getElementById('advanceConfirmBtn').disabled = false;
   document.getElementById('advanceConfirmBtn').style.opacity = '1';
@@ -593,11 +710,34 @@ async function confirmAdvance() {
   showLoadingToast('正在更新階段並計算下一個截止日…');
 
   try {
+    // 依里程碑決定下一個 stage
+    const milestoneOverride = MILESTONE_STAGE_OVERRIDE[_advanceSelectedMilestone];
+    const nextStage = milestoneOverride || STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage;
+
+    // 不受理/結案：特殊處理
+    if (nextStage === 'CLOSED') {
+      const result = await callGAS('bully_advance_stage', {
+        case_id: _advanceCaseId,
+        milestone: _advanceSelectedMilestone,
+        done_date: doneDate,
+        stage: _advanceCurrentStage,
+        status: _advanceSelectedMilestone === '決議不受理' ? '不受理結案' : '已結案'
+      });
+      if (!result.ok) throw new Error(result.error);
+      closeAdvanceModal();
+      hideLoadingToast();
+      await loadCases();
+      alert(_advanceSelectedMilestone === '決議不受理'
+        ? '📋 案件已標記為「不受理結案」\n\n⚠️ 提醒：請確認是否已審酌第71條故意傷害情形，並於20工作日內書面通知檢舉人。'
+        : '✅ 案件已結案歸檔');
+      return;
+    }
+
     const result = await callGAS('bully_advance_stage', {
       case_id: _advanceCaseId,
       milestone: _advanceSelectedMilestone,
       done_date: doneDate,
-      stage: STAGE_NEXT[_advanceCurrentStage] || _advanceCurrentStage
+      stage: nextStage
     });
 
     if (!result.ok) throw new Error(result.error);
@@ -606,7 +746,7 @@ async function confirmAdvance() {
     hideLoadingToast();
     await loadCases();
 
-    let msg = `✅ 已推進至「${STAGE_LABELS[result.stage] || result.stage}」`;
+    let msg = `✅ 已推進至「${STAGE_LABELS[nextStage] || nextStage}」`;
     if (result.next_deadline) {
       msg += `\n\n📅 下一個截止日：\n${result.next_deadline.milestone}\n${result.next_deadline.due_date}（剩 ${result.next_deadline.days_left} 天）`;
     }
