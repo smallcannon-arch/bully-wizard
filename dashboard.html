@@ -263,7 +263,22 @@ function logout() {
 async function callGAS(action, data = {}) {
   const body = JSON.stringify({ action, email: currentEmail, token: currentToken, ...data });
   const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body });
-  return await res.json();
+  const result = await res.json();
+  
+  // 🛡️ 全域攔截器：如果後端回報 Token 無效或拒絕存取
+  if (!result.ok && result.error && result.error.includes('拒絕存取')) {
+    // 1. 跳出明確的提示視窗
+    alert('⏳ 登入時效已過！為保護校安資料安全，請重新登入。');
+    
+    // 2. 清除已經失效的鑰匙與記憶
+    sessionStorage.removeItem('bully_token');
+    sessionStorage.removeItem('bully_email');
+    
+    // 3. 強制重整網頁，把使用者踢回登入畫面
+    location.reload(); 
+  }
+  
+  return result;
 }
 
 async function loadCases() {
