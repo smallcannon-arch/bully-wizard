@@ -1086,7 +1086,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       <div style="font-size:.85rem; color:#666; margin-bottom:1rem;">
         準備工作：請確認已備妥「3-1 簽請組成防制委員會及審查小組」與「3-2 委員名冊」。
       </div>
-      <button class="btn btn-primary" style="background:var(--ok); font-size:1.05rem; padding:.6rem 2rem; width:100%; box-shadow:0 4px 12px rgba(26,92,46,.2);" onclick="show('f35','3-5 審查小組會議紀錄','受理')">
+      <button class="btn btn-primary" style="background:var(--ok); font-size:1.05rem; padding:.6rem 2rem; width:100%; box-shadow:0 4px 12px rgba(26,92,46,.2);" onclick="autoAdvanceToStage02()">
         ✅ 條件齊備！點此進入 STAGE 02 填寫審查會議紀錄
       </button>
     </div>
@@ -2820,7 +2820,62 @@ window.onload = function() {
   if (originalOnload) originalOnload();
   initStage01Logic();
 };
-  
+// 🚀 區塊四專用：自動推進至 STAGE 02 並連動後端時鐘
+async function autoAdvanceToStage02() {
+  const caseId = getUrlParam('case_id');
+  if (!caseId) return;
+
+  // 1. 抓取區塊三的資料（將作為 20 工作日的起算基準）
+  const sourceMap = { 'written': '接獲書面檢舉', 'verbal': '言詞檢舉', 'media': '視同檢舉(機關/媒體)' };
+  const sourceVal = document.querySelector('input[name="b3_source"]:checked')?.value;
+  const milestone = sourceMap[sourceVal] || '接獲檢舉';
+  const triggerDate = document.getElementById('b3_receive_date').value;
+
+  if (!triggerDate) {
+    alert('⚠️ 請先確認已填寫「接獲檢舉日期」！');
+    return;
+  }
+
+  // 2. 改變按鈕狀態，避免重複點擊
+  const btn = document.querySelector('#b4_finish button');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ 系統自動推進與寫入資料庫中...';
+  btn.disabled = true;
+
+  try {
+    const currentToken = sessionStorage.getItem('bully_token');
+    const currentEmail = sessionStorage.getItem('bully_email');
+    
+    // 3. 呼叫後端 API，正式把案件推入 STAGE 02
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'bully_advance_stage',
+        token: currentToken,
+        email: currentEmail,
+        case_id: caseId,
+        stage: 'STAGE_02',
+        milestone: milestone,
+        done_date: triggerDate
+      })
+    });
+    
+    const result = await res.json();
+    if (!result.ok) throw new Error(result.error || '後端回報錯誤');
+
+    // 4. 推進成功，跳出提示並自動切換畫面
+    alert('✅ 案件已自動推進至「02 審查小組」！\n系統已依據您輸入的日期，正式啟動 20 工作日審查倒數時鐘。');
+    show('f35', '3-5 審查小組會議紀錄', '受理'); 
+
+  } catch (err) {
+    alert('❌ 自動推進失敗：' + err.message + '\n(您可以回到儀表板大廳手動推進)');
+  } finally {
+    // 恢復按鈕狀態
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}  
 </script>
 </body>
 </html>
