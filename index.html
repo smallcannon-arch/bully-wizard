@@ -166,6 +166,13 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .modal-body { padding: 1.5rem; overflow-y: auto; }
 .modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; flex-shrink: 0; }
 
+/* ── 循序解鎖區塊樣式 ── */
+.ui-block { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 4px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; position: relative; }
+.ui-block.active-block { border-left-color: var(--ok); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.ui-block.locked-block { opacity: 0.45; pointer-events: none; filter: grayscale(100%); background: #f9f9f9; }
+.block-title { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .8rem; display: flex; align-items: center; gap: .5rem; }
+.block-number { background: var(--ink); color: #fff; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-size: .8rem; font-family: monospace; }
+  
 /* ── 列印 ── */
 @media print {
   .top-bar, .sidebar { display: none !important; }
@@ -1001,80 +1008,90 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 </div>
 
-<!-- ══ 盲點補強：受理階段送出前強制確認 ══ -->
+<!-- ══ 模組一：STAGE 01 受理前確認清單（區塊化重構版） ══ -->
 <div class="form-page" id="f_stage01_confirm">
-<div class="doc">
-  <div class="doc-title">✅ 受理前確認清單（建案前必讀）</div>
-
-  <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;">
-    <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
-  </div>
-
-  <!-- 盲點2：跨校案件 (已修復為真實核取方塊) -->
-  <div class="section" style="margin-top:1rem;">
-    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 跨校案件確認（第20條）</div>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>雙方當事人均為本校在籍學生（非跨校案件）。</span>
-    </label>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;display:block;">
-          → 依第20條，以「先接獲檢舉之學校」調查；STAGE 06 防制委員會審議時，須通知行為人所屬學校派員列席。
-        </span>
-      </span>
-    </label>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;display:block;">
-          → 依第19條，應於知悉後<strong>3個工作日內</strong>移送調查學校，並產出案件移送函。
-        </span>
-      </span>
-    </label>
-  </div>
-
-  <!-- 盲點3：保全證據 -->
-  <div class="section" style="margin-top:1rem;">
-    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 初步保全證據確認（第23條）</div>
-    <div style="font-size:.82rem;color:#555;font-family:'Noto Sans TC',sans-serif;margin-bottom:.5rem;line-height:1.65;">
-      依第23條規定，學校知悉或接獲檢舉後，應先行保全或初步調查與事件有關之證據、資料。<br>
-      <strong style="color:#8b1a1a;">監視器錄影通常僅保存7至30天，須立即確認！</strong>
+  <div class="doc" style="max-width: 850px; background: transparent; border: none; padding: 0;">
+    <div class="doc-title" style="text-align: left; font-size: 1.2rem; margin-bottom: 1.5rem;">✅ 受理前確認清單（建案前必讀）</div>
+    
+    <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;margin-bottom:1.5rem;">
+      <strong>⚠️ 本區塊採「循序解鎖」防呆機制。請依序完成檢核，以確保法定程序 100% 完備。</strong>
     </div>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" id="cbEvidence1" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>已確認並保全與本案相關之<strong>監視器錄影</strong>（若有），已備份或申請留存。</span>
-    </label>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" id="cbEvidence2" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>已確認並保全與本案相關之<strong>數位通訊紀錄</strong>（如 LINE 截圖、FB 貼文等），已請當事人提供或截圖存檔。</span>
-    </label>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" id="cbEvidence3" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>已確認並保全與本案相關之<strong>實物證據</strong>（如毀損物品、醫療診斷書等），已拍照或妥善保存。</span>
-    </label>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" id="cbEvidenceNA" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>本案目前無可保全之相關證據，已記錄說明。</span>
-    </label>
-  </div>
 
-  <!-- 校安通報確認 (已修復為真實核取方塊) -->
-  <div class="section" style="margin-top:1rem;">
-    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
-    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
-      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。</span>
-    </label>
-  </div>
+    <!-- 區塊一：緊急義務區 -->
+    <div id="b1_emergency" class="ui-block active-block">
+      <div class="block-title"><span class="block-number">1</span> 🚨 緊急義務區（第17、23條）</div>
+      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">發生疑似霸凌事件，學校有立即通報與保全證據之義務。</div>
+      
+      <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.5rem 0;">
+        <input type="checkbox" id="b1_cb_report" class="b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;flex-shrink:0;">
+        <span><strong>已完成校安/社政通報（知悉後24小時內）。</strong><br>
+        <span style="font-size:.8rem;color:#888;">知悉日期：<input type="date" id="b1_aware_date" class="b1-trigger" style="padding:.1rem .3rem;border:1px solid #ccc;border-radius:3px;"> （此日期為計算24小時通報之基準）</span></span>
+      </label>
+      
+      <div style="border-top:1px dashed #ddd; margin: .8rem 0;"></div>
+      <div style="font-size:.85rem; font-weight:600;">初步保全證據（監視器錄影通常僅保存7-30天，須立即確認！）</div>
+      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全監視器錄影</span></label>
+      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全數位通訊紀錄 (LINE/FB)</span></label>
+      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全實物證據</span></label>
+      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>無可保全之證據，已記錄說明</span></label>
+    </div>
 
-  <div class="note-box" style="margin-top:1rem;">
-    <strong>完成後：</strong>請繼續至 3-5 審查小組會議紀錄，召開審查小組決議是否受理。
+    <!-- 區塊二：管轄權分流區 -->
+    <div id="b2_jurisdiction" class="ui-block locked-block">
+      <div class="block-title"><span class="block-number">2</span> 🏫 管轄權分流區（第19、20條）</div>
+      <div style="display:flex; flex-direction:column; gap:.6rem; margin-top:.8rem;">
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="full" class="b2-trigger" style="margin-top:3px;accent-color:#1a5c2e;">
+          <span><strong>本校具完全管轄權</strong><br><span style="font-size:.8rem;color:#666;">雙方當事人均為本校在籍學生。</span></span>
+        </label>
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="cross" class="b2-trigger" style="margin-top:3px;accent-color:#1a5c2e;">
+          <span><strong>本案為跨校案件（本校為先接獲檢舉之學校）</strong><br><span style="font-size:.8rem;color:#666;">依第20條，由本校調查；STAGE 06 審議時須通知他校派員列席。</span></span>
+        </label>
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="none" class="b2-trigger" style="margin-top:3px;accent-color:#c0392b;">
+          <span><strong style="color:#c0392b;">本案不具管轄權（行為人已非本校生）</strong><br><span style="font-size:.8rem;color:#666;">依第19條，應於知悉後 3 個工作日內移送。</span></span>
+        </label>
+      </div>
+      <div id="b2_transfer_btn" style="display:none; margin-top:1rem; padding:1rem; background:#fdf0f0; border-left:3px solid #c0392b;">
+        <div style="font-size:.85rem; font-weight:600; color:#c0392b; margin-bottom:.5rem;">⚠️ 系統已啟動 3 個工作日移送倒數</div>
+        <button class="btn btn-primary" style="background:#c0392b;" onclick="alert('將產出案件移送函 Word 檔 (擴充功能)')">📄 產出案件移送函</button>
+      </div>
+    </div>
+
+    <!-- 區塊三：法定成案開關 -->
+    <div id="b3_trigger" class="ui-block locked-block">
+      <div class="block-title"><span class="block-number">3</span> 📝 法定成案開關（第18條）</div>
+      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">請確認案件來源，此將作為 <strong style="color:var(--ink);">20 工作日審查期限</strong> 的起算基準（Day 0）。</div>
+      
+      <div style="display:flex; gap:1.5rem; margin-bottom:1rem;">
+        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="written" class="b3-trigger" style="accent-color:#1a5c2e;"> 接獲書面檢舉</label>
+        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="verbal" class="b3-trigger" style="accent-color:#1a5c2e;"> 言詞檢舉</label>
+        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="media" class="b3-trigger" style="accent-color:#1a5c2e;"> 視同檢舉(機關/媒體)</label>
+      </div>
+      
+      <div id="b3_verbal_btn" style="display:none; margin-bottom:1rem;">
+        <button class="btn btn-ghost" style="font-size:.8rem;" onclick="show('f33','3-3 檢舉書','受理')">🖨️ 列印 3-3 檢舉書供檢舉人簽名</button>
+      </div>
+
+      <div style="background:#f0faf4; padding:.8rem; border-radius:4px; display:inline-block;">
+        <span style="font-weight:600; color:#1a5c2e; font-size:.9rem;">接獲檢舉日期 * </span>
+        <input type="date" id="b3_receive_date" class="b3-trigger" style="padding:.2rem .4rem; border:1px solid #a8d5b5; border-radius:3px; margin-left:.5rem;">
+      </div>
+    </div>
+
+    <!-- 區塊四：進入審查 -->
+    <div id="b4_finish" class="ui-block locked-block">
+      <div class="block-title"><span class="block-number">4</span> 👥 銜接審查小組（進入 STAGE 02）</div>
+      <div style="font-size:.85rem; color:#666; margin-bottom:1rem;">
+        準備工作：請確認已備妥「3-1 簽請組成防制委員會及審查小組」與「3-2 委員名冊」。
+      </div>
+      <button class="btn btn-primary" style="background:var(--ok); font-size:1.05rem; padding:.6rem 2rem; width:100%; box-shadow:0 4px 12px rgba(26,92,46,.2);" onclick="show('f35','3-5 審查小組會議紀錄','受理')">
+        ✅ 條件齊備！點此進入 STAGE 02 填寫審查會議紀錄
+      </button>
+    </div>
   </div>
 </div>
-</div>
-
 <!-- ══ 4-1 調和或調查程序說明書 ══ -->
 <div class="form-page" id="f41">
 <div class="doc">
@@ -2479,6 +2496,18 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 </div><!-- /layout -->
 
+<!-- 系統專屬美化 Confirm 彈窗 (雙按鈕) -->
+<div class="modal-overlay" id="sysConfirmModal" style="z-index: 10000;">
+  <div class="modal-box" style="max-width: 450px;">
+    <div class="modal-head" style="background: var(--warn); color: #fff;" id="sysConfirmTitle">確認操作</div>
+    <div class="modal-body" style="padding: 2rem 1.5rem; font-size: .95rem; color: #333; line-height: 1.6;" id="sysConfirmMsg"></div>
+    <div class="modal-foot" style="background: #fff; border-top: 1px solid var(--paper); justify-content: flex-end; gap: 1rem;">
+      <button class="btn btn-ghost" onclick="resolveSysConfirm(false)">取消</button>
+      <button class="btn btn-primary" style="background: var(--warn);" onclick="resolveSysConfirm(true)">確認</button>
+    </div>
+  </div>
+</div>
+
 <script>
 
 // ── 專屬彈窗功能 ──
@@ -2704,6 +2733,94 @@ window.onload = function() {
   loadCaseFromUrl();
 };
 
+// ── 系統專屬 Confirm Promise 封裝 ──
+let confirmResolve = null;
+function customConfirm(msg, title = '確認操作') {
+  document.getElementById('sysConfirmTitle').textContent = title;
+  document.getElementById('sysConfirmMsg').innerHTML = msg;
+  document.getElementById('sysConfirmModal').style.display = 'flex';
+  return new Promise(resolve => { confirmResolve = resolve; });
+}
+function resolveSysConfirm(result) {
+  document.getElementById('sysConfirmModal').style.display = 'none';
+  if (confirmResolve) { confirmResolve(result); confirmResolve = null; }
+}
+
+// ── 模組一：STAGE 01 循序解鎖與狀態暫存邏輯 ──
+function initStage01Logic() {
+  const caseId = getUrlParam('case_id');
+  if (!caseId) return;
+
+  // 綁定監聽器
+  document.querySelectorAll('.b1-trigger').forEach(el => el.addEventListener('change', checkStage01));
+  document.querySelectorAll('.b2-trigger').forEach(el => el.addEventListener('change', checkStage01));
+  document.querySelectorAll('.b3-trigger').forEach(el => el.addEventListener('change', checkStage01));
+
+  // 讀取暫存
+  const savedState = JSON.parse(localStorage.getItem('stage01_' + caseId) || '{}');
+  if (savedState.b1_report) document.getElementById('b1_cb_report').checked = true;
+  if (savedState.b1_date) document.getElementById('b1_aware_date').value = savedState.b1_date;
+  if (savedState.b1_evidences) {
+    document.querySelectorAll('.b1-evidence').forEach((cb, i) => cb.checked = savedState.b1_evidences[i]);
+  }
+  if (savedState.b2_juris) document.querySelector(`input[name="b2_juris"][value="${savedState.b2_juris}"]`).checked = true;
+  if (savedState.b3_source) document.querySelector(`input[name="b3_source"][value="${savedState.b3_source}"]`).checked = true;
+  if (savedState.b3_date) document.getElementById('b3_receive_date').value = savedState.b3_date;
+
+  checkStage01(); // 初始檢查
+}
+
+function checkStage01() {
+  const caseId = getUrlParam('case_id');
+  if (!caseId) return;
+
+  // 狀態收集
+  const state = {
+    b1_report: document.getElementById('b1_cb_report').checked,
+    b1_date: document.getElementById('b1_aware_date').value,
+    b1_evidences: Array.from(document.querySelectorAll('.b1-evidence')).map(cb => cb.checked),
+    b2_juris: document.querySelector('input[name="b2_juris"]:checked')?.value,
+    b3_source: document.querySelector('input[name="b3_source"]:checked')?.value,
+    b3_date: document.getElementById('b3_receive_date').value
+  };
+  localStorage.setItem('stage01_' + caseId, JSON.stringify(state)); // 寫入暫存
+
+  // 判斷解鎖邏輯
+  const b1_pass = state.b1_report && state.b1_date && state.b1_evidences.some(v => v === true);
+  const b2 = document.getElementById('b2_jurisdiction');
+  b1_pass ? b2.classList.remove('locked-block') : b2.classList.add('locked-block');
+
+  const b3 = document.getElementById('b3_trigger');
+  const b4 = document.getElementById('b4_finish');
+  const transferBtn = document.getElementById('b2_transfer_btn');
+  const verbalBtn = document.getElementById('b3_verbal_btn');
+
+  // 無管轄權中斷邏輯
+  if (state.b2_juris === 'none') {
+    transferBtn.style.display = 'block';
+    b3.classList.add('locked-block'); b4.classList.add('locked-block');
+    return;
+  } else {
+    transferBtn.style.display = 'none';
+  }
+
+  const b2_pass = b1_pass && (state.b2_juris === 'full' || state.b2_juris === 'cross');
+  b2_pass ? b3.classList.remove('locked-block') : b3.classList.add('locked-block');
+
+  // 言詞檢舉列印按鈕
+  verbalBtn.style.display = state.b3_source === 'verbal' ? 'block' : 'none';
+
+  const b3_pass = b2_pass && state.b3_source && state.b3_date;
+  b3_pass ? b4.classList.remove('locked-block') : b4.classList.add('locked-block');
+}
+
+// 覆寫 window.onload 加入初始化
+const originalOnload = window.onload;
+window.onload = function() {
+  if (originalOnload) originalOnload();
+  initStage01Logic();
+};
+  
 </script>
 </body>
 </html>
