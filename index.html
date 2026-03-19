@@ -2689,16 +2689,16 @@ function toggleStage(id) {
   arrow.classList.toggle('open', !isOpen);
 }
 
-// 預設開啟受理階段、顯示「受理前確認清單」並執行初始鎖定檢查
 window.onload = function() {
-  // 修改預設開啟頁面：應改為 f_stage01_confirm (確認清單)，因為 3-1 目前被鎖住了
-  const first = document.querySelector('.nav-item');
-  if (first) {
-    show('f_stage01_confirm', '受理前確認清單（建案前必讀）', '受理', first);
-    first.classList.add('active');
+  // 預設開啟 3-1 簽請組成防制委員會
+  const firstNav = document.querySelector('.nav-item');
+  if (firstNav) {
+    // 這裡我們直接指定顯示 f31
+    show('f31', '3-1 簽請組成防制委員會', '受理', firstNav);
+    firstNav.classList.add('active');
   }
 
-  // 重要：啟動時先檢查一次狀態，確保 3-1 到 3-9 是鎖定的
+  // 執行初始鎖定檢查 (確保 3-4 以後是鎖定的)
   checkStage01Ready();
 
   // 從 URL 載入案件資訊
