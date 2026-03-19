@@ -1010,49 +1010,78 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <!-- ══ 模組一：STAGE 01 受理前確認清單（區塊化重構版） ══ -->
 <!-- 模組一：受理前確認清單 (帶循序解鎖) -->
+<!-- 🟢 修正：恢復原始美學結構 + 注入解鎖邏輯 -->
 <div class="form-page" id="f_stage01_confirm">
-  <div class="doc" style="max-width:850px; background:transparent; border:none; padding:0;">
-    <div class="doc-title" style="text-align:left; font-size:1.2rem; margin-bottom:1.5rem;">✅ 受理前確認清單（建案前必讀）</div>
+  <div class="doc" style="max-width: 850px; background: transparent; border: none; padding: 0;">
+    <div class="doc-title" style="text-align: left; font-size: 1.2rem; margin-bottom: 1.5rem;">✅ 受理前確認清單（建案前必讀）</div>
     
-    <div id="b1_emergency" class="ui-block active-block">
-      <div class="block-title"><span class="block-number">1</span> 🚨 緊急義務區</div>
-      <label class="ck-row" style="cursor:pointer;">
-        <input type="checkbox" id="b1_cb_report" class="b1-trigger"> 
-        <span><strong>已完成校安通報（知悉後24小時內）。</strong></span>
-      </label>
-      <div style="margin-left:1.5rem; margin-top:.5rem;">
-        知悉日期：<input type="date" id="b1_aware_date" class="b1-trigger">
-      </div>
-      <div style="margin-top:1rem; font-weight:600;">保全證據（必選）：</div>
-      <label class="ck-row"><input type="checkbox" class="b1-evidence b1-trigger"> 已保全監視器或數位紀錄</label>
+    <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;margin-bottom:1.5rem;">
+      <strong>⚠️ 本區塊採「循序解鎖」防呆機制。請依序完成檢核，以確保法定程序 100% 完備。</strong>
     </div>
 
+    <!-- 區塊 1 -->
+    <div id="b1_emergency" class="ui-block active-block">
+      <div class="block-title"><span class="block-number">1</span> 🚨 緊急義務區（第17、23條）</div>
+      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">發生疑似霸凌事件，學校有立即通報義務。</div>
+      
+      <label class="ck-row" style="cursor:pointer;">
+        <input type="checkbox" id="b1_cb_report" class="b1-trigger" style="width:16px;height:16px;">
+        <span><strong>已完成校安/社政通報（知悉後24小時內）。</strong></span>
+      </label>
+      <div style="margin-left:2rem; margin-top:.5rem;">
+        <span class="gm-label">知悉日期：</span>
+        <input type="date" id="b1_aware_date" class="b1-trigger" style="padding:4px; border:1px solid var(--line);">
+      </div>
+      
+      <div style="border-top:1px dashed #ddd; margin: 1rem 0;"></div>
+      <div style="font-size:.85rem; font-weight:600; margin-bottom:.5rem;">初步保全證據（必填）：</div>
+      <label class="ck-row" style="cursor:pointer;">
+        <input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;"> 
+        <span>已完成監視器錄影或數位通訊紀錄保全</span>
+      </label>
+    </div>
+
+    <!-- 區塊 2 -->
     <div id="b2_jurisdiction" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">2</span> 🏫 管轄權分流</div>
-      <div style="display:flex; flex-direction:column; gap:.6rem;">
-        <label><input type="radio" name="b2_juris" value="full" class="b2-trigger"> <strong>本校具完全管轄權</strong></label>
-        <label><input type="radio" name="b2_juris" value="cross" class="b2-trigger"> <strong>跨校案件（本校先接獲檢舉）</strong></label>
-        <label><input type="radio" name="b2_juris" value="none" class="b2-trigger"> <strong style="color:var(--warn);">不具管轄權（應於 3 日內移送）</strong></label>
+      <div class="block-title"><span class="block-number">2</span> 🏫 管轄權分流區（第19、20條）</div>
+      <div style="display:flex; flex-direction:column; gap:.8rem; margin-top:.8rem;">
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="full" class="b2-trigger">
+          <span><strong>本校具完全管轄權</strong> <small>(雙方均為本校生)</small></span>
+        </label>
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="cross" class="b2-trigger">
+          <span><strong>跨校案件</strong> <small>(由本校先行受理)</small></span>
+        </label>
+        <label style="display:flex; gap:.5rem; cursor:pointer;">
+          <input type="radio" name="b2_juris" value="none" class="b2-trigger">
+          <span style="color:var(--warn); font-weight:700;">本案不具管轄權（應於 3 工作日內移送）</span>
+        </label>
       </div>
       <div id="b2_transfer_btn" style="display:none; margin-top:1rem; padding:1rem; background:#fdf0f0; border-left:3px solid var(--warn);"></div>
     </div>
 
+    <!-- 區塊 3 -->
     <div id="b3_trigger" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">3</span> 📝 法定成案開關</div>
+      <div class="block-title"><span class="block-number">3</span> 📝 法定成案開關（第18條）</div>
+      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">請確認案件來源，此日期為 20 工作日審查之基準。</div>
       <div style="display:flex; gap:1.5rem; margin-bottom:1rem;">
         <label><input type="radio" name="b3_source" value="written" class="b3-trigger"> 書面檢舉</label>
         <label><input type="radio" name="b3_source" value="verbal" class="b3-trigger"> 言詞檢舉</label>
         <label><input type="radio" name="b3_source" value="media" class="b3-trigger"> 視同檢舉</label>
       </div>
-      <div style="background:#f0faf4; padding:.8rem; border-radius:4px;">
-        <strong>接獲檢舉日期 * </strong>
-        <input type="date" id="b3_receive_date" class="b3-trigger">
+      <div style="background:#f0faf4; padding:1rem; border-radius:4px; display:inline-block; border:1px solid #a8d5b5;">
+        <span style="font-weight:600; color:#1a5c2e;">接獲檢舉日期 * </span>
+        <input type="date" id="b3_receive_date" class="b3-trigger" style="padding:4px; border:1px solid #a8d5b5;">
       </div>
     </div>
 
+    <!-- 區塊 4 -->
     <div id="b4_finish" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">4</span> 🚀 進入審查階段</div>
-      <button class="btn btn-primary" style="width:100%; font-size:1.1rem;" onclick="autoAdvanceToStage02()">✅ 條件齊備！啟動 20 工作日時鐘並進入 STAGE 02</button>
+      <div class="block-title"><span class="block-number">4</span> 🚀 進入審查小組階段</div>
+      <button id="finalAdvanceBtn" class="btn btn-primary" style="width:100%; font-size:1.1rem; padding:12px;" onclick="autoAdvanceToStage02()" disabled>
+        ⏳ 請依序完成上方檢核項目...
+      </button>
     </div>
   </div>
 </div>
@@ -2473,70 +2502,95 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <script>
-// ── 1. 基礎彈窗與系統功能 ──
+// ── 1. 基礎載入 ──
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
+
 function customAlert(msg, title = '系統提示') {
   document.getElementById('sysAlertTitle').textContent = title;
   document.getElementById('sysAlertMsg').textContent = msg;
   document.getElementById('sysAlertModal').style.display = 'flex';
 }
-function closeSysAlert() {
-  document.getElementById('sysAlertModal').style.display = 'none';
+function closeSysAlert() { document.getElementById('sysAlertModal').style.display = 'none'; }
+
+// ── 2. 核心邏輯：循序解鎖判定 (修正點：增加觸發與判斷精準度) ──
+function initStage01Logic() {
+  const triggers = document.querySelectorAll('.b1-trigger, .b2-trigger, .b3-trigger');
+  triggers.forEach(el => el.addEventListener('change', checkStage01));
+  checkStage01();
 }
 
-// ── 2. 移送函一鍵複製功能 ──
-function copyTransferLetter() {
-  const caseId = getUrlParam('case_id') || '未編號';
-  const receiveDate = document.getElementById('b3_receive_date').value || '____年__月__日';
-  const awareDate = document.getElementById('b1_aware_date').value || '____年__月__日';
-  
-  const subject = `【移送函】關於本校受理編號 ${caseId} 之校園霸凌事件移送說明`;
-  const content = `主旨：關於本校於 ${receiveDate} 受理之校園霸凌事件（編號：${caseId}），經初步審查不具管轄權，特此移送貴校辦理。
+function checkStage01() {
+  // 區塊 1 檢查
+  const b1_report = document.getElementById('b1_cb_report').checked;
+  const b1_date = document.getElementById('b1_aware_date').value;
+  const b1_evidence = document.querySelector('.b1-evidence').checked;
+  const b1_pass = b1_report && b1_date && b1_evidence;
 
-說明：
-一、本案係本校於 ${awareDate} 知悉，並於 ${receiveDate} 接獲檢舉在案。
-二、經查行為人目前就讀於貴校，依「校園霸凌防制準則」第19條規定，本案應由行為人現所屬學校具管轄權，爰依法移送。
-三、隨函檢附原始檢舉資料與相關保全證據影本，請貴校依權責續辦。`;
+  const b2_sec = document.getElementById('b2_jurisdiction');
+  if (b1_pass) {
+    b2_sec.classList.remove('locked-block');
+    b2_sec.classList.add('active-block');
+  } else {
+    b2_sec.classList.add('locked-block');
+  }
 
-  const fullText = subject + "\n\n" + content;
-  
-  navigator.clipboard.writeText(fullText).then(() => {
-    customAlert('✅ 移送函內文已複製！\n請直接至公文系統按 Ctrl+V 貼上即可。', '🎉 複製成功');
-  });
+  // 區塊 2 檢查
+  const juris = document.querySelector('input[name="b2_juris"]:checked')?.value;
+  const b2_pass = b1_pass && (juris === 'full' || juris === 'cross');
+  const transferDiv = document.getElementById('b2_transfer_btn');
+  const b3_sec = document.getElementById('b3_trigger');
+
+  if (juris === 'none') {
+    transferDiv.style.display = 'block';
+    transferDiv.innerHTML = `<div style="color:var(--warn); font-weight:700; margin-bottom:8px;">⚠️ 本案不具管轄權</div><button class="btn" style="background:var(--warn); color:#fff;" onclick="copyTransferLetter()">📋 一鍵複製移送公文內文</button>`;
+    b3_sec.classList.add('locked-block');
+  } else {
+    transferDiv.style.display = 'none';
+    if (b2_pass) {
+      b3_sec.classList.remove('locked-block');
+      b3_sec.classList.add('active-block');
+    } else {
+      b3_sec.classList.add('locked-block');
+    }
+  }
+
+  // 區塊 3 檢查
+  const source = document.querySelector('input[name="b3_source"]:checked')?.value;
+  const receiveDate = document.getElementById('b3_receive_date').value;
+  const b3_pass = b2_pass && source && receiveDate;
+
+  const b4_sec = document.getElementById('b4_finish');
+  const finalBtn = document.getElementById('finalAdvanceBtn');
+
+  if (b3_pass) {
+    b4_sec.classList.remove('locked-block');
+    b4_sec.classList.add('active-block');
+    finalBtn.disabled = false;
+    finalBtn.innerHTML = '✅ 條件齊備！啟動 20 工作日時鐘並進入 STAGE 02';
+  } else {
+    b4_sec.classList.add('locked-block');
+    finalBtn.disabled = true;
+    finalBtn.innerHTML = '⏳ 請依序完成上方檢核項目...';
+  }
 }
 
-// ── 3. 推進 STAGE 02 與日期防呆 (確保紅燈消失、綠燈亮起) ──
+// ── 3. 推進功能 (修正點：後端里程碑文字對齊) ──
 async function autoAdvanceToStage02() {
   const caseId = getUrlParam('case_id');
-  if (!caseId) return;
+  const awareDate = document.getElementById('b1_aware_date').value;
+  const receiveDate = document.getElementById('b3_receive_date').value;
 
-  // 🛡️ A. 日期防呆檢查
-  const awareVal = document.getElementById('b1_aware_date').value;   // 知悉日
-  const receiveVal = document.getElementById('b3_receive_date').value; // 檢舉日
-
-  if (!awareVal || !receiveVal) {
-    customAlert('⚠️ 日期還沒填完喔！\n請填好「知悉日期」與「接獲檢舉日期」。', '操作提醒');
+  // 防呆
+  if (new Date(receiveDate) < new Date(awareDate)) {
+    customAlert('❌ 邏輯錯誤：受理日期不能早於知悉日期！', '日期錯誤');
     return;
   }
 
-  const dAware = new Date(awareVal);
-  const dReceive = new Date(receiveVal);
-
-  if (dReceive < dAware) {
-    customAlert('❌ 邏輯錯誤：【受理檢舉日期】不能早於【知悉日期】！', '日期錯誤');
-    return;
-  }
-
-  // 🚀 B. 執行推進
-  const btn = document.querySelector('#b4_finish button');
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ 系統處理中...請稍候';
-  btn.disabled = true;
+  const finalBtn = document.getElementById('finalAdvanceBtn');
+  finalBtn.innerHTML = '⏳ 系統寫入資料中，請稍候...';
+  finalBtn.disabled = true;
 
   try {
-    const currentToken = sessionStorage.getItem('bully_token');
-    const currentEmail = sessionStorage.getItem('bully_email');
-    
-    // 這裡的文字必須跟後端 Map 鑰匙完全一致
     const sourceMap = { 
       'written': '接獲檢舉—書面通報(第18條)', 
       'verbal': '接獲檢舉—書面通報(第18條)', 
@@ -2550,143 +2604,86 @@ async function autoAdvanceToStage02() {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         action: 'bully_advance_stage',
-        token: currentToken,
-        email: currentEmail,
+        token: sessionStorage.getItem('bully_token'),
+        email: sessionStorage.getItem('bully_email'),
         case_id: caseId,
-        from_stage: 'STAGE_01', // 🟢 觸發後端「斬草除根」邏輯
-        stage: 'STAGE_02',     
+        from_stage: 'STAGE_01', 
+        stage: 'STAGE_02',
         status: '進行中',
-        milestone: milestone,   // 🟢 傳送正確鑰匙給後端接棒 20 天時鐘
-        done_date: receiveVal   // 🟢 以檢舉日作為新時鐘起算點
+        milestone: milestone,
+        done_date: receiveDate
       })
     });
     
     const result = await res.json();
     if (!result.ok) throw new Error(result.error);
 
-    customAlert('✅ 推進成功！\n紅燈已清除，20 工作日時鐘已正式啟動。', '處理成功');
-    setTimeout(() => location.reload(), 1500); 
+    customAlert('✅ 推進成功！紅燈已清除，綠色 20 日時鐘已啟動。', '處理成功');
+    setTimeout(() => location.reload(), 1500);
 
   } catch (err) {
-    customAlert('❌ 推進失敗：' + err.message, '系統錯誤');
-    btn.innerHTML = originalText;
-    btn.disabled = false;
+    customAlert('❌ 失敗：' + err.message);
+    finalBtn.disabled = false;
+    finalBtn.innerHTML = '重試推進';
   }
 }
 
-// ── 4. 基礎載入與導覽邏輯 ──
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
-
-async function loadCaseFromUrl() {
-  const caseId = getUrlParam('case_id');
-  const email = getUrlParam('email');
-  if (!caseId || !email) return;
-
-  document.getElementById('backBtn').style.display = 'inline-block';
-
-  try {
-    const currentToken = sessionStorage.getItem('bully_token');
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'bully_load', email: email, token: currentToken, data: { case_id: caseId } })
-    });
-    const result = await res.json();
-    if (!result.ok) return;
-
-    const c = result.case;
-    const bar = document.getElementById('caseInfoBar');
-    bar.style.display = 'block';
-    bar.innerHTML = `📋 ${c.case_name}　🏫 ${c.school || ''}　📍 階段：${c.stage}`;
-    
-    if (c.stage === 'STAGE_01') initStage01Logic();
-
-  } catch(e) { console.warn('載入失敗', e); }
+// 移送函功能
+function copyTransferLetter() {
+  const caseId = getUrlParam('case_id') || '未編號';
+  const receiveDate = document.getElementById('b3_receive_date').value || '____年__月__日';
+  const subject = `【移送函】關於編號 ${caseId} 校園霸凌事件移送說明`;
+  const content = `主旨：關於本校於 ${receiveDate} 受理之校園霸凌事件（案號：${caseId}），經查不具管轄權，依法移送貴校辦理。`;
+  navigator.clipboard.writeText(subject + "\n\n" + content).then(() => customAlert('✅ 公文內文已複製！'));
 }
 
-function show(id, name, stage, el) {
-  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById(id);
-  if (page) page.classList.add('active');
-  if (el) el.classList.add('active');
-  document.getElementById('currentFormName').textContent = name;
-  document.getElementById('breadcrumb').innerHTML = `<span>${stage}階段</span> › ${name}`;
-  document.getElementById('mainContent').scrollTo(0, 0);
-}
-
-// ── 5. 循序解鎖邏輯 (STAGE 01) ──
-function initStage01Logic() {
-  document.querySelectorAll('.b1-trigger, .b2-trigger, .b3-trigger').forEach(el => {
-    el.addEventListener('change', checkStage01);
-  });
-  checkStage01();
-}
-
-function checkStage01() {
-  const b1_report = document.getElementById('b1_cb_report').checked;
-  const b1_date = document.getElementById('b1_aware_date').value;
-  const b1_evidences = Array.from(document.querySelectorAll('.b1-evidence')).some(cb => cb.checked);
-  
-  const b1_pass = b1_report && b1_date && b1_evidences;
-  const b2 = document.getElementById('b2_jurisdiction');
-  b1_pass ? b2.classList.remove('locked-block') : b2.classList.add('locked-block');
-
-  const juris = document.querySelector('input[name="b2_juris"]:checked')?.value;
-  const transferDiv = document.getElementById('b2_transfer_btn');
-  const b3 = document.getElementById('b3_trigger');
-  
-  if (juris === 'none') {
-    transferDiv.style.display = 'block';
-    transferDiv.innerHTML = `<div style="color:var(--warn); font-weight:600; font-size:.85rem; margin-bottom:.5rem;">⚠️ 本案不具管轄權，請複製移送函文字後進行發文：</div>
-                             <button class="print-btn" style="background:var(--warn); width:100%;" onclick="copyTransferLetter()">📋 一鍵複製移送函內文</button>`;
-    b3.classList.add('locked-block'); return;
-  } else {
-    transferDiv.style.display = 'none';
-  }
-
-  const b2_pass = b1_pass && (juris === 'full' || juris === 'cross');
-  b2_pass ? b3.classList.remove('locked-block') : b3.classList.add('locked-block');
-
-  const source = document.querySelector('input[name="b3_source"]:checked')?.value;
-  const receiveDate = document.getElementById('b3_receive_date').value;
-  const b4 = document.getElementById('b4_finish');
-
-  const b3_pass = b2_pass && source && receiveDate;
-  b3_pass ? b4.classList.remove('locked-block') : b4.classList.add('locked-block');
-}
-
-// ── 6. Word 下載與歸檔檢核 ──
+// 下載 Word 與其他輔助功能
 function downloadWord() {
   const activePage = document.querySelector('.form-page.active');
-  if (!activePage) { customAlert('請先選擇表單'); return; }
-  const formName = document.getElementById('currentFormName').textContent;
-  const docHtml = activePage.innerHTML;
-  const blob = new Blob([`<html><head><meta charset="UTF-8"></head><body>${docHtml}</body></html>`], { type: 'application/msword;charset=utf-8' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${formName}.doc`; a.click();
+  if (!activePage) return;
+  const blob = new Blob([`<html><head><meta charset="UTF-8"></head><body>${activePage.innerHTML}</body></html>`], { type: 'application/msword;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `表單.doc`; a.click();
 }
 
-function openArchiveModal() { document.getElementById('modal-archive').style.display = 'flex'; updateArchiveBtn(); }
-function closeArchiveModal() { document.getElementById('modal-archive').style.display = 'none'; }
-function updateArchiveBtn() {
-  const allChecked = ['arc1','arc2','arc3','arc4','arc5'].every(id => document.getElementById(id)?.checked);
-  const btn = document.getElementById('arc-confirm-btn');
-  btn.disabled = !allChecked; btn.style.opacity = allChecked ? '1' : '.45';
-}
-
-// ── 7. 輔助工具 ──
-function getUrlParam(name) { return new URLSearchParams(window.location.search).get(name); }
+function getUrlParam(n) { return new URLSearchParams(window.location.search).get(n); }
 function toggleStage(id) {
   document.getElementById(id).classList.toggle('open');
   document.getElementById('arr-' + id).classList.toggle('open');
 }
 function goBack() { window.location.href = './dashboard.html'; }
 
-window.onload = function() {
-  loadCaseFromUrl();
-  const firstNav = document.querySelector('.nav-item');
-  if (firstNav) firstNav.click();
-};
+// ── 4. 啟動入口 ──
+async function loadCaseFromUrl() {
+  const caseId = getUrlParam('case_id');
+  const email = getUrlParam('email');
+  if (!caseId || !email) return;
+  document.getElementById('backBtn').style.display = 'inline-block';
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'bully_load', email: email, token: sessionStorage.getItem('bully_token'), data: { case_id: caseId } })
+    });
+    const result = await res.json();
+    if (result.ok) {
+      const c = result.case;
+      document.getElementById('caseInfoBar').style.display = 'block';
+      document.getElementById('caseInfoBar').innerHTML = `📋 案號：${c.case_id}　👤 ${c.case_name}　📍 階段：${c.stage}`;
+      if (c.stage === 'STAGE_01') initStage01Logic();
+    }
+  } catch(e) { console.error(e); }
+}
+
+function show(id, name, stage, el) {
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('currentFormName').textContent = name;
+  document.getElementById('breadcrumb').innerHTML = `<span>${stage}階段</span> › ${name}`;
+}
+
+window.onload = function() { loadCaseFromUrl(); };
 </script>
   
 </body>
