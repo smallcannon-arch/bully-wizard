@@ -2846,7 +2846,7 @@ async function autoAdvanceToStage02() {
     const currentToken = sessionStorage.getItem('bully_token');
     const currentEmail = sessionStorage.getItem('bully_email');
     
-    // 3. 呼叫後端 API，正式把案件推入 STAGE 02
+// 3. 呼叫後端 API，正式把案件推入 STAGE 02
     const res = await fetch(GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
@@ -2855,7 +2855,9 @@ async function autoAdvanceToStage02() {
         token: currentToken,
         email: currentEmail,
         case_id: caseId,
-        status: '進行中', // 🟢 補上這行：讓狀態從「通報列管中」正式轉為「進行中」
+        from_stage: 'STAGE_01', // 🟢 關鍵修復：告訴後端我們是從哪來的，喚醒您的精準刪除迴圈！
+        stage: 'STAGE_02',      // 🟢 確保這行存在：告訴後端我們要去 STAGE_02 (讓右上角文字恢復)
+        status: '進行中',
         milestone: milestone,
         done_date: triggerDate
       })
