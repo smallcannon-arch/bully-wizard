@@ -2622,11 +2622,12 @@ async function loadCaseFromUrl() {
   document.getElementById('backBtn').style.display = 'inline-block';
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'bully_load', email, data: { case_id: caseId } })
-    });
+     const currentToken = sessionStorage.getItem('bully_token'); // 🔑 從記憶體拿出鑰匙
+     const res = await fetch(GAS_URL, {
+       method: 'POST',
+       headers: { 'Content-Type': 'text/plain' },
+       body: JSON.stringify({ action: 'bully_load', email: email, token: currentToken, data: { case_id: caseId } })
+     });
     const result = await res.json();
     if (!result.ok) return;
 
