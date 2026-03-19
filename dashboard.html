@@ -845,6 +845,7 @@ async function confirmAdvance() {
     if (nextStage === 'CLOSED') {
       const result = await callGAS('bully_advance_stage', {
         case_id: _advanceCaseId,
+        email: currentEmail,
         milestone: _advanceSelectedMilestone,
         done_date: doneDate,
         stage: _advanceCurrentStage,
@@ -862,6 +863,7 @@ async function confirmAdvance() {
 
     const result = await callGAS('bully_advance_stage', {
       case_id: _advanceCaseId,
+      email: currentEmail,
       milestone: _advanceSelectedMilestone,
       done_date: doneDate,
       stage: nextStage
