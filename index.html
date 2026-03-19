@@ -2855,7 +2855,7 @@ async function autoAdvanceToStage02() {
         token: currentToken,
         email: currentEmail,
         case_id: caseId,
-        stage: 'STAGE_02',
+        status: '進行中', // 🟢 補上這行：讓狀態從「通報列管中」正式轉為「進行中」
         milestone: milestone,
         done_date: triggerDate
       })
