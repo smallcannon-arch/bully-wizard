@@ -400,8 +400,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則，期滿得續聘。<br>
     二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組，審查小組任期與防制委員會委員相同。
   </div>
-</div>
-</div>
+
+  <!-- 💡 推進按鈕放在這裡 -->
+  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f32', '3-2 委員名冊')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 本表填寫完畢，前往下一步：3-2 委員名冊 →
+    </button>
+  </div>
+
+</div> <!--這裡是原本的 doc 結束 -->
+</div> <!--這裡是原本的 f31 結束 -->
 
 <!-- ══════════════════════════════
   3-2 防制委員會（含審查小組）名冊
@@ -453,6 +461,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div class="note-box">
     一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則。<br>
     二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組。
+  </div>
+  <!-- 💡 推進按鈕放在這裡 -->
+  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f33', '3-3 檢舉書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 本表填寫完畢，前往下一步：3-3 檢舉書 →
+    </button>
   </div>
 </div>
 </div>
@@ -570,6 +584,15 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       <td colspan="8" style="font-size:.8rem;">校安通報編號：<span style="display:inline-block;width:150px;border-bottom:1px solid #999;"></span>（通報後再行填寫）</td>
     </tr>
   </table>
+  <!-- 💡 3-3 的推進按鈕：導向確認清單 -->
+  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px; text-align: left; background: #fff9db; padding: 10px; border-radius: 4px;">
+      📌 <strong>行政提醒：</strong> 檢舉書收件後，請務必確認是否已於 24 小時內完成校安通報，並備妥相關證據保全紀錄。
+    </div>
+    <button onclick="goToNextStep('f_stage01_confirm', '事件受理前確認清單')" style="padding: 12px 24px; background: #c0392b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      🚀 檢舉書已收件，進入「事件受理前確認清單」 →
+    </button>
+  </div>
 </div>
 </div>
 
@@ -2783,6 +2806,28 @@ document.addEventListener('change', function(e) {
 });
 
 // nav-item active 狀態已由 show() 統一管理，無需額外 listener
+
+// ── 推進式導航函式：這是按鈕的「大腦」 ──
+function goToNextStep(targetId, targetTitle) {
+  // A. 呼叫原本系統的 show 函式來切換畫面
+  // 參數：(表單ID, 表單標題, 階段名稱)
+  show(targetId, targetTitle, '受理');
+  
+  // B. 讓畫面自動捲回最上方，老師才不用手動往上滑
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // C. 自動把左邊選單的「藍色高亮」移到新項目上
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    // 如果選單文字包含我們目標的標題（例如 "3-2"），就把它變亮
+    if (item.innerText.includes(targetTitle)) {
+      navItems.forEach(nav => nav.classList.remove('active'));
+      item.classList.add('active');
+    }
+  });
+
+  console.log("🚀 已導航至：" + targetTitle);
+}
 </script>
 </body>
 </html>
