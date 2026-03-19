@@ -365,7 +365,7 @@ function logout() {
 // ── API 呼叫
 async function callGAS(action, data = {}) {
   // 攤平 data 到頂層，讓 GAS 端直接用 params.xxx 讀取
-  const body = JSON.stringify({ action, email: currentEmail, ...data });
+  const body = JSON.stringify({ action, email: currentEmail, data: data, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' }, // GAS 需要 text/plain 避免 CORS preflight
