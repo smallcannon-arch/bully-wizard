@@ -209,28 +209,32 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
       </div>
       <div class="stage-items open" id="s1">
-  <!-- 第一組：例行準備與檢舉受理 -->
-  <div style="padding: 5px 15px; font-size: 0.75rem; color: #888; letter-spacing: 1px;">📋 例行準備工作</div>
-  <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
-  <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
-  <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
+        <!-- 第一組：例行準備工作 -->
+        <div style="padding:5px 15px;font-size:.75rem;color:#888;letter-spacing:1px;">📋 例行準備工作</div>
+        <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
+        <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
+        <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
 
-  <!-- 第二組：程序檢核 -->
-  <hr style="border: 0; border-top: 1px solid #333; margin: 10px 15px;">
-  <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')">
-    <span class="nav-num" style="color:#c0392b;">✓</span><strong>事件受理前確認清單</strong>
-  </div>
+        <!-- 第二組：程序檢核 -->
+        <hr style="border:0;border-top:1px solid #333;margin:10px 15px;">
+        <div class="nav-item" onclick="show('f_stage01_confirm','事件受理前確認清單','受理')">
+          <span class="nav-num" style="color:#c0392b;">✓</span><strong>事件受理前確認清單</strong>
+        </div>
 
-  <!-- 第三組：後續法定程序 (受清單鎖定) -->
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單</div>
-</div> </div> <div class="stage-group">
-      <div class="stage-head" style="background: #3a3a5c;" onclick="toggleStage('s4pre')">
-        📋 前置分流作業 <span class="stage-arrow" id="arr-s4pre">›</span>
+        <!-- 第三組：後續法定程序（受確認清單鎖定） -->
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
+        <div class="nav-item lock-target" style="opacity:.5;cursor:not-allowed;pointer-events:none;" onclick="show('f39','3-9 開會通知單（含簽到表）','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
+      </div>
+    </div>
+
+    <!-- 前置分流作業 -->
+    <div class="stage-group">
+      <div class="stage-head" style="background:#3a3a5c;" onclick="toggleStage('s4pre')">
+        📋 前置分流作業<span class="stage-arrow" id="arr-s4pre">›</span>
       </div>
       <div class="stage-items" id="s4pre">
         <div class="nav-item" onclick="show('f41','4-1 程序說明書','前置')"><span class="nav-num">4-1</span>程序說明書</div>
@@ -239,24 +243,38 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       </div>
     </div>
 
+    <!-- 調和階段 -->
     <div class="stage-group">
       <div class="stage-head s-mediate" onclick="toggleStage('s4a')">
-        🤝 調和階段 (4-x) <span class="stage-arrow" id="arr-s4a">›</span>
+        🤝 調和階段（4-x）<span class="stage-arrow" id="arr-s4a">›</span>
       </div>
       <div class="stage-items" id="s4a">
         <div class="nav-item" onclick="show('f44','4-4 調和會議紀錄','調和')"><span class="nav-num">4-4</span>調和會議紀錄</div>
         <div class="nav-item" onclick="show('f45','4-5 調和協議書','調和')"><span class="nav-num">4-5</span>調和協議書</div>
         <div class="nav-item" onclick="show('f46','4-6 保證書','調和')"><span class="nav-num">4-6</span>保證書</div>
+        <div class="nav-item" onclick="show('f47','4-7 調和報告（空白）','調和')"><span class="nav-num">4-7</span>調和報告（空白）</div>
+        <div style="padding:5px 15px;font-size:.72rem;color:#888;">📖 參考寫法</div>
+        <div class="nav-item" onclick="show('f48a','4-8 參考寫法1','調和')"><span class="nav-num">4-8a</span>寫法1（多行為人）</div>
+        <div class="nav-item" onclick="show('f48b','4-8 參考寫法2','調和')"><span class="nav-num">4-8b</span>寫法2（具體建議）</div>
+        <div class="nav-item" onclick="show('f48c','4-8 參考寫法3','調和')"><span class="nav-num">4-8c</span>寫法3（網路言行）</div>
       </div>
     </div>
 
+    <!-- 調查階段 -->
     <div class="stage-group">
       <div class="stage-head s-investigate" onclick="toggleStage('s5')">
-        🔍 調查階段 (5-x) <span class="stage-arrow" id="arr-s5">›</span>
+        🔍 調查階段（5-x）<span class="stage-arrow" id="arr-s5">›</span>
       </div>
       <div class="stage-items" id="s5">
         <div class="nav-item" onclick="show('f51','5-1 訪談通知單','調查')"><span class="nav-num">5-1</span>訪談通知單</div>
         <div class="nav-item" onclick="show('f52','5-2 延長通知函','調查')"><span class="nav-num">5-2</span>延長通知函</div>
+        <div class="nav-item" onclick="show('f53','5-3 訪談大綱','調查')"><span class="nav-num">5-3</span>訪談大綱</div>
+        <div class="nav-item" onclick="show('f54','5-4 調查報告（空白）','調查')"><span class="nav-num">5-4</span>調查報告（空白）</div>
+        <div style="padding:5px 15px;font-size:.72rem;color:#888;">📖 參考寫法</div>
+        <div class="nav-item" onclick="show('f55a','5-5 寫法1','調查')"><span class="nav-num">5-5a</span>寫法1（肢體語言・高中）</div>
+        <div class="nav-item" onclick="show('f55b','5-5 寫法2','調查')"><span class="nav-num">5-5b</span>寫法2（網路・多行為人）</div>
+        <div class="nav-item" onclick="show('f56a','5-6 寫法1','調查')"><span class="nav-num">5-6a</span>寫法1（第71條・高中）</div>
+        <div class="nav-item" onclick="show('f56b','5-6 寫法2','調查')"><span class="nav-num">5-6b</span>寫法2（第71條・國小）</div>
       </div>
     </div>
 
@@ -274,7 +292,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       </div>
     </div>
 
-  </nav>
+</nav>
 
   <!-- 主內容 -->
   <main class="main-content" id="mainContent">
@@ -285,27 +303,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f31">
 <div class="doc">
-  <!-- ══════════════════════════════
-     行政引導：3-1 範本說明區
-     ══════════════════════════════ -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">ℹ️</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁內容僅供「行政內容預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        下方的簽請單與名冊為標準範例。為了確保公文排版正確（不跑版），系統<span style="color: #c0392b; font-weight: bold;">不開放</span>在網頁直接編輯。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        請點擊頁面右上方藍色按鈕 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，取得正式檔案後再進行編修。
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 原本的公文內容開始 -->
-<div class="doc-title">簽　請　單</div>
+  <div class="doc-title">簽　請　單</div>
   <table class="form-table" style="margin-bottom:1rem;">
     <tr>
       <td class="cell-label">簽於</td>
@@ -413,38 +411,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則，期滿得續聘。<br>
     二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組，審查小組任期與防制委員會委員相同。
   </div>
-
-  <!-- 💡 推進按鈕放在這裡 -->
-  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f32', '3-2 委員名冊')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 本步驟已完成，前往下一步：3-2 委員名冊 →
-    </button>
-  </div>
-
-</div> <!--這裡是原本的 doc 結束 -->
-</div> <!--這裡是原本的 f31 結束 -->
+</div>
+</div>
 
 <!-- ══════════════════════════════
   3-2 防制委員會（含審查小組）名冊
 ══════════════════════════════ -->
 <div class="form-page" id="f32">
 <div class="doc">
-  <!-- 3-2 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">📋</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「名冊格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        此名冊需由校長指派審查小組成員。請下載 Word 檔後，依據 3-1 簽核結果填入正式委員名單。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        確認格式無誤後，請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 進行編輯。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">（學校全銜）<br>校園霸凌防制委員會名冊</div>
   <table class="form-table">
     <tr>
@@ -491,12 +465,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     一、依防制準則第7條，高級中等以下學校應組成防制委員會5人至11人，任期一年為原則。<br>
     二、依防制準則第24條，學校校長應在防制委員會委員中指派三人組成審查小組。
   </div>
-  <!-- 💡 推進按鈕放在這裡 -->
-  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f33', '3-3 檢舉書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 本步驟已完成，前往下一步：3-3 檢舉書 →
-    </button>
-  </div>
 </div>
 </div>
 
@@ -505,22 +473,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f33">
 <div class="doc">
-  <!-- 3-3 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">✍️</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「檢舉書格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        接獲檢舉後，請參考此標準格式收件。若檢舉人口頭敘明，請承辦人協助記錄於 Word 檔並請其簽名。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 使用空白表單。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="sign-row" style="justify-content:flex-end; margin-bottom:.5rem; font-size:.82rem;">
     <span>承辦人：<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span></span>
     <span style="margin-left:2rem;">主管：<span style="display:inline-block;width:60px;border-bottom:1px solid #999;"></span></span>
@@ -629,15 +581,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       <td colspan="8" style="font-size:.8rem;">校安通報編號：<span style="display:inline-block;width:150px;border-bottom:1px solid #999;"></span>（通報後再行填寫）</td>
     </tr>
   </table>
-  <!-- 💡 3-3 的推進按鈕：導向確認清單 -->
-  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px; text-align: left; background: #fff9db; padding: 10px; border-radius: 4px;">
-      📌 <strong>行政提醒：</strong> 檢舉書收件後，請務必確認是否已於 24 小時內完成校安通報，並備妥相關證據保全紀錄。
-    </div>
-    <button onclick="goToNextStep('f_stage01_confirm', '事件受理前確認清單')" style="padding: 12px 24px; background: #c0392b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      🚀 檢舉書已收件，進入「事件受理前確認清單」 →
-    </button>
-  </div>
 </div>
 </div>
 
@@ -722,22 +665,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f35">
 <div class="doc">
-  <!-- 3-5 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">⚖️</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「會議紀錄格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        審查小組應於接獲檢舉後 <span style="color:#c0392b; font-weight:bold;">5 個工作日內</span> 召開會議。請依會議結果產出正式紀錄。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        會議結束後，請下載右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 完成紀錄簽核。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">（學校全銜）<br>校園霸凌審查小組會議紀錄</div>
   <table class="form-table" style="margin-bottom:1rem;">
     <tr>
@@ -800,22 +727,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <div class="form-page" id="f36">
 <!-- 受理版 -->
 <div class="doc">
-  <!-- 3-6 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">✉️</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「通知函格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        依規定應於接獲檢舉後 <span style="color:#c0392b; font-weight:bold;">20 日內</span> 以書面通知申請人或檢舉人是否受理。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        請下載 Word 檔並依審查小組決議（受理/不受理）修改內容後，掛文號正式發出。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">受理通知函</div>
   <div style="font-size:.78rem;color:#888;text-align:right;margin-bottom:.5rem;font-family:'Noto Sans TC',sans-serif;">
     檔號：<span class="input-line" style="width:80px;display:inline-block;"></span>　保存年限：<span class="input-line" style="width:60px;display:inline-block;"></span>　<span class="classified-badge">密件</span>
@@ -882,22 +793,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f37">
 <div class="doc">
-  <!-- 3-7 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">📝</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「陳情書範例預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        若申請人對「不受理」結果不服，可於收到通知次日起 <span style="color:#c0392b; font-weight:bold;">20 日內</span> 向學校提出申復（陳情）。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        此為提供給家長的參考格式，學校可預先下載備份，於家長有需求時提供。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">陳　情　書</div>
   <div style="text-align:right;font-size:.82rem;margin-bottom:.5rem;">受理人員簽章：<span style="display:inline-block;width:80px;border-bottom:1px solid #999;"></span></div>
   <table class="form-table">
@@ -967,22 +862,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f38">
 <div class="doc">
-  <!-- 3-8 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">📅</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「送達證書格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        所有正式通知函件皆建議檢附送達證書，以確認當事人收受日期，作為 <span style="color:#c0392b; font-weight:bold;">時效計算基準</span>。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        請下載 Word 檔，於親自送達或掛號郵寄時併同使用。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">（ＯＯＯ通知）送達證書</div>
   <div style="font-size:.78rem;text-align:right;margin-bottom:.5rem;font-family:'Noto Sans TC',sans-serif;">
     ※請繳回（ＯＯ學校）（送達地址：<span class="input-line" style="width:150px;display:inline-block;"></span>）
@@ -1064,22 +943,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 ══════════════════════════════ -->
 <div class="form-page" id="f39">
 <div class="doc">
-  <!-- 3-9 專用引導區塊 -->
-<div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-  <div style="display: flex; align-items: flex-start; gap: 12px;">
-    <span style="font-size: 1.5rem;">📢</span>
-    <div>
-      <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「開會通知單格式預覽」</strong>
-      <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        案件受理後，應組成處理小組（三或五人）。此通知單用於邀集小組委員召開第一次調查會議。
-      </p>
-      <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-        <strong style="color: #c0392b;">👉 操作指引：</strong> 
-        請下載 Word 檔修改會議時間、地點後發出。記得包含下方的簽到表。
-      </div>
-    </div>
-  </div>
-</div>
   <div class="doc-title">開　會　通　知　單</div>
   <table class="form-table" style="margin-bottom:1rem;">
     <tr>
@@ -1159,29 +1022,36 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
   </div>
 
- <!-- 盲點2：跨校案件 (已強化互動功能) -->
-<div class="section" style="margin-top:1rem;">
-  <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 案件管轄權確認（第19、20條）</div>
-  
-  <div class="ck-row">
-    <input type="radio" name="jurisdiction" id="jur_local" value="local" style="width:16px;height:16px;accent-color:#1a1a2e;">
-    <label for="jur_local">雙方當事人均為本校在籍學生（非跨校案件）。</label>
+  <!-- 盲點2：跨校案件 (radio button 互斥三選一) -->
+  <div class="section" style="margin-top:1rem;">
+    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 案件管轄權確認（第19、20條）</div>
+    <div class="ck-row">
+      <input type="radio" name="jurisdiction" id="jur_local" value="local"
+             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             onchange="checkStage01Ready()">
+      <label for="jur_local">雙方當事人均為本校在籍學生（非跨校案件）。</label>
+    </div>
+    <div class="ck-row">
+      <input type="radio" name="jurisdiction" id="jur_cross" value="cross"
+             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             onchange="checkStage01Ready()">
+      <label for="jur_cross">本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:1.5rem;">
+          → 依第20條，以「先接獲檢舉之學校」調查；STAGE 06 防制委員會審議時，須通知行為人所屬學校派員列席。
+        </span>
+      </label>
+    </div>
+    <div class="ck-row">
+      <input type="radio" name="jurisdiction" id="jur_none" value="none"
+             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             onchange="checkStage01Ready()">
+      <label for="jur_none">本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:1.5rem;">
+          → 依第19條，應於知悉後<strong>3個工作日內</strong>移送調查學校，並產出案件移送函。
+        </span>
+      </label>
+    </div>
   </div>
-  
-  <div class="ck-row">
-    <input type="radio" name="jurisdiction" id="jur_cross" value="cross" style="width:16px;height:16px;accent-color:#1a1a2e;">
-    <label for="jur_cross">本案為<strong>跨校案件</strong>（行為人非本校生）。
-      <br><span style="font-size:.82rem;color:#666;margin-left:1.5rem;">→ 依第20條，由先接獲檢舉學校調查。</span>
-    </label>
-  </div>
-  
-  <div class="ck-row">
-    <input type="radio" name="jurisdiction" id="jur_none" value="none" style="width:16px;height:16px;accent-color:#1a1a2e;">
-    <label for="jur_none">本案<strong>不具管轄權</strong>（如當事人已非本校生）。
-      <br><span style="font-size:.82rem;color:#666;margin-left:1.5rem;">→ 依第19條，應於3工作日內移送調查學校。</span>
-    </label>
-  </div>
-</div>
 
   <!-- 盲點3：保全證據 -->
   <div class="section" style="margin-top:1rem;">
@@ -1208,31 +1078,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     </div>
   </div>
 
-  <!-- 校安通報確認（強化時間紀錄與防呆） -->
-<div class="section" style="margin-top:1rem;">
-  <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
-  
-  <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;">
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: 0.85rem;">
-      <div>
-        <label style="display:block; color:#666; margin-bottom:2px;">🕒 學校知悉時間：</label>
-        <input type="datetime-local" id="time_known" onchange="checkStage01Ready()" style="padding:4px; border:1px solid #ccc; border-radius:4px;">
-      </div>
-      <div>
-        <label style="display:block; color:#666; margin-bottom:2px;">🚀 完成通報時間：</label>
-        <input type="datetime-local" id="time_reported" onchange="checkStage01Ready()" style="padding:4px; border:1px solid #ccc; border-radius:4px;">
-      </div>
-      <div id="time_status_msg" style="font-weight: bold; margin-top: 15px;"></div>
+  <!-- 校安通報確認 -->
+  <div class="section" style="margin-top:1rem;">
+    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
+    <div class="ck-row">
+      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。<br>
+        <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
+      </span>
     </div>
   </div>
-
-  <div class="ck-row">
-    <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-    <span>已完成校安通報（含通報主管機關與社政機關）。<br>
-      <span style="font-size:.8rem;color:#666;">校安通報編號：<input type="text" id="report_no" placeholder="請輸入編號" style="border:none; border-bottom:1px solid #999; width:120px; background:transparent; outline:none;"></span>
-    </span>
-  </div>
-</div>
 
   <div class="note-box" style="margin-top:1rem;">
     <strong>完成後：</strong>請繼續至 3-5 審查小組會議紀錄，召開審查小組決議是否受理。
@@ -1240,38 +1095,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 </div>
 
-</div>
-</div>
-
-<!-- ══════════════════════════════
-     4-1 調和或調查程序說明書
-     ══════════════════════════════ -->
-<div class="form-page" id="f41" style="display:none;">
+<!-- ══ 4-1 調和或調查程序說明書 ══ -->
+<div class="form-page" id="f41">
 <div class="doc">
-
-  <!-- 💡 4-1 專用引導區塊 -->
-  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <span style="font-size: 1.5rem;">📖</span>
-      <div>
-        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「程序說明書預覽」</strong>
-        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-          在進行調查或調和會議前，應向當事人雙方說明程序。這份說明書建議於個別會談時發放。
-        </p>
-        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-          <strong style="color: #c0392b;">👉 操作指引：</strong> 
-          確認內容後，請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 列印提供給家長。
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="doc-title">調和或調查程序說明書</div>
 
   <div class="section">
     <div class="section-title">壹、目的：</div>
     <p class="item">為協助學生處理人際關係，以培養其責任感及自尊尊人之處事態度，減輕雙方不當行為造成之創傷與衝突、促進和解及修復關係，並維護學生身心健康、促進全人發展，完善班級經營，建構友善校園。</p>
   </div>
+
   <div class="section">
     <div class="section-title">貳、說明：</div>
 
@@ -1301,35 +1134,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div class="note-box">
     <strong>注意：</strong>本說明書應於會前個別會談時提供予雙方當事人及其法定代理人或實際照顧者，並完成說明後留存。
   </div>
-  <!-- 💡 4-1 的推進按鈕：導向 4-2 調和或調查意願書 -->
-  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f42', '4-2 調和或調查意願書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 說明完畢，前往下一步：4-2 意願書 →
-    </button>
-  </div>
 </div>
 </div>
 
 <!-- ══ 4-2 調和意願書（行為人＋被行為人各一份） ══ -->
-<div class="form-page" id="f42" style="display:none;">
+<div class="form-page" id="f42">
 <div class="doc">
-
-  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <span style="font-size: 1.5rem;">🤝</span>
-      <div>
-        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「意願書格式預覽」</strong>
-        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-          調和程序必須在<span style="color:#c0392b; font-weight:bold;">雙方皆同意</span>的前提下才能進行。若任一方不同意，則應立即轉入「調查程序」。
-        </p>
-        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-          <strong style="color: #c0392b;">👉 操作指引：</strong> 
-          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，列印後交由雙方學生及家長簽署。
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="doc-title">（行為人）調和意願書</div>
   <p style="margin-bottom:1rem;line-height:1.9;">為協助學生處理人際關係，避免造成雙方的創傷與衝突、促進和解及修復關係，並維護學生身心健康。經由本校處理小組委員與您會談後，您也大致瞭解調和程序的目的及用意，若您願意進行調和程序，請勾選。</p>
 
@@ -1367,14 +1177,8 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <tr><td class="cell-label">聯絡電話</td><td><span class="iblock"></span></td></tr>
   </table>
   <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-
-  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f43', '4-3 個別訪談紀錄')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 意願確認完畢，前往：4-3 個別訪談紀錄 →
-    </button>
-  </div>
-
-</div> </div> ```
+</div>
+</div>
 
 <!-- ══ 4-3 調和或調查會議前之個別會談會議紀錄 ══ -->
 <div class="form-page" id="f43">
@@ -1442,38 +1246,12 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <!-- ══ 4-4 調和會議紀錄 ══ -->
-<div class="form-page" id="f44" style="display:none;">
+<div class="form-page" id="f44">
 <div class="doc">
-
-  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <span style="font-size: 1.5rem;">⚖️</span>
-      <div>
-        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和會議紀錄格式預覽」</strong>
-        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-          調和期限為 <span style="color:#c0392b; font-weight:bold;">1 個月</span>。若調和成立，請產出調和報告送防制委員會；若不成立或有停止事由，則應立即轉入「調查程序」。
-        </p>
-        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-          <strong style="color: #c0392b;">👉 操作指引：</strong> 
-          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，於會議現場記錄使用。
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="doc-title">調和會議紀錄</div>
-  
   <table class="form-table" style="margin-bottom:1rem;">
-    <tr>
-      <td class="cell-label" style="width:15%;">一、日期</td>
-      <td style="width:35%;"><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td>
-      <td class="cell-label" style="width:15%;">二、地點</td>
-      <td style="width:35%;"><span class="iblock"></span></td>
-    </tr>
-    <tr>
-      <td class="cell-label">三、委員</td>
-      <td colspan="3"><span class="iblock"></span></td>
-    </tr>
+    <tr><td class="cell-label">一、日期</td><td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td><td class="cell-label">地點</td><td><span class="iblock"></span></td></tr>
+    <tr><td class="cell-label">處理小組委員</td><td colspan="3"><span class="iblock"></span></td></tr>
   </table>
 
   <div class="section">
@@ -1518,148 +1296,73 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 
   <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-
-  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f45', '4-5 調和報告(範例)')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 會議記錄完畢，前往：4-5 調和報告 →
-    </button>
-  </div>
-
-</div> 
+</div>
 </div>
 
 <!-- ══ 4-5 調和協議書 ══ -->
-<div class="form-page" id="f45" style="display:none;">
+<div class="form-page" id="f45">
 <div class="doc">
-
-  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <span style="font-size: 1.5rem;">🤝</span>
-      <div>
-        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和協議書格式預覽」</strong>
-        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-          協議內容應明確具體（如：何時道歉、如何約束行為）。若調和成立，請將此協議書作為附件，送至「防制委員會」進行審議。
-        </p>
-        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-          <strong style="color: #c0392b;">👉 操作指引：</strong> 
-          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，正式簽署後掃描留存。
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="doc-title">調和協議書</div>
   <p style="margin-bottom:.75rem;">本案經調和成立，協議內容如下：</p>
-  
-  <div style="border: 1px solid #000; min-height: 150px; padding: .75rem; margin-bottom: 1.2rem; font-size: .95rem; line-height: 1.8;">
-    <p style="color:#aaa;">（請填寫協議內容，如：道歉方式、後續行為約束、賠償事項等）</p>
+  <div style="border: 1px solid var(--line); min-height: 150px; padding: .75rem; margin-bottom: 1.2rem; font-size: .9rem;">
+    <p style="color:#aaa;font-size:.78rem;font-family:'Noto Sans TC',sans-serif;">（請填寫協議內容，如：道歉方式、後續行為約束、賠償事項等）</p>
   </div>
 
-  <div class="section-title" style="margin-bottom:.6rem; font-weight: bold;">雙方簽名</div>
+  <div class="section-title" style="margin-bottom:.6rem;">雙方簽名</div>
   <table class="form-table">
     <tr>
-      <td class="cell-label" style="width:25%;">當事人（一）</td>
+      <td class="cell-label">當事人（一）</td>
       <td><span class="iblock" style="min-height:2rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人<br>或實際照顧者</td>
-      <td>
-        <span class="iblock"></span>
-        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
-      </td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
     </tr>
     <tr>
       <td class="cell-label">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
-    <tr><td colspan="2" style="background:#f9f9f9; height:10px;"></td></tr>
     <tr>
       <td class="cell-label">當事人（二）</td>
       <td><span class="iblock" style="min-height:2rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人<br>或實際照顧者</td>
-      <td>
-        <span class="iblock"></span>
-        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
-      </td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
     </tr>
     <tr>
       <td class="cell-label">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
   </table>
-
-  <div class="date-row" style="margin-top: 20px;">
-    中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日
-  </div>
-
-  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f46', '4-6 調和協議保證書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 協議達成，簽署調和協議保證書：4-6 調和協議保證書 →
-    </button>
-  </div>
-
-</div> 
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
 </div>
 
 <!-- ══ 4-6 調和協議保證書 ══ -->
-<div class="form-page" id="f46" style="display:none;">
+<div class="form-page" id="f46">
 <div class="doc">
-
-  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-    <div style="display: flex; align-items: flex-start; gap: 12px;">
-      <span style="font-size: 1.5rem;">✍️</span>
-      <div>
-        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和協議保證書預覽」</strong>
-        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-          本保證書主要由<span style="color:#c0392b; font-weight:bold;">行為人</span>簽署，作為誠意致歉與不再犯之正式憑證。建議於調和會議現場完成簽署。
-        </p>
-        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
-          <strong style="color: #c0392b;">👉 操作指引：</strong> 
-          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 供現場簽署使用。
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="doc-title">調和協議保證書</div>
-  
-  <p style="line-height:2.5; margin-bottom:1.5rem; font-size: 1.1rem;">
-    本人 <span class="iline" style="min-width:100px;"></span> 日前因個人行為對被行為人 <span class="iline" style="min-width:100px;"></span> 誠摯的表達歉意，同時保證不再犯，並立下保證書作為證明。
+  <p style="line-height:2; margin-bottom:1.5rem;">
+    本人　<span class="iline" style="min-width:60px;"></span>　日前因個人行為對被行為人　<span class="iline" style="min-width:60px;"></span>　誠摯的表達歉意，同時保證不再犯，並立下保證書作為證明。
   </p>
-  
-  <p style="margin-bottom:2rem; font-weight: bold;">此致</p>
-  
+  <p style="margin-bottom:2rem;">此致</p>
   <table class="form-table">
     <tr>
-      <td class="cell-label" style="width:25%;">立書人簽名</td>
-      <td><span class="iblock" style="min-height:3rem;"></span></td>
+      <td class="cell-label">立書人簽名</td>
+      <td><span class="iblock" style="min-height:2.5rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人</td>
-      <td>
-        <span class="iblock"></span>
-        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
-      </td>
+      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
     </tr>
     <tr>
-      <td class="cell-label" style="height:3rem;">與當事人關係</td>
+      <td class="cell-label">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
   </table>
-
-  <div class="date-row" style="margin-top: 30px;">
-    中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日
-  </div>
-
-  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
-    <button onclick="goToNextStep('f51', '5-1 防制委員會議通知單')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-      ✅ 文件簽署完備，進入審議階段：5-1 會議通知 →
-    </button>
-  </div>
-
-</div> 
+  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
+</div>
 </div>
 
 <!-- ══ 4-7 調和報告（空白版） ══ -->
@@ -1921,94 +1624,115 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 </div>
 
-<!-- ══ 5-1 調查訪談通知單（含電話記錄單） ══ -->
-<div class="form-page" id="f51" style="display:none;">
-  <div class="doc">
-    <!-- 💡 主任導引區塊 -->
-    <div style="background: #fff5f5; border-left: 6px solid #c0392b; padding: 15px; margin-bottom: 20px;">
-      <div style="display: flex; align-items: flex-start; gap: 12px;">
-        <span style="font-size: 1.5rem;">🔍</span>
-        <div>
-          <strong style="color: #c0392b; font-size: 1.05rem;">調查程序：訪談通知作業</strong>
-          <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-            1. **當事人及檢舉人**：必須書面通知（含回執聯）。<br>
-            2. **一般相關人/證人**：可使用下方的「電話通知記錄單」。<br>
-            <span style="color: #c0392b; font-weight: bold;">⚠️ 提醒：</span>若當事人無正當理由拒絕配合，處理小組得不待其陳述，逕行作成調查報告。
-          </p>
-        </div>
-      </div>
-    </div>
+<!-- ══ 5-1 學生調查訪談通知單（含電話通知記錄單） ══ -->
+<div class="form-page" id="f51">
+<div class="doc">
+  <div class="doc-title">（學校全銜）<br>校園事件調查訪談通知單</div>
 
-    <div class="doc-title">（學校全銜）<br>校園事件調查訪談通知單</div>
-
-    <div class="law-banner" style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; font-size: 0.9rem; margin-bottom: 15px;">
-      <strong>⚠️ 法定必要記載：</strong>通知應以書面為之，並記載「調查目的、時間、地點及不到場所生之效果」。
-    </div>
-
-    <div class="section">
-      <div class="ck-row">一、調查訪談事由：</div>
-      <div class="item"><span class="iblock" style="min-height: 25px;"></span></div>
-      <div class="ck-row" style="margin-top:.6rem;">二、受訪人員：<span class="iline iline-lg"></span></div>
-      <div class="ck-row" style="margin-top:.4rem;">三、調查訪談時間：民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</div>
-      <div class="ck-row" style="margin-top:.4rem;">四、地點：<span class="iline iline-lg"></span></div>
-      <div class="ck-row" style="margin-top:.4rem;">五、聯絡人：<span class="iline"></span>　電話：<span class="iline iline-lg"></span></div>
-    </div>
-
-    <div class="section" style="margin-top:1.5rem;">
-      <div class="section-title">六、相關法規告知：</div>
-      <div class="item" style="font-size:.85rem; line-height:1.7; color: #555;">
-        1. 學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。<br>
-        2. 當事人為未成年者，得由法定代理人、實際照顧者陪同。<br>
-        3. 行為人應親自出席受訪。<br>
-        <strong>4. 不到場效果：</strong>無正當理由拒絕配合調查者，處理小組得不待其陳述，逕行作成調查報告。
-      </div>
-    </div>
+  <div class="law-banner">
+    <strong>⚠️ 法定必要記載（第39條第1項第3款）：</strong>通知應以書面為之，並記載「調查目的、時間、地點及不到場所生之效果」。<br>
+    <strong>不到場效果（第41條）：</strong>當事人無正當理由拒絕配合，經限期通知仍未配合，處理小組得不待其陳述，逕行作成調查報告。
   </div>
 
-  <!-- 回執聯 -->
-  <div class="doc" style="border-top: 3px dashed #999; margin-top: 20px; padding-top: 20px;">
-    <div class="doc-title" style="font-size:1.1rem; margin-bottom: 15px;">校園事件調查訪談通知單回執聯</div>
-    <p style="font-size:.95rem; margin-bottom:1rem;">茲定於上述時間地點進行調查訪談，請勾選出席意願：</p>
-    <div style="font-size:.95rem;">
-      <div class="ck-row" style="margin-bottom:.5rem;"><span class="cb"></span> <span>家長願意陪同學生 <span class="iline iline-sm"></span> 出席。</span></div>
-      <div style="padding-left:1.5rem; margin-bottom:.8rem;">家長姓名：<span class="iline"></span>　關係：<span class="iline"></span></div>
-      <div class="ck-row"><span class="cb"></span> <span>家長無法陪同，同意由學生 <span class="iline iline-sm"></span> 自行出席。</span></div>
-      <div style="margin-top:1.5rem; display:flex; justify-content:space-between;">
-        <span>家長簽名：<span class="iline iline-lg"></span></span>
-        <span>日期：<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
-      </div>
-    </div>
+  <div class="section">
+    <div class="ck-row">一、調查訪談事由：</div>
+    <div class="item"><span class="iblock"></span></div>
+    <div class="ck-row" style="margin-top:.4rem;">二、受訪人員：<span class="iline iline-lg"></span></div>
+    <div class="ck-row" style="margin-top:.3rem;">三、調查訪談時間：民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</div>
+    <div class="ck-row" style="margin-top:.3rem;">四、地點：<span class="iline iline-lg"></span></div>
+    <div class="ck-row" style="margin-top:.3rem;">五、敬請家長填寫回執聯後，交與貴子弟於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日前繳回本校。<br>&emsp;&emsp;（聯絡人：<span class="iline"></span>　電話：<span class="iline iline-lg"></span>）</div>
   </div>
 
-  <div class="page-sep"><span>電話通知記錄單（供相關人/證人使用）</span></div>
-
-  <!-- 電話通知記錄單 -->
-  <div class="doc">
-    <div class="doc-title" style="font-size:1.1rem;">校園事件調查訪談電話通知記錄單</div>
-    <table class="form-table">
-      <thead>
-        <tr style="background: #f8f9fa;">
-          <th style="width:25%;">訪談對象</th>
-          <th style="width:30%;">通知日期時間</th>
-          <th style="width:30%;">出席意願</th>
-          <th style="width:15%;">通知人</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>行為人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意 □陪同</td><td></td></tr>
-        <tr><td>被行為人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意 □陪同</td><td></td></tr>
-        <tr><td>關係人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意受訪</td><td></td></tr>
-        <tr><td>關係人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意受訪</td><td></td></tr>
-      </tbody>
-    </table>
-
-    <!-- 調查程序的下一步前進按鈕 -->
-    <div style="text-align: right; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
-      <button onclick="goToNextStep('f52', '5-2 延長通知函')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-        ✅ 通知完畢，前往：5-2 延長通知函 →
-      </button>
+  <div class="section" style="margin-top:.75rem;">
+    <div class="section-title">六、相關法規：</div>
+    <div class="item" style="font-size:.82rem; line-height:1.7; font-family:'Noto Sans TC',sans-serif;">
+      <p style="margin-bottom:.3rem;">1. 防制準則第39條第1款：訪談時，學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。</p>
+      <p style="margin-bottom:.3rem;">2. 防制準則第39條第2款：受訪人員應配合處理小組之調查，並提供相關文件、資料或陳述意見。接受調查時，行為人應親自出席；當事人為未成年者，得由法定代理人、實際照顧者或受委託之人員陪同。</p>
+      <p style="margin-bottom:.3rem;">3. 防制準則第39條第3款：依第1款規定通知當事人及檢舉人時，應以書面為之，並記載調查目的、時間、地點及<strong>不到場所生之效果</strong>。</p>
+      <p style="margin-bottom:.3rem;">4. 防制準則第39條第4款：接受調查時，行為人應親自出席。</p>
+      <p>5. 防制準則第41條第1項：當事人或檢舉人無正當理由拒絕配合調查，經處理小組通知限期配合調查，屆期仍未配合者，<strong>處理小組得不待其陳述，逕行作成調查報告</strong>。</p>
     </div>
   </div>
+</div>
+
+<!-- 回執聯 -->
+<div class="doc" style="border-top: 3px dashed var(--line); margin-top: -1px;">
+  <div class="doc-title" style="font-size:.92rem;">（學校全銜）校園事件調查訪談通知單回執聯</div>
+  <p style="font-size:.88rem; margin-bottom:.75rem;">訂於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分於本校<span class="iline"></span>樓會議室進行調查訪談，請於下列□中勾選出席意願：</p>
+  <div style="font-size:.88rem;">
+    <div class="ck-row" style="margin-bottom:.4rem;"><span class="cb"></span><span>家長願意陪同學生 <span class="iline iline-sm"></span> 出席調查訪談會議。</span></div>
+    <div style="padding-left:1.4rem; margin-bottom:.5rem;">出席家長姓名：<span class="iline"></span>　與學生之關係為<span class="iline"></span>。</div>
+    <div class="ck-row"><span class="cb"></span><span>家長無法陪同出席，同意由學生 <span class="iline iline-sm"></span> 自行出席調查訪談會議。</span></div>
+    <div style="margin-top:.75rem; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap;">
+      <span>家長簽名：<span class="iline iline-lg"></span></span>
+      <span>填寫日期：<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
+    </div>
+  </div>
+  <div class="note-box" style="margin-top:.6rem;">敬請貴家長填寫回執聯後，交與貴子弟於民國<span style="border-bottom:1px solid #999;display:inline-block;min-width:40px;"></span>年<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>月<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>日前繳回本校聯絡人。</div>
+</div>
+
+<div class="page-sep"><span>電話通知記錄單（通知當事人以外之相關人使用）</span></div>
+
+<!-- 電話通知記錄單 -->
+<div class="doc">
+  <div class="doc-title" style="font-size:.92rem;">（學校全銜）<br>校園事件調查訪談電話通知記錄單</div>
+  <div class="note-box" style="margin-bottom:.75rem;">
+    <strong>說明：</strong>依防制準則第39條第1項第3款規定，通知<strong>當事人及檢舉人以外之相關人（含證人）</strong>接受訪談時，學校可以不用書面通知，改用電話通知並留下紀錄即可。
+  </div>
+  <table class="form-table">
+    <tr>
+      <th>訪談對象姓名</th>
+      <th>電話通知日期時間</th>
+      <th>是否同意出席受訪</th>
+      <th>通知人簽章</th>
+    </tr>
+    <tr>
+      <td>行為人學生<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>被行為人學生<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>其他相關人員<br><span class="iblock"></span></td>
+      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
+      <td>
+        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
+        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</div>
 </div>
 
 <!-- ══ 5-2 處理程序延長通知函 ══ -->
@@ -2766,32 +2490,17 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <script>
 
-// ── 最終純淨版：下載 Word 功能
+// ── 下載 Word 功能
 function downloadWord() {
   const activePage = document.querySelector('.form-page.active');
   if (!activePage) { alert('請先選擇一份表單'); return; }
 
   const formName = document.getElementById('currentFormName').textContent || '霸凌表單';
 
-  // --- 🌟 關鍵修改：過濾雜質 🌟 ---
-  // 1. 複製目前的頁面內容（複製品）
-  const tempClone = activePage.cloneNode(true);
-
-  // 2. 找到所有「藍色導引」、「下一步按鈕」、「普通按鈕」
-  const unwanted = tempClone.querySelectorAll([
-    'div[style*="background: #ebf5ff"]', 
-    'div[style*="text-align: right"]',   
-    'button'
-  ].join(','));
-
-  // 3. 把雜質從複製品中剔除
-  unwanted.forEach(el => el.remove());
-
-  // 4. 從乾淨的複製品中提取 HTML 內容
-  const docHtml = tempClone.querySelector('.doc') ?
-    Array.from(tempClone.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
-    tempClone.innerHTML;
-  // --- 🌟 過濾結束 🌟 ---
+  // 取得目前表單的 HTML 內容
+  const docHtml = activePage.querySelector('.doc') ?
+    Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
+    activePage.innerHTML;
 
   // 建立可被 Word 開啟的 HTML 檔案（Word 支援讀取 .doc 格式的 HTML）
   const wordContent = `
@@ -2885,9 +2594,7 @@ function confirmArchive() {
   closeArchiveModal();
   alert('✅ 結案歸檔完成！\n案件狀態已更新為「已結案」。\n（實際系統將呼叫 GAS 更新 cases 工作表）');
 }
-document.addEventListener('change', function(e) {
-  if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
-});
+
 
 // ── 案件串接：從 URL 讀取 case_id
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
@@ -2980,122 +2687,94 @@ function toggleStage(id) {
   arrow.classList.toggle('open', !isOpen);
 }
 
+// 預設開啟受理階段、顯示 3-1
 window.onload = function() {
   // 預設開啟 3-1 簽請組成防制委員會
-  const firstNav = document.querySelector('.nav-item');
-  if (firstNav) {
-    // 這裡我們直接指定顯示 f31
-    show('f31', '3-1 簽請組成防制委員會', '受理', firstNav);
-    firstNav.classList.add('active');
+  // 明確找到 f31 對應的 nav-item，不依賴 querySelector('.nav-item') 的順序
+  const f31Nav = document.querySelector(".nav-item[onclick*=\"f31\"]");
+  if (f31Nav) {
+    show('f31', '3-1 簽請組成防制委員會', '受理', f31Nav);
+  } else {
+    // 備援：直接顯示 f31
+    const page = document.getElementById('f31');
+    if (page) page.classList.add('active');
   }
-
-  // 執行初始鎖定檢查 (確保 3-4 以後是鎖定的)
+  // 初始執行鎖定檢查
   checkStage01Ready();
-
   // 從 URL 載入案件資訊
   loadCaseFromUrl();
 };
 
-// ── STAGE 01 自動檢查與 24h 時效警示 (版本 2.1) ──
+// nav-item active 狀態已由 show() 統一管理，無需額外 listener
+
+// ── STAGE 01 確認清單解鎖機制（Gemini 整合版）
 function checkStage01Ready() {
-  const tKnown = document.getElementById('time_known').value;
-  const tReported = document.getElementById('time_reported').value;
+  const tKnown = document.getElementById('time_known') ? document.getElementById('time_known').value : '';
+  const tReported = document.getElementById('time_reported') ? document.getElementById('time_reported').value : '';
   const msgEl = document.getElementById('time_status_msg');
   const cbReport = document.getElementById('cbReport24h');
-  
-  let timeLogical = false; // 時間邏輯是否正確 (通報不能早於知悉)
 
-  if (tKnown && tReported) {
+  let timeLogical = false;
+
+  if (tKnown && tReported && msgEl) {
     const dKnown = new Date(tKnown);
     const dReported = new Date(tReported);
     const diffMs = dReported - dKnown;
-    const diffHrs = diffMs / (1000 * 60 * 60);
+    const diffHrs = diffMs / 3600000;
 
     if (diffMs < 0) {
-      msgEl.innerHTML = "❌ 錯誤：通報時間不可早於知悉時間";
-      msgEl.style.color = "#c0392b";
+      msgEl.innerHTML = '❌ 錯誤：通報時間不可早於知悉時間';
+      msgEl.style.color = '#c0392b';
       timeLogical = false;
     } else if (diffHrs > 24) {
-      msgEl.innerHTML = `⚠️ 逾時通報 (已超過 ${Math.floor(diffHrs)} 小時)`;
-      msgEl.style.color = "#d35400";
-      timeLogical = true; // 逾時仍視為邏輯正確，允許後續操作
+      msgEl.innerHTML = `⚠️ 逾時通報（已超過 ${Math.floor(diffHrs)} 小時）`;
+      msgEl.style.color = '#d35400';
+      timeLogical = true;
     } else {
-      msgEl.innerHTML = "✅ 符合 24h 內通報";
-      msgEl.style.color = "#27ae60";
+      msgEl.innerHTML = '✅ 符合 24h 內通報';
+      msgEl.style.color = '#27ae60';
       timeLogical = true;
     }
-  } else {
-    msgEl.innerHTML = "";
-    timeLogical = false;
+  } else if (!tKnown && !tReported) {
+    timeLogical = true; // 未填時間則不強制（向下相容）
   }
 
-  // ── 其他必要條件 ──
-  // 1. 證據保全 4 選 1
-  const evidenceIds = ['cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
+  // 證據保全 4 選 1
+  const evidenceIds = ['cbEvidence1','cbEvidence2','cbEvidence3','cbEvidenceNA'];
   const hasEvidence = evidenceIds.some(id => {
     const el = document.getElementById(id);
     return el && el.checked;
   });
 
-  // 2. 管轄權 3 選 1
+  // 管轄權 3 選 1（不含不具管轄權）
   const jurOption = document.querySelector('input[name="jurisdiction"]:checked');
-  const hasJurisdiction = jurOption && jurOption.value !== 'none';
+  const hasJurisdiction = jurOption ? jurOption.value !== 'none' : true; // 向下相容
 
-  // 3. 通報勾選框
+  // 通報勾選
   const hasCheckedReport = cbReport ? cbReport.checked : false;
 
-  // ── 總體解鎖判斷 ──
+  // 解鎖判斷
   const lockItems = document.querySelectorAll('.lock-target');
-  
-  // 只要「通報勾選」+「時間邏輯正確(不論是否逾時)」+「證據有選」+「具管轄權」
-  if (hasCheckedReport && timeLogical && hasEvidence && hasJurisdiction) {
-    lockItems.forEach(el => {
-      el.style.opacity = "1";
-      el.style.cursor = "pointer";
-      el.style.pointerEvents = "auto";
-    });
-    console.log("🔓 條件達成（含時效警示檢查），後續表單已解鎖");
-  } else {
-    lockItems.forEach(el => {
-      el.style.opacity = "0.5";
-      el.style.cursor = "not-allowed";
-      el.style.pointerEvents = "none";
-    });
-  }
+  const shouldUnlock = hasCheckedReport && timeLogical && hasEvidence && hasJurisdiction;
+
+  lockItems.forEach(el => {
+    el.style.opacity = shouldUnlock ? '1' : '0.5';
+    el.style.cursor = shouldUnlock ? 'pointer' : 'not-allowed';
+    el.style.pointerEvents = shouldUnlock ? 'auto' : 'none';
+  });
 }
 
-// 更新監聽器：增加對 Radio (jurisdiction) 的監聽
+// 監聽確認清單的所有勾選框和單選鈕
 document.addEventListener('change', function(e) {
-  const triggerIds = ['cbReport24h', 'cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
-  // 如果變動的是上述 ID，或是 name 為 jurisdiction 的單選鈕
+  const triggerIds = ['cbReport24h','cbEvidence1','cbEvidence2','cbEvidence3','cbEvidenceNA'];
   if (triggerIds.includes(e.target.id) || e.target.name === 'jurisdiction') {
     checkStage01Ready();
   }
+  // 結案歸檔 Modal 的勾選框
+  if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
 });
 
-// nav-item active 狀態已由 show() 統一管理，無需額外 listener
 
-// ── 推進式導航函式：這是按鈕的「大腦」 ──
-function goToNextStep(targetId, targetTitle) {
-  // A. 呼叫原本系統的 show 函式來切換畫面
-  // 參數：(表單ID, 表單標題, 階段名稱)
-  show(targetId, targetTitle, '受理');
-  
-  // B. 讓畫面自動捲回最上方，老師才不用手動往上滑
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // C. 自動把左邊選單的「藍色高亮」移到新項目上
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => {
-    // 如果選單文字包含我們目標的標題（例如 "3-2"），就把它變亮
-    if (item.innerText.includes(targetTitle)) {
-      navItems.forEach(nav => nav.classList.remove('active'));
-      item.classList.add('active');
-    }
-  });
-
-  console.log("🚀 已導航至：" + targetTitle);
-}
 </script>
 </body>
 </html>
