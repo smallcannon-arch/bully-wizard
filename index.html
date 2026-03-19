@@ -209,13 +209,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
       </div>
       <div class="stage-items open" id="s1">
-  <!-- 第一個維持正常，讓老師可以進去勾選 -->
   <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>受理前確認清單</strong></div>
   
-  <!-- 以下 3-1 到 3-9 全部預設鎖定 -->
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
+  <!-- 3-1 到 3-3 預設開放，不加 lock-target -->
+  <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
+  <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
+  <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
+  
+  <!-- 3-4 以後維持鎖定，需過清單檢核 -->
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
