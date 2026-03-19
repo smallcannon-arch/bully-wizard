@@ -1009,86 +1009,50 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <!-- ══ 模組一：STAGE 01 受理前確認清單（區塊化重構版） ══ -->
+<!-- 模組一：受理前確認清單 (帶循序解鎖) -->
 <div class="form-page" id="f_stage01_confirm">
-  <div class="doc" style="max-width: 850px; background: transparent; border: none; padding: 0;">
-    <div class="doc-title" style="text-align: left; font-size: 1.2rem; margin-bottom: 1.5rem;">✅ 受理前確認清單（建案前必讀）</div>
+  <div class="doc" style="max-width:850px; background:transparent; border:none; padding:0;">
+    <div class="doc-title" style="text-align:left; font-size:1.2rem; margin-bottom:1.5rem;">✅ 受理前確認清單（建案前必讀）</div>
     
-    <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;margin-bottom:1.5rem;">
-      <strong>⚠️ 本區塊採「循序解鎖」防呆機制。請依序完成檢核，以確保法定程序 100% 完備。</strong>
-    </div>
-
-    <!-- 區塊一：緊急義務區 -->
     <div id="b1_emergency" class="ui-block active-block">
-      <div class="block-title"><span class="block-number">1</span> 🚨 緊急義務區（第17、23條）</div>
-      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">發生疑似霸凌事件，學校有立即通報與保全證據之義務。</div>
-      
-      <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.5rem 0;">
-        <input type="checkbox" id="b1_cb_report" class="b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;flex-shrink:0;">
-        <span><strong>已完成校安/社政通報（知悉後24小時內）。</strong><br>
-        <span style="font-size:.8rem;color:#888;">知悉日期：<input type="date" id="b1_aware_date" class="b1-trigger" style="padding:.1rem .3rem;border:1px solid #ccc;border-radius:3px;"> （此日期為計算24小時通報之基準）</span></span>
+      <div class="block-title"><span class="block-number">1</span> 🚨 緊急義務區</div>
+      <label class="ck-row" style="cursor:pointer;">
+        <input type="checkbox" id="b1_cb_report" class="b1-trigger"> 
+        <span><strong>已完成校安通報（知悉後24小時內）。</strong></span>
       </label>
-      
-      <div style="border-top:1px dashed #ddd; margin: .8rem 0;"></div>
-      <div style="font-size:.85rem; font-weight:600;">初步保全證據（監視器錄影通常僅保存7-30天，須立即確認！）</div>
-      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全監視器錄影</span></label>
-      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全數位通訊紀錄 (LINE/FB)</span></label>
-      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>已保全實物證據</span></label>
-      <label class="ck-row" style="cursor:pointer;"><input type="checkbox" class="b1-evidence b1-trigger" style="width:16px;height:16px;accent-color:#1a5c2e;"> <span>無可保全之證據，已記錄說明</span></label>
+      <div style="margin-left:1.5rem; margin-top:.5rem;">
+        知悉日期：<input type="date" id="b1_aware_date" class="b1-trigger">
+      </div>
+      <div style="margin-top:1rem; font-weight:600;">保全證據（必選）：</div>
+      <label class="ck-row"><input type="checkbox" class="b1-evidence b1-trigger"> 已保全監視器或數位紀錄</label>
     </div>
 
-    <!-- 區塊二：管轄權分流區 -->
     <div id="b2_jurisdiction" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">2</span> 🏫 管轄權分流區（第19、20條）</div>
-      <div style="display:flex; flex-direction:column; gap:.6rem; margin-top:.8rem;">
-        <label style="display:flex; gap:.5rem; cursor:pointer;">
-          <input type="radio" name="b2_juris" value="full" class="b2-trigger" style="margin-top:3px;accent-color:#1a5c2e;">
-          <span><strong>本校具完全管轄權</strong><br><span style="font-size:.8rem;color:#666;">雙方當事人均為本校在籍學生。</span></span>
-        </label>
-        <label style="display:flex; gap:.5rem; cursor:pointer;">
-          <input type="radio" name="b2_juris" value="cross" class="b2-trigger" style="margin-top:3px;accent-color:#1a5c2e;">
-          <span><strong>本案為跨校案件（本校為先接獲檢舉之學校）</strong><br><span style="font-size:.8rem;color:#666;">依第20條，由本校調查；STAGE 06 審議時須通知他校派員列席。</span></span>
-        </label>
-        <label style="display:flex; gap:.5rem; cursor:pointer;">
-          <input type="radio" name="b2_juris" value="none" class="b2-trigger" style="margin-top:3px;accent-color:#c0392b;">
-          <span><strong style="color:#c0392b;">本案不具管轄權（行為人已非本校生）</strong><br><span style="font-size:.8rem;color:#666;">依第19條，應於知悉後 3 個工作日內移送。</span></span>
-        </label>
+      <div class="block-title"><span class="block-number">2</span> 🏫 管轄權分流</div>
+      <div style="display:flex; flex-direction:column; gap:.6rem;">
+        <label><input type="radio" name="b2_juris" value="full" class="b2-trigger"> <strong>本校具完全管轄權</strong></label>
+        <label><input type="radio" name="b2_juris" value="cross" class="b2-trigger"> <strong>跨校案件（本校先接獲檢舉）</strong></label>
+        <label><input type="radio" name="b2_juris" value="none" class="b2-trigger"> <strong style="color:var(--warn);">不具管轄權（應於 3 日內移送）</strong></label>
       </div>
-      <div id="b2_transfer_btn" style="display:none; margin-top:1rem; padding:1rem; background:#fdf0f0; border-left:3px solid #c0392b;">
-        <div style="font-size:.85rem; font-weight:600; color:#c0392b; margin-bottom:.5rem;">⚠️ 系統已啟動 3 個工作日移送倒數</div>
-        <button class="btn btn-primary" style="background:#c0392b; color:#ffffff; border:none; padding:.5rem 1rem; border-radius:4px; font-weight:600; cursor:pointer;" onclick="alert('【系統提示】案件移送函的 Word 自動產出引擎尚未實作，將於後續擴充補上！')">📄 產出案件移送函</button>
-      </div>
+      <div id="b2_transfer_btn" style="display:none; margin-top:1rem; padding:1rem; background:#fdf0f0; border-left:3px solid var(--warn);"></div>
     </div>
 
-    <!-- 區塊三：法定成案開關 -->
     <div id="b3_trigger" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">3</span> 📝 法定成案開關（第18條）</div>
-      <div style="font-size:.85rem; color:#666; margin-bottom:.8rem;">請確認案件來源，此將作為 <strong style="color:var(--ink);">20 工作日審查期限</strong> 的起算基準（Day 0）。</div>
-      
+      <div class="block-title"><span class="block-number">3</span> 📝 法定成案開關</div>
       <div style="display:flex; gap:1.5rem; margin-bottom:1rem;">
-        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="written" class="b3-trigger" style="accent-color:#1a5c2e;"> 接獲書面檢舉</label>
-        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="verbal" class="b3-trigger" style="accent-color:#1a5c2e;"> 言詞檢舉</label>
-        <label style="cursor:pointer;"><input type="radio" name="b3_source" value="media" class="b3-trigger" style="accent-color:#1a5c2e;"> 視同檢舉(機關/媒體)</label>
+        <label><input type="radio" name="b3_source" value="written" class="b3-trigger"> 書面檢舉</label>
+        <label><input type="radio" name="b3_source" value="verbal" class="b3-trigger"> 言詞檢舉</label>
+        <label><input type="radio" name="b3_source" value="media" class="b3-trigger"> 視同檢舉</label>
       </div>
-      
-      <div id="b3_verbal_btn" style="display:none; margin-bottom:1rem;">
-        <button class="btn btn-ghost" style="font-size:.8rem;" onclick="show('f33','3-3 檢舉書','受理')">🖨️ 列印 3-3 檢舉書供檢舉人簽名</button>
-      </div>
-
-      <div style="background:#f0faf4; padding:.8rem; border-radius:4px; display:inline-block;">
-        <span style="font-weight:600; color:#1a5c2e; font-size:.9rem;">接獲檢舉日期 * </span>
-        <input type="date" id="b3_receive_date" class="b3-trigger" style="padding:.2rem .4rem; border:1px solid #a8d5b5; border-radius:3px; margin-left:.5rem;">
+      <div style="background:#f0faf4; padding:.8rem; border-radius:4px;">
+        <strong>接獲檢舉日期 * </strong>
+        <input type="date" id="b3_receive_date" class="b3-trigger">
       </div>
     </div>
 
-    <!-- 區塊四：進入審查 -->
     <div id="b4_finish" class="ui-block locked-block">
-      <div class="block-title"><span class="block-number">4</span> 👥 銜接審查小組（進入 STAGE 02）</div>
-      <div style="font-size:.85rem; color:#666; margin-bottom:1rem;">
-        準備工作：請確認已備妥「3-1 簽請組成防制委員會及審查小組」與「3-2 委員名冊」。
-      </div>
-      <button class="btn btn-primary" style="background:var(--ok); font-size:1.05rem; padding:.6rem 2rem; width:100%; box-shadow:0 4px 12px rgba(26,92,46,.2);" onclick="autoAdvanceToStage02()">
-        ✅ 條件齊備！點此進入 STAGE 02 填寫審查會議紀錄
-      </button>
+      <div class="block-title"><span class="block-number">4</span> 🚀 進入審查階段</div>
+      <button class="btn btn-primary" style="width:100%; font-size:1.1rem;" onclick="autoAdvanceToStage02()">✅ 條件齊備！啟動 20 工作日時鐘並進入 STAGE 02</button>
     </div>
   </div>
 </div>
@@ -2519,7 +2483,7 @@ function closeSysAlert() {
   document.getElementById('sysAlertModal').style.display = 'none';
 }
 
-// ── 2. 移送函一鍵複製功能 (主任要求的省力神器) ──
+// ── 2. 移送函一鍵複製功能 ──
 function copyTransferLetter() {
   const caseId = getUrlParam('case_id') || '未編號';
   const receiveDate = document.getElementById('b3_receive_date').value || '____年__月__日';
@@ -2536,11 +2500,11 @@ function copyTransferLetter() {
   const fullText = subject + "\n\n" + content;
   
   navigator.clipboard.writeText(fullText).then(() => {
-    customAlert('✅ 移送函內文已複製！\n請直接至公文系統（筆硯）按 Ctrl+V 貼上即可。', '🎉 複製成功');
+    customAlert('✅ 移送函內文已複製！\n請直接至公文系統按 Ctrl+V 貼上即可。', '🎉 複製成功');
   });
 }
 
-// ── 3. 推進 STAGE 02 與日期防呆 (修正紅燈消不掉的問題) ──
+// ── 3. 推進 STAGE 02 與日期防呆 (確保紅燈消失、綠燈亮起) ──
 async function autoAdvanceToStage02() {
   const caseId = getUrlParam('case_id');
   if (!caseId) return;
@@ -2550,35 +2514,35 @@ async function autoAdvanceToStage02() {
   const receiveVal = document.getElementById('b3_receive_date').value; // 檢舉日
 
   if (!awareVal || !receiveVal) {
-    customAlert('⚠️ 主任，日期還沒填完喔！\n請確保填好「知悉日期」與「接獲檢舉日期」。', '操作提醒');
+    customAlert('⚠️ 日期還沒填完喔！\n請填好「知悉日期」與「接獲檢舉日期」。', '操作提醒');
     return;
   }
 
   const dAware = new Date(awareVal);
   const dReceive = new Date(receiveVal);
 
-  if (dAware < dReceive) {
-    customAlert('❌ 邏輯錯誤：【知悉日期】不能早於【受理檢舉日期】！\n（接到檢舉的那一刻就應該是知悉日了）', '日期錯誤');
+  if (dReceive < dAware) {
+    customAlert('❌ 邏輯錯誤：【受理檢舉日期】不能早於【知悉日期】！', '日期錯誤');
     return;
   }
 
   // 🚀 B. 執行推進
   const btn = document.querySelector('#b4_finish button');
   const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ 系統處理中...';
+  btn.innerHTML = '⏳ 系統處理中...請稍候';
   btn.disabled = true;
 
   try {
     const currentToken = sessionStorage.getItem('bully_token');
     const currentEmail = sessionStorage.getItem('bully_email');
     
+    // 這裡的文字必須跟後端 Map 鑰匙完全一致
     const sourceMap = { 
       'written': '接獲檢舉—書面通報(第18條)', 
       'verbal': '接獲檢舉—書面通報(第18條)', 
       'media': '視同檢舉：機關/媒體通報(第18條)' 
     };
     const sourceVal = document.querySelector('input[name="b3_source"]:checked')?.value;
-    // 💡 這裡補上括號，確保如果沒選來源時，也能對上後端的預設鑰匙
     const milestone = sourceMap[sourceVal] || '24小時通報主管機關(第17條)';
 
     const res = await fetch(GAS_URL, {
@@ -2589,29 +2553,28 @@ async function autoAdvanceToStage02() {
         token: currentToken,
         email: currentEmail,
         case_id: caseId,
-        from_stage: 'STAGE_01', 
+        from_stage: 'STAGE_01', // 🟢 觸發後端「斬草除根」邏輯
         stage: 'STAGE_02',     
         status: '進行中',
-        milestone: milestone, 
-        done_date: receiveVal 
+        milestone: milestone,   // 🟢 傳送正確鑰匙給後端接棒 20 天時鐘
+        done_date: receiveVal   // 🟢 以檢舉日作為新時鐘起算點
       })
     });
     
     const result = await res.json();
     if (!result.ok) throw new Error(result.error);
 
-    customAlert('✅ 案件已推進至「02 審查小組」！\n紅燈已清除，綠色 20 日時鐘已啟動。', '處理成功');
+    customAlert('✅ 推進成功！\n紅燈已清除，20 工作日時鐘已正式啟動。', '處理成功');
     setTimeout(() => location.reload(), 1500); 
 
   } catch (err) {
     customAlert('❌ 推進失敗：' + err.message, '系統錯誤');
-  } finally {
     btn.innerHTML = originalText;
     btn.disabled = false;
   }
 }
 
-// ── 4. 基礎載入與循序解鎖邏輯 ──
+// ── 4. 基礎載入與導覽邏輯 ──
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
 
 async function loadCaseFromUrl() {
@@ -2652,9 +2615,8 @@ function show(id, name, stage, el) {
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
+// ── 5. 循序解鎖邏輯 (STAGE 01) ──
 function initStage01Logic() {
-  const caseId = getUrlParam('case_id');
-  if (!caseId) return;
   document.querySelectorAll('.b1-trigger, .b2-trigger, .b3-trigger').forEach(el => {
     el.addEventListener('change', checkStage01);
   });
@@ -2671,17 +2633,16 @@ function checkStage01() {
   b1_pass ? b2.classList.remove('locked-block') : b2.classList.add('locked-block');
 
   const juris = document.querySelector('input[name="b2_juris"]:checked')?.value;
-  const transferBtn = document.getElementById('b2_transfer_btn');
+  const transferDiv = document.getElementById('b2_transfer_btn');
   const b3 = document.getElementById('b3_trigger');
   
   if (juris === 'none') {
-    transferBtn.style.display = 'block';
-    const btnHtml = `<button class="print-btn" style="background:#c0392b; width:100%; margin-top:10px;" onclick="copyTransferLetter()">📋 一鍵複製移送函文字</button>`;
-    transferBtn.innerHTML = `<div style="color:#c0392b; font-weight:600; font-size:.85rem;">⚠️ 本案不具管轄權，請點擊下方按鈕複製公文內容：</div>${btnHtml}`;
-    b3.classList.add('locked-block');
-    return;
+    transferDiv.style.display = 'block';
+    transferDiv.innerHTML = `<div style="color:var(--warn); font-weight:600; font-size:.85rem; margin-bottom:.5rem;">⚠️ 本案不具管轄權，請複製移送函文字後進行發文：</div>
+                             <button class="print-btn" style="background:var(--warn); width:100%;" onclick="copyTransferLetter()">📋 一鍵複製移送函內文</button>`;
+    b3.classList.add('locked-block'); return;
   } else {
-    transferBtn.style.display = 'none';
+    transferDiv.style.display = 'none';
   }
 
   const b2_pass = b1_pass && (juris === 'full' || juris === 'cross');
@@ -2695,14 +2656,13 @@ function checkStage01() {
   b3_pass ? b4.classList.remove('locked-block') : b4.classList.add('locked-block');
 }
 
-// ── 5. 結案與 Word 下載 (保留主任原本的功能) ──
+// ── 6. Word 下載與歸檔檢核 ──
 function downloadWord() {
   const activePage = document.querySelector('.form-page.active');
-  if (!activePage) { customAlert('請先選擇表單再下載', '⚠️ 提醒'); return; }
+  if (!activePage) { customAlert('請先選擇表單'); return; }
   const formName = document.getElementById('currentFormName').textContent;
-  const docHtml = activePage.querySelector('.doc') ? Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') : activePage.innerHTML;
-  const wordContent = `<html><head><meta charset="UTF-8"></head><body>${docHtml}</body></html>`;
-  const blob = new Blob([wordContent], { type: 'application/msword;charset=utf-8' });
+  const docHtml = activePage.innerHTML;
+  const blob = new Blob([`<html><head><meta charset="UTF-8"></head><body>${docHtml}</body></html>`], { type: 'application/msword;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${formName}.doc`; a.click();
 }
 
@@ -2710,17 +2670,15 @@ function openArchiveModal() { document.getElementById('modal-archive').style.dis
 function closeArchiveModal() { document.getElementById('modal-archive').style.display = 'none'; }
 function updateArchiveBtn() {
   const allChecked = ['arc1','arc2','arc3','arc4','arc5'].every(id => document.getElementById(id)?.checked);
-  document.getElementById('arc-confirm-btn').disabled = !allChecked;
-  document.getElementById('arc-confirm-btn').style.opacity = allChecked ? '1' : '.45';
+  const btn = document.getElementById('arc-confirm-btn');
+  btn.disabled = !allChecked; btn.style.opacity = allChecked ? '1' : '.45';
 }
 
-// ── 6. 輔助功能 ──
+// ── 7. 輔助工具 ──
 function getUrlParam(name) { return new URLSearchParams(window.location.search).get(name); }
 function toggleStage(id) {
-  const items = document.getElementById(id);
-  const arrow = document.getElementById('arr-' + id);
-  items.classList.toggle('open');
-  arrow.classList.toggle('open');
+  document.getElementById(id).classList.toggle('open');
+  document.getElementById('arr-' + id).classList.toggle('open');
 }
 function goBack() { window.location.href = './dashboard.html'; }
 
