@@ -209,20 +209,25 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
       </div>
       <div class="stage-items open" id="s1">
-  <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>受理前確認清單</strong></div>
-  
-  <!-- 3-1 到 3-3 預設開放，不加 lock-target -->
+  <!-- 第一組：例行準備與檢舉受理 -->
+  <div style="padding: 5px 15px; font-size: 0.75rem; color: #888; letter-spacing: 1px;">📋 例行準備工作</div>
   <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
   <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
   <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
-  
-  <!-- 3-4 以後維持鎖定，需過清單檢核 -->
+
+  <!-- 第二組：程序檢核 -->
+  <hr style="border: 0; border-top: 1px solid #333; margin: 10px 15px;">
+  <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')">
+    <span class="nav-num" style="color:#c0392b;">✓</span><strong>事件受理前確認清單</strong>
+  </div>
+
+  <!-- 第三組：後續法定程序 (受清單鎖定) -->
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
-  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單</div>
 </div>
     </div>
 
@@ -2700,14 +2705,14 @@ window.onload = function() {
   loadCaseFromUrl();
 };
 
-// ── STAGE 01 自動檢查與 24h 時效防呆 ──
+// ── STAGE 01 自動檢查與 24h 時效警示 (版本 2.1) ──
 function checkStage01Ready() {
   const tKnown = document.getElementById('time_known').value;
   const tReported = document.getElementById('time_reported').value;
   const msgEl = document.getElementById('time_status_msg');
   const cbReport = document.getElementById('cbReport24h');
   
-  let timeValid = false;
+  let timeLogical = false; // 時間邏輯是否正確 (通報不能早於知悉)
 
   if (tKnown && tReported) {
     const dKnown = new Date(tKnown);
@@ -2716,38 +2721,49 @@ function checkStage01Ready() {
     const diffHrs = diffMs / (1000 * 60 * 60);
 
     if (diffMs < 0) {
-      msgEl.innerHTML = "❌ 錯誤：通報時間早於知悉時間";
+      msgEl.innerHTML = "❌ 錯誤：通報時間不可早於知悉時間";
       msgEl.style.color = "#c0392b";
-      timeValid = false;
+      timeLogical = false;
     } else if (diffHrs > 24) {
-      msgEl.innerHTML = `⚠️ 已逾 24 小時 (${Math.floor(diffHrs)}h)`;
+      msgEl.innerHTML = `⚠️ 逾時通報 (已超過 ${Math.floor(diffHrs)} 小時)`;
       msgEl.style.color = "#d35400";
-      timeValid = true; // 實務上逾時仍可建案，但需警告；若主任要逾時禁止建案，請改為 false
+      timeLogical = true; // 逾時仍視為邏輯正確，允許後續操作
     } else {
       msgEl.innerHTML = "✅ 符合 24h 內通報";
       msgEl.style.color = "#27ae60";
-      timeValid = true;
+      timeLogical = true;
     }
   } else {
     msgEl.innerHTML = "";
-    timeValid = false;
+    timeLogical = false;
   }
 
-  // 其他條件：證據保全、管轄權
+  // ── 其他必要條件 ──
+  // 1. 證據保全 4 選 1
   const evidenceIds = ['cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
-  const hasEvidence = evidenceIds.some(id => document.getElementById(id)?.checked);
+  const hasEvidence = evidenceIds.some(id => {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  });
+
+  // 2. 管轄權 3 選 1
   const jurOption = document.querySelector('input[name="jurisdiction"]:checked');
+  const hasJurisdiction = jurOption && jurOption.value !== 'none';
 
-  // 解鎖邏輯：通報勾選 + 時間合法 + 證據勾選 + 管轄權(本校/跨校)
+  // 3. 通報勾選框
+  const hasCheckedReport = cbReport ? cbReport.checked : false;
+
+  // ── 總體解鎖判斷 ──
   const lockItems = document.querySelectorAll('.lock-target');
-  const canAdvance = cbReport.checked && timeValid && hasEvidence && jurOption && jurOption.value !== 'none';
-
-  if (canAdvance) {
+  
+  // 只要「通報勾選」+「時間邏輯正確(不論是否逾時)」+「證據有選」+「具管轄權」
+  if (hasCheckedReport && timeLogical && hasEvidence && hasJurisdiction) {
     lockItems.forEach(el => {
       el.style.opacity = "1";
       el.style.cursor = "pointer";
       el.style.pointerEvents = "auto";
     });
+    console.log("🔓 條件達成（含時效警示檢查），後續表單已解鎖");
   } else {
     lockItems.forEach(el => {
       el.style.opacity = "0.5";
