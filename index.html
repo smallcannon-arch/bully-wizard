@@ -2572,9 +2572,14 @@ async function autoAdvanceToStage02() {
     const currentToken = sessionStorage.getItem('bully_token');
     const currentEmail = sessionStorage.getItem('bully_email');
     
-    const sourceMap = { 'written': '接獲書面檢舉', 'verbal': '言詞檢舉', 'media': '視同檢舉(機關/媒體)' };
+    const sourceMap = { 
+      'written': '接獲檢舉—書面通報(第18條)', 
+      'verbal': '接獲檢舉—書面通報(第18條)', 
+      'media': '視同檢舉：機關/媒體通報(第18條)' 
+    };
     const sourceVal = document.querySelector('input[name="b3_source"]:checked')?.value;
-    const milestone = sourceMap[sourceVal] || '接獲檢舉';
+    // 💡 這裡補上括號，確保如果沒選來源時，也能對上後端的預設鑰匙
+    const milestone = sourceMap[sourceVal] || '24小時通報主管機關(第17條)';
 
     const res = await fetch(GAS_URL, {
       method: 'POST',
