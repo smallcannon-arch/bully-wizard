@@ -261,7 +261,7 @@ function logout() {
 }
 
 async function callGAS(action, data = {}) {
-  const body = JSON.stringify({ action, email: currentEmail, ...data });
+  const body = JSON.stringify({ action, email: currentEmail, token: currentToken, ...data });
   const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body });
   return await res.json();
 }
