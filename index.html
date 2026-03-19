@@ -1250,16 +1250,35 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 </div>
 
-<!-- ══ 4-1 調和或調查程序說明書 ══ -->
-<div class="form-page" id="f41">
+<!-- ══════════════════════════════
+     4-1 調和或調查程序說明書
+     ══════════════════════════════ -->
+<div class="form-page" id="f41" style="display:none;">
 <div class="doc">
+
+  <!-- 💡 4-1 專用引導區塊 -->
+  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <span style="font-size: 1.5rem;">📖</span>
+      <div>
+        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「程序說明書預覽」</strong>
+        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+          在進行調查或調和會議前，應向當事人雙方說明程序。這份說明書建議於個別會談時發放。
+        </p>
+        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
+          <strong style="color: #c0392b;">👉 操作指引：</strong> 
+          確認內容後，請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 列印提供給家長。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="doc-title">調和或調查程序說明書</div>
 
   <div class="section">
     <div class="section-title">壹、目的：</div>
     <p class="item">為協助學生處理人際關係，以培養其責任感及自尊尊人之處事態度，減輕雙方不當行為造成之創傷與衝突、促進和解及修復關係，並維護學生身心健康、促進全人發展，完善班級經營，建構友善校園。</p>
   </div>
-
   <div class="section">
     <div class="section-title">貳、說明：</div>
 
@@ -1289,12 +1308,35 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div class="note-box">
     <strong>注意：</strong>本說明書應於會前個別會談時提供予雙方當事人及其法定代理人或實際照顧者，並完成說明後留存。
   </div>
+  <!-- 💡 4-1 的推進按鈕：導向 4-2 調和或調查意願書 -->
+  <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f42', '4-2 調和或調查意願書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 說明完畢，前往下一步：4-2 意願書 →
+    </button>
+  </div>
 </div>
 </div>
 
 <!-- ══ 4-2 調和意願書（行為人＋被行為人各一份） ══ -->
-<div class="form-page" id="f42">
+<div class="form-page" id="f42" style="display:none;">
 <div class="doc">
+
+  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <span style="font-size: 1.5rem;">🤝</span>
+      <div>
+        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「意願書格式預覽」</strong>
+        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+          調和程序必須在<span style="color:#c0392b; font-weight:bold;">雙方皆同意</span>的前提下才能進行。若任一方不同意，則應立即轉入「調查程序」。
+        </p>
+        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
+          <strong style="color: #c0392b;">👉 操作指引：</strong> 
+          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，列印後交由雙方學生及家長簽署。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="doc-title">（行為人）調和意願書</div>
   <p style="margin-bottom:1rem;line-height:1.9;">為協助學生處理人際關係，避免造成雙方的創傷與衝突、促進和解及修復關係，並維護學生身心健康。經由本校處理小組委員與您會談後，您也大致瞭解調和程序的目的及用意，若您願意進行調和程序，請勾選。</p>
 
@@ -1332,8 +1374,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <tr><td class="cell-label">聯絡電話</td><td><span class="iblock"></span></td></tr>
   </table>
   <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-</div>
-</div>
+
+  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f43', '4-3 個別訪談紀錄')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 意願確認完畢，前往：4-3 個別訪談紀錄 →
+    </button>
+  </div>
+
+</div> </div> ```
 
 <!-- ══ 4-3 調和或調查會議前之個別會談會議紀錄 ══ -->
 <div class="form-page" id="f43">
@@ -1401,12 +1449,38 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <!-- ══ 4-4 調和會議紀錄 ══ -->
-<div class="form-page" id="f44">
+<div class="form-page" id="f44" style="display:none;">
 <div class="doc">
+
+  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <span style="font-size: 1.5rem;">⚖️</span>
+      <div>
+        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和會議紀錄格式預覽」</strong>
+        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+          調和期限為 <span style="color:#c0392b; font-weight:bold;">1 個月</span>。若調和成立，請產出調和報告送防制委員會；若不成立或有停止事由，則應立即轉入「調查程序」。
+        </p>
+        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
+          <strong style="color: #c0392b;">👉 操作指引：</strong> 
+          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，於會議現場記錄使用。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="doc-title">調和會議紀錄</div>
+  
   <table class="form-table" style="margin-bottom:1rem;">
-    <tr><td class="cell-label">一、日期</td><td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td><td class="cell-label">地點</td><td><span class="iblock"></span></td></tr>
-    <tr><td class="cell-label">處理小組委員</td><td colspan="3"><span class="iblock"></span></td></tr>
+    <tr>
+      <td class="cell-label" style="width:15%;">一、日期</td>
+      <td style="width:35%;"><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</td>
+      <td class="cell-label" style="width:15%;">二、地點</td>
+      <td style="width:35%;"><span class="iblock"></span></td>
+    </tr>
+    <tr>
+      <td class="cell-label">三、委員</td>
+      <td colspan="3"><span class="iblock"></span></td>
+    </tr>
   </table>
 
   <div class="section">
@@ -1451,73 +1525,148 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
 
   <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-</div>
+
+  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f45', '4-5 調和報告(範例)')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 會議記錄完畢，前往：4-5 調和報告 →
+    </button>
+  </div>
+
+</div> 
 </div>
 
 <!-- ══ 4-5 調和協議書 ══ -->
-<div class="form-page" id="f45">
+<div class="form-page" id="f45" style="display:none;">
 <div class="doc">
-  <div class="doc-title">調和協議書</div>
-  <p style="margin-bottom:.75rem;">本案經調和成立，協議內容如下：</p>
-  <div style="border: 1px solid var(--line); min-height: 150px; padding: .75rem; margin-bottom: 1.2rem; font-size: .9rem;">
-    <p style="color:#aaa;font-size:.78rem;font-family:'Noto Sans TC',sans-serif;">（請填寫協議內容，如：道歉方式、後續行為約束、賠償事項等）</p>
+
+  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <span style="font-size: 1.5rem;">🤝</span>
+      <div>
+        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和協議書格式預覽」</strong>
+        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+          協議內容應明確具體（如：何時道歉、如何約束行為）。若調和成立，請將此協議書作為附件，送至「防制委員會」進行審議。
+        </p>
+        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
+          <strong style="color: #c0392b;">👉 操作指引：</strong> 
+          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span>，正式簽署後掃描留存。
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="section-title" style="margin-bottom:.6rem;">雙方簽名</div>
+  <div class="doc-title">調和協議書</div>
+  <p style="margin-bottom:.75rem;">本案經調和成立，協議內容如下：</p>
+  
+  <div style="border: 1px solid #000; min-height: 150px; padding: .75rem; margin-bottom: 1.2rem; font-size: .95rem; line-height: 1.8;">
+    <p style="color:#aaa;">（請填寫協議內容，如：道歉方式、後續行為約束、賠償事項等）</p>
+  </div>
+
+  <div class="section-title" style="margin-bottom:.6rem; font-weight: bold;">雙方簽名</div>
   <table class="form-table">
     <tr>
-      <td class="cell-label">當事人（一）</td>
+      <td class="cell-label" style="width:25%;">當事人（一）</td>
       <td><span class="iblock" style="min-height:2rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人<br>或實際照顧者</td>
-      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+      <td>
+        <span class="iblock"></span>
+        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
+      </td>
     </tr>
     <tr>
       <td class="cell-label">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
+    <tr><td colspan="2" style="background:#f9f9f9; height:10px;"></td></tr>
     <tr>
       <td class="cell-label">當事人（二）</td>
       <td><span class="iblock" style="min-height:2rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人<br>或實際照顧者</td>
-      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+      <td>
+        <span class="iblock"></span>
+        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
+      </td>
     </tr>
     <tr>
       <td class="cell-label">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
   </table>
-  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-</div>
+
+  <div class="date-row" style="margin-top: 20px;">
+    中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日
+  </div>
+
+  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f46', '4-6 調和協議保證書')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 協議達成，簽署調和協議保證書：4-6 調和協議保證書 →
+    </button>
+  </div>
+
+</div> 
 </div>
 
 <!-- ══ 4-6 調和協議保證書 ══ -->
-<div class="form-page" id="f46">
+<div class="form-page" id="f46" style="display:none;">
 <div class="doc">
+
+  <div style="background: #ebf5ff; border-left: 6px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px;">
+      <span style="font-size: 1.5rem;">✍️</span>
+      <div>
+        <strong style="color: #0056b3; font-size: 1.05rem;">本網頁為「調和協議保證書預覽」</strong>
+        <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+          本保證書主要由<span style="color:#c0392b; font-weight:bold;">行為人</span>簽署，作為誠意致歉與不再犯之正式憑證。建議於調和會議現場完成簽署。
+        </p>
+        <div style="background: #fff; padding: 8px 12px; border: 1px dashed #007bff; border-radius: 4px; display: inline-block;">
+          <strong style="color: #c0392b;">👉 操作指引：</strong> 
+          請點擊右上方 <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">📥 下載 Word</span> 供現場簽署使用。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="doc-title">調和協議保證書</div>
-  <p style="line-height:2; margin-bottom:1.5rem;">
-    本人　<span class="iline" style="min-width:60px;"></span>　日前因個人行為對被行為人　<span class="iline" style="min-width:60px;"></span>　誠摯的表達歉意，同時保證不再犯，並立下保證書作為證明。
+  
+  <p style="line-height:2.5; margin-bottom:1.5rem; font-size: 1.1rem;">
+    本人 <span class="iline" style="min-width:100px;"></span> 日前因個人行為對被行為人 <span class="iline" style="min-width:100px;"></span> 誠摯的表達歉意，同時保證不再犯，並立下保證書作為證明。
   </p>
-  <p style="margin-bottom:2rem;">此致</p>
+  
+  <p style="margin-bottom:2rem; font-weight: bold;">此致</p>
+  
   <table class="form-table">
     <tr>
-      <td class="cell-label">立書人簽名</td>
-      <td><span class="iblock" style="min-height:2.5rem;"></span></td>
+      <td class="cell-label" style="width:25%;">立書人簽名</td>
+      <td><span class="iblock" style="min-height:3rem;"></span></td>
     </tr>
     <tr>
       <td class="cell-label">法定代理人</td>
-      <td><span class="iblock"></span><span style="font-size:.78rem;color:#888;font-family:'Noto Sans TC',sans-serif;">（當事人如未滿法定年齡須併同簽名）</span></td>
+      <td>
+        <span class="iblock"></span>
+        <span style="font-size:.8rem; color:#666;">（當事人如未滿 18 歲須併同簽名）</span>
+      </td>
     </tr>
     <tr>
-      <td class="cell-label">與當事人關係</td>
+      <td class="cell-label" style="height:3rem;">與當事人關係</td>
       <td><span class="iblock"></span></td>
     </tr>
   </table>
-  <div class="date-row">中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日</div>
-</div>
+
+  <div class="date-row" style="margin-top: 30px;">
+    中　華　民　國　<span class="iline iline-sm"></span>　年　<span class="iline iline-sm"></span>　月　<span class="iline iline-sm"></span>　日
+  </div>
+
+  <div style="text-align: right; margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+    <button onclick="goToNextStep('f51', '5-1 防制委員會議通知單')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+      ✅ 文件簽署完備，進入審議階段：5-1 會議通知 →
+    </button>
+  </div>
+
+</div> 
 </div>
 
 <!-- ══ 4-7 調和報告（空白版） ══ -->
@@ -2645,17 +2794,32 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <script>
 
-// ── 下載 Word 功能
+// ── 最終純淨版：下載 Word 功能
 function downloadWord() {
   const activePage = document.querySelector('.form-page.active');
   if (!activePage) { alert('請先選擇一份表單'); return; }
 
   const formName = document.getElementById('currentFormName').textContent || '霸凌表單';
 
-  // 取得目前表單的 HTML 內容
-  const docHtml = activePage.querySelector('.doc') ?
-    Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
-    activePage.innerHTML;
+  // --- 🌟 關鍵修改：過濾雜質 🌟 ---
+  // 1. 複製目前的頁面內容（複製品）
+  const tempClone = activePage.cloneNode(true);
+
+  // 2. 找到所有「藍色導引」、「下一步按鈕」、「普通按鈕」
+  const unwanted = tempClone.querySelectorAll([
+    'div[style*="background: #ebf5ff"]', 
+    'div[style*="text-align: right"]',   
+    'button'
+  ].join(','));
+
+  // 3. 把雜質從複製品中剔除
+  unwanted.forEach(el => el.remove());
+
+  // 4. 從乾淨的複製品中提取 HTML 內容
+  const docHtml = tempClone.querySelector('.doc') ?
+    Array.from(tempClone.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
+    tempClone.innerHTML;
+  // --- 🌟 過濾結束 🌟 ---
 
   // 建立可被 Word 開啟的 HTML 檔案（Word 支援讀取 .doc 格式的 HTML）
   const wordContent = `
