@@ -316,6 +316,16 @@ function renderCases(cases) {
     const lightClass = dl ? `light-${dl.light}` : 'light-none';
     const dlTag = dl ? `<span class="deadline-tag dl-${dl.light}">${dl.days_left < 0 ? `逾期 ${-dl.days_left} 天` : `${dl.days_left} 天`} | ${dl.milestone}</span>` : '';
     const updatedDate = c.updated_at ? new Date(c.updated_at).toLocaleDateString('zh-TW') : '—';
+    
+    // 🛡️ 模組三：動態生成 05A/05B 的軌道切換按鈕
+    let switchBtn = '';
+    const daysLeft = dl ? dl.days_left : 99; // 取出剩餘天數供防呆使用
+    if (c.stage === 'STAGE_05A') {
+      switchBtn = `<button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#fff0f0;border-color:#ffcdd2;color:#c62828;margin-right:.5rem;" onclick="event.stopPropagation();switchStage05('${c.case_id}', 'STAGE_05A', 'STAGE_05B', ${daysLeft})">切換調查 🔄</button>`;
+    } else if (c.stage === 'STAGE_05B') {
+      switchBtn = `<button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f3e5f5;border-color:#e1bee7;color:#6a1b9a;margin-right:.5rem;" onclick="event.stopPropagation();switchStage05('${c.case_id}', 'STAGE_05B', 'STAGE_05A', ${daysLeft})">重啟調和 🔄</button>`;
+    }
+
     return `
     <div class="case-card" onclick="openCase('${c.case_id}')">
       <div class="case-card-head">
@@ -330,11 +340,55 @@ function renderCases(cases) {
       </div>
       <div class="case-card-foot">
         <span>更新：${updatedDate}</span>
-        <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:#1a5c2e;" onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.case_name}','${c.stage}')">推進 →</button>
+        <div>
+          ${switchBtn}
+          <button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:#1a5c2e;" onclick="event.stopPropagation();openAdvanceModal('${c.case_id}','${c.case_name}','${c.stage}')">推進 →</button>
+        </div>
       </div>
     </div>`;
   });
   document.getElementById('caseArea').innerHTML = `<div class="case-grid">${cards.join('')}</div>`;
+}
+
+  // 🛡️ STAGE 05 調和/調查 雙向切換防呆引擎
+async function switchStage05(caseId, fromStage, toStage, daysLeft) {
+  // 1. 單向證據防火牆與文件重簽防呆
+  if (fromStage === 'STAGE_05A' && toStage === 'STAGE_05B') {
+    const warn1 = confirm('【⚖️ 證據排除防火牆】\n\n依法規，調和過程中當事人「不利於己之陳述」，絕對不得作為後續調查報告之基礎。\n\n請確認已向調查小組宣達此原則，並確認切換為「調查程序」？');
+    if (!warn1) return;
+  } else if (fromStage === 'STAGE_05B' && toStage === 'STAGE_05A') {
+    const warn2 = confirm('【🤝 意願重簽確認】\n\n請確認已於調查紀錄載明「中斷調查意願」。\n切換後，請務必讓雙方重新簽署【4-2 調和意願書】。\n\n確認切換回「調和程序」？');
+    if (!warn2) return;
+  }
+
+  // 2. 期限檢核與智能展延詢問
+  let milestoneToTrigger = ''; // 預設不傳里程碑，後端時鐘就會無縫接軌繼續算
+  if (daysLeft < 15) {
+    const extend = confirm(`【⚠️ 期限警示】\n\n本案處理期限僅剩 ${daysLeft} 天！\n\n是否要在切換程序的同時，依法向防制委員會「自動申請展延 1 個月」？\n(若選取消，將僅切換程序，期限維持不變)`);
+    if (extend) {
+      milestoneToTrigger = '第一次展延'; // 觸發後端 GAS 的展延 1 個月計算
+    }
+  }
+
+  // 3. 發送 API 請求執行切換
+  document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><div class="spinner"></div><p>程序軌道切換中，請稍候...</p></div>';
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const res = await callGAS('bully_advance_stage', {
+      case_id: caseId,
+      stage: toStage,
+      milestone: milestoneToTrigger, 
+      done_date: today
+    });
+    
+    if (!res.ok) throw new Error(res.error);
+    
+    alert('✅ 案件程序與期限狀態切換成功！');
+    loadCases(); // 重新刷出最新列表
+  } catch (err) {
+    alert('❌ 切換失敗：' + err.message);
+    loadCases();
+  }
 }
 
 function openCase(caseId) { window.location.href = `./index.html?case_id=${caseId}&email=${encodeURIComponent(currentEmail)}`; }
