@@ -209,17 +209,20 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         📥 受理階段（3-x）<span class="stage-arrow open" id="arr-s1">›</span>
       </div>
       <div class="stage-items open" id="s1">
-        <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>受理前確認清單</strong></div>
-        <div class="nav-item" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
-        <div class="nav-item" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
-        <div class="nav-item" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
-        <div class="nav-item" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
-        <div class="nav-item" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
-        <div class="nav-item" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
-        <div class="nav-item" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
-        <div class="nav-item" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
-        <div class="nav-item" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
-      </div>
+  <!-- 第一個維持正常，讓老師可以進去勾選 -->
+  <div class="nav-item" onclick="show('f_stage01_confirm','受理前確認清單（建案前必讀）','受理')"><span class="nav-num" style="color:#c0392b;">✓</span><strong>受理前確認清單</strong></div>
+  
+  <!-- 以下 3-1 到 3-9 全部預設鎖定 -->
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f31','3-1 簽請組成防制委員會','受理')"><span class="nav-num">3-1</span>簽請組成防制委員會</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f32','3-2 委員名冊','受理')"><span class="nav-num">3-2</span>委員名冊</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f33','3-3 檢舉書','受理')"><span class="nav-num">3-3</span>檢舉書</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f34','3-4 撤回檢舉書','受理')"><span class="nav-num">3-4</span>撤回檢舉書</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f35','3-5 審查小組會議紀錄','受理')"><span class="nav-num">3-5</span>審查小組會議紀錄</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f36','3-6 受理或不受理通知函','受理')"><span class="nav-num">3-6</span>受理或不受理通知函</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
+  <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單（含簽到表）</div>
+</div>
     </div>
 
     <!-- 調和階段 -->
@@ -1002,30 +1005,29 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
   </div>
 
-  <!-- 盲點2：跨校案件 -->
-  <div class="section" style="margin-top:1rem;">
-    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 跨校案件確認（第20條）</div>
-    <div class="ck-row">
-      <span class="cb"></span>
-      <span>雙方當事人均為本校在籍學生（非跨校案件）。</span>
-    </div>
-    <div class="ck-row">
-      <span class="cb"></span>
-      <span>本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
-          → 依第20條，以「先接獲檢舉之學校」調查；STAGE 06 防制委員會審議時，須通知行為人所屬學校派員列席。
-        </span>
-      </span>
-    </div>
-    <div class="ck-row">
-      <span class="cb"></span>
-      <span>本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
-          → 依第19條，應於知悉後<strong>3個工作日內</strong>移送調查學校，並產出案件移送函。
-        </span>
-      </span>
-    </div>
+ <!-- 盲點2：跨校案件 (已強化互動功能) -->
+<div class="section" style="margin-top:1rem;">
+  <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 案件管轄權確認（第19、20條）</div>
+  
+  <div class="ck-row">
+    <input type="radio" name="jurisdiction" id="jur_local" value="local" style="width:16px;height:16px;accent-color:#1a1a2e;">
+    <label for="jur_local">雙方當事人均為本校在籍學生（非跨校案件）。</label>
   </div>
+  
+  <div class="ck-row">
+    <input type="radio" name="jurisdiction" id="jur_cross" value="cross" style="width:16px;height:16px;accent-color:#1a1a2e;">
+    <label for="jur_cross">本案為<strong>跨校案件</strong>（行為人非本校生）。
+      <br><span style="font-size:.82rem;color:#666;margin-left:1.5rem;">→ 依第20條，由先接獲檢舉學校調查。</span>
+    </label>
+  </div>
+  
+  <div class="ck-row">
+    <input type="radio" name="jurisdiction" id="jur_none" value="none" style="width:16px;height:16px;accent-color:#1a1a2e;">
+    <label for="jur_none">本案<strong>不具管轄權</strong>（如當事人已非本校生）。
+      <br><span style="font-size:.82rem;color:#666;margin-left:1.5rem;">→ 依第19條，應於3工作日內移送調查學校。</span>
+    </label>
+  </div>
+</div>
 
   <!-- 盲點3：保全證據 -->
   <div class="section" style="margin-top:1rem;">
@@ -2666,16 +2668,83 @@ function toggleStage(id) {
   arrow.classList.toggle('open', !isOpen);
 }
 
-// 預設開啟受理階段、顯示 3-1
+// 預設開啟受理階段、顯示「受理前確認清單」並執行初始鎖定檢查
 window.onload = function() {
+  // 修改預設開啟頁面：應改為 f_stage01_confirm (確認清單)，因為 3-1 目前被鎖住了
   const first = document.querySelector('.nav-item');
   if (first) {
-    show('f31', '3-1 簽請組成防制委員會', '受理', first);
+    show('f_stage01_confirm', '受理前確認清單（建案前必讀）', '受理', first);
     first.classList.add('active');
   }
+
+  // 重要：啟動時先檢查一次狀態，確保 3-1 到 3-9 是鎖定的
+  checkStage01Ready();
+
   // 從 URL 載入案件資訊
   loadCaseFromUrl();
 };
+
+// ── STAGE 01 自動檢查與解鎖邏輯 (版本 2.0：含管轄權判定) ──
+function checkStage01Ready() {
+  // 1. 檢查通報 (Checkbox)
+  const reportEl = document.getElementById('cbReport24h');
+  const isReported = reportEl ? reportEl.checked : false;
+  
+  // 2. 檢查證據保全 (Checkbox 四選一)
+  const evidenceIds = ['cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
+  const hasEvidence = evidenceIds.some(id => {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  });
+
+  // 3. 檢查管轄權 (Radio 三選一)
+  const jurOption = document.querySelector('input[name="jurisdiction"]:checked');
+  const jurValue = jurOption ? jurOption.value : null;
+
+  // 4. 取得鎖定目標
+  const lockItems = document.querySelectorAll('.lock-target');
+
+  // ── 核心邏輯判斷 ──
+  // 條件：通報已勾 且 證據已勾 且 管轄權已選
+  if (isReported && hasEvidence && jurValue) {
+    
+    if (jurValue === 'none') {
+      // 分流：不具管轄權 ➔ 維持鎖定，並提示移送
+      lockItems.forEach(el => {
+        el.style.opacity = "0.5";
+        el.style.cursor = "not-allowed";
+        el.style.pointerEvents = "none";
+      });
+      console.log("⚠️ 不具管轄權，請改為產出移送函，3-1至3-9 維持鎖定。");
+      // 這裡未來可以加入一個「顯示移送函按鈕」的邏輯
+    } else {
+      // 分流：本校或跨校 ➔ 解鎖
+      lockItems.forEach(el => {
+        el.style.opacity = "1";
+        el.style.cursor = "pointer";
+        el.style.pointerEvents = "auto";
+      });
+      console.log("🔓 具管轄權，3-1至3-9 已解鎖。");
+    }
+    
+  } else {
+    // 初始或條件不足：維持鎖定
+    lockItems.forEach(el => {
+      el.style.opacity = "0.5";
+      el.style.cursor = "not-allowed";
+      el.style.pointerEvents = "none";
+    });
+  }
+}
+
+// 更新監聽器：增加對 Radio (jurisdiction) 的監聽
+document.addEventListener('change', function(e) {
+  const triggerIds = ['cbReport24h', 'cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
+  // 如果變動的是上述 ID，或是 name 為 jurisdiction 的單選鈕
+  if (triggerIds.includes(e.target.id) || e.target.name === 'jurisdiction') {
+    checkStage01Ready();
+  }
+});
 
 // nav-item active 狀態已由 show() 統一管理，無需額外 listener
 </script>
