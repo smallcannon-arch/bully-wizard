@@ -2700,51 +2700,55 @@ window.onload = function() {
   loadCaseFromUrl();
 };
 
-// ── STAGE 01 自動檢查與解鎖邏輯 (版本 2.0：含管轄權判定) ──
+// ── STAGE 01 自動檢查與 24h 時效防呆 ──
 function checkStage01Ready() {
-  // 1. 檢查通報 (Checkbox)
-  const reportEl = document.getElementById('cbReport24h');
-  const isReported = reportEl ? reportEl.checked : false;
+  const tKnown = document.getElementById('time_known').value;
+  const tReported = document.getElementById('time_reported').value;
+  const msgEl = document.getElementById('time_status_msg');
+  const cbReport = document.getElementById('cbReport24h');
   
-  // 2. 檢查證據保全 (Checkbox 四選一)
-  const evidenceIds = ['cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
-  const hasEvidence = evidenceIds.some(id => {
-    const el = document.getElementById(id);
-    return el && el.checked;
-  });
+  let timeValid = false;
 
-  // 3. 檢查管轄權 (Radio 三選一)
-  const jurOption = document.querySelector('input[name="jurisdiction"]:checked');
-  const jurValue = jurOption ? jurOption.value : null;
+  if (tKnown && tReported) {
+    const dKnown = new Date(tKnown);
+    const dReported = new Date(tReported);
+    const diffMs = dReported - dKnown;
+    const diffHrs = diffMs / (1000 * 60 * 60);
 
-  // 4. 取得鎖定目標
-  const lockItems = document.querySelectorAll('.lock-target');
-
-  // ── 核心邏輯判斷 ──
-  // 條件：通報已勾 且 證據已勾 且 管轄權已選
-  if (isReported && hasEvidence && jurValue) {
-    
-    if (jurValue === 'none') {
-      // 分流：不具管轄權 ➔ 維持鎖定，並提示移送
-      lockItems.forEach(el => {
-        el.style.opacity = "0.5";
-        el.style.cursor = "not-allowed";
-        el.style.pointerEvents = "none";
-      });
-      console.log("⚠️ 不具管轄權，請改為產出移送函，3-1至3-9 維持鎖定。");
-      // 這裡未來可以加入一個「顯示移送函按鈕」的邏輯
+    if (diffMs < 0) {
+      msgEl.innerHTML = "❌ 錯誤：通報時間早於知悉時間";
+      msgEl.style.color = "#c0392b";
+      timeValid = false;
+    } else if (diffHrs > 24) {
+      msgEl.innerHTML = `⚠️ 已逾 24 小時 (${Math.floor(diffHrs)}h)`;
+      msgEl.style.color = "#d35400";
+      timeValid = true; // 實務上逾時仍可建案，但需警告；若主任要逾時禁止建案，請改為 false
     } else {
-      // 分流：本校或跨校 ➔ 解鎖
-      lockItems.forEach(el => {
-        el.style.opacity = "1";
-        el.style.cursor = "pointer";
-        el.style.pointerEvents = "auto";
-      });
-      console.log("🔓 具管轄權，3-1至3-9 已解鎖。");
+      msgEl.innerHTML = "✅ 符合 24h 內通報";
+      msgEl.style.color = "#27ae60";
+      timeValid = true;
     }
-    
   } else {
-    // 初始或條件不足：維持鎖定
+    msgEl.innerHTML = "";
+    timeValid = false;
+  }
+
+  // 其他條件：證據保全、管轄權
+  const evidenceIds = ['cbEvidence1', 'cbEvidence2', 'cbEvidence3', 'cbEvidenceNA'];
+  const hasEvidence = evidenceIds.some(id => document.getElementById(id)?.checked);
+  const jurOption = document.querySelector('input[name="jurisdiction"]:checked');
+
+  // 解鎖邏輯：通報勾選 + 時間合法 + 證據勾選 + 管轄權(本校/跨校)
+  const lockItems = document.querySelectorAll('.lock-target');
+  const canAdvance = cbReport.checked && timeValid && hasEvidence && jurOption && jurOption.value !== 'none';
+
+  if (canAdvance) {
+    lockItems.forEach(el => {
+      el.style.opacity = "1";
+      el.style.cursor = "pointer";
+      el.style.pointerEvents = "auto";
+    });
+  } else {
     lockItems.forEach(el => {
       el.style.opacity = "0.5";
       el.style.cursor = "not-allowed";
