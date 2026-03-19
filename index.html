@@ -228,37 +228,36 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f37','3-7 不服陳情書','受理')"><span class="nav-num">3-7</span>不服陳情書</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f38','3-8 送達證書','受理')"><span class="nav-num">3-8</span>送達證書</div>
   <div class="nav-item lock-target" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" onclick="show('f39','3-9 處理小組委員開會通知單','受理')"><span class="nav-num">3-9</span>開會通知單</div>
-</div> <!-- 修正 231 行，stage3 結束 -->
-    </div> <!-- s1 stage-group 結束 -->
-
-    <!-- ══ 04 前置分流作業 ══ -->
-    <div class="menu-stage" onclick="toggleStage('s4pre')">
-      <span id="arr-s4pre" class="arrow">▶</span> 04 調和或調查前置工作
-    </div>
-    <div id="s4pre" class="stage-items">
-      <div class="nav-item" onclick="show('f41','4-1 程序說明書','前置')"><span class="nav-num">4-1</span>📖 程序說明書</div>
-      <div class="nav-item" onclick="show('f42','4-2 調和意願書','前置')"><span class="nav-num">4-2</span>🤝 調和意願書</div>
-      <div class="nav-item" onclick="show('f43','4-3 個別會談紀錄','前置')"><span class="nav-num">4-3</span>🎤 個別會談紀錄</div>
+</div> </div> <div class="stage-group">
+      <div class="stage-head" style="background: #3a3a5c;" onclick="toggleStage('s4pre')">
+        📋 前置分流作業 <span class="stage-arrow" id="arr-s4pre">›</span>
+      </div>
+      <div class="stage-items" id="s4pre">
+        <div class="nav-item" onclick="show('f41','4-1 程序說明書','前置')"><span class="nav-num">4-1</span>程序說明書</div>
+        <div class="nav-item" onclick="show('f42','4-2 調和意願書','前置')"><span class="nav-num">4-2</span>調和意願書</div>
+        <div class="nav-item" onclick="show('f43','4-3 個別會談紀錄','前置')"><span class="nav-num">4-3</span>個別會談紀錄</div>
+      </div>
     </div>
 
-    <!-- ══ 04-A 調和程序軌道 (綠色) ══ -->
-    <div class="menu-stage" onclick="toggleStage('s4a')" style="border-left: 5px solid #27ae60; background: #f0fff4;">
-      <span id="arr-s4a" class="arrow">▶</span> 04-A 調和程序軌道
-    </div>
-    <div id="s4a" class="stage-items">
-      <div class="nav-item" onclick="show('f44','4-4 調和會議紀錄','調和')"><span class="nav-num">4-4</span>⚖️ 調和會議紀錄</div>
-      <div class="nav-item" onclick="show('f45','4-5 調和協議書','調和')"><span class="nav-num">4-5</span>✍️ 調和協議書</div>
-      <div class="nav-item" onclick="show('f46','4-6 保證書','調和')"><span class="nav-num">4-6</span>✒️ 保證書</div>
+    <div class="stage-group">
+      <div class="stage-head s-mediate" onclick="toggleStage('s4a')">
+        🤝 調和階段 (4-x) <span class="stage-arrow" id="arr-s4a">›</span>
+      </div>
+      <div class="stage-items" id="s4a">
+        <div class="nav-item" onclick="show('f44','4-4 調和會議紀錄','調和')"><span class="nav-num">4-4</span>調和會議紀錄</div>
+        <div class="nav-item" onclick="show('f45','4-5 調和協議書','調和')"><span class="nav-num">4-5</span>調和協議書</div>
+        <div class="nav-item" onclick="show('f46','4-6 保證書','調和')"><span class="nav-num">4-6</span>保證書</div>
+      </div>
     </div>
 
-    <!-- ══ 05 調查程序軌道 (紅色) ══ -->
-    <div class="menu-stage" onclick="toggleStage('s5')" style="border-left: 5px solid #c0392b; background: #fff5f5;">
-      <span id="arr-s5" class="arrow">▶</span> 05 調查程序軌道
-    </div>
-    <div id="s5" class="stage-items">
-      <div class="nav-item" onclick="show('f51','5-1 訪談通知單','調查')"><span class="nav-num">5-1</span>📩 訪談通知單</div>
-      <div class="nav-item" onclick="show('f52','5-2 延長通知函','調查')"><span class="nav-num">5-2</span>⏳ 延長通知函</div>
-      <div class="nav-item" onclick="show('f53','5-3 訪談大綱','調查')"><span class="nav-num">5-3</span>📋 訪談大綱</div>
+    <div class="stage-group">
+      <div class="stage-head s-investigate" onclick="toggleStage('s5')">
+        🔍 調查階段 (5-x) <span class="stage-arrow" id="arr-s5">›</span>
+      </div>
+      <div class="stage-items" id="s5">
+        <div class="nav-item" onclick="show('f51','5-1 訪談通知單','調查')"><span class="nav-num">5-1</span>訪談通知單</div>
+        <div class="nav-item" onclick="show('f52','5-2 延長通知函','調查')"><span class="nav-num">5-2</span>延長通知函</div>
+      </div>
     </div>
 
     <!-- 審議階段 -->
