@@ -1055,16 +1055,31 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     </div>
   </div>
 
-  <!-- 校安通報確認 -->
-  <div class="section" style="margin-top:1rem;">
-    <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
-    <div class="ck-row">
-      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
-      <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。<br>
-        <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
-      </span>
+  <!-- 校安通報確認（強化時間紀錄與防呆） -->
+<div class="section" style="margin-top:1rem;">
+  <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
+  
+  <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;">
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: 0.85rem;">
+      <div>
+        <label style="display:block; color:#666; margin-bottom:2px;">🕒 學校知悉時間：</label>
+        <input type="datetime-local" id="time_known" onchange="checkStage01Ready()" style="padding:4px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="display:block; color:#666; margin-bottom:2px;">🚀 完成通報時間：</label>
+        <input type="datetime-local" id="time_reported" onchange="checkStage01Ready()" style="padding:4px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div id="time_status_msg" style="font-weight: bold; margin-top: 15px;"></div>
     </div>
   </div>
+
+  <div class="ck-row">
+    <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+    <span>已完成校安通報（含通報主管機關與社政機關）。<br>
+      <span style="font-size:.8rem;color:#666;">校安通報編號：<input type="text" id="report_no" placeholder="請輸入編號" style="border:none; border-bottom:1px solid #999; width:120px; background:transparent; outline:none;"></span>
+    </span>
+  </div>
+</div>
 
   <div class="note-box" style="margin-top:1rem;">
     <strong>完成後：</strong>請繼續至 3-5 審查小組會議紀錄，召開審查小組決議是否受理。
