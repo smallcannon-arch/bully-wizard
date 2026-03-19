@@ -231,6 +231,36 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
     </div>
 
+<!-- ══ 04 調和或調查前置工作 ══ -->
+<div class="menu-stage" onclick="toggleStage('stage4_pre')">
+  <span id="arr-stage4_pre" class="arrow">▶</span> 04 調和或調查前置工作
+</div>
+<div id="stage4_pre" class="stage-items">
+  <div class="nav-item" onclick="show('f41', '4-1 程序說明書', '前置')"><span class="nav-num">4-1</span>程序說明書</div>
+  <div class="nav-item" onclick="show('f42', '4-2 調和意願書', '前置')"><span class="nav-num">4-2</span>調和意願書</div>
+  <div class="nav-item" onclick="show('f43', '4-3 個別會談紀錄', '前置')"><span class="nav-num">4-3</span>個別會談紀錄</div>
+</div>
+
+<!-- ══ 04-A 調和程序軌道 (綠色：分流一) ══ -->
+<div class="menu-stage" onclick="toggleStage('stage4_a')" style="border-left: 5px solid #27ae60; background: #f0fff4;">
+  <span id="arr-stage4_a" class="arrow">▶</span> 04-A 調和程序軌道
+</div>
+<div id="stage4_a" class="stage-items">
+  <div class="nav-item" onclick="show('f44', '4-4 調和會議紀錄', '調和')"><span class="nav-num">4-4</span>調和會議紀錄</div>
+  <div class="nav-item" onclick="show('f45', '4-5 調和協議書', '調和')"><span class="nav-num">4-5</span>調和協議書</div>
+  <div class="nav-item" onclick="show('f46', '4-6 調和協議保證書', '調和')"><span class="nav-num">4-6</span>保證書</div>
+</div>
+
+<!-- ══ 05 調查程序軌道 (紅色：分流二) ══ -->
+<div class="menu-stage" onclick="toggleStage('stage5')" style="border-left: 5px solid #c0392b; background: #fff5f5;">
+  <span id="arr-stage5" class="arrow">▶</span> 05 調查程序軌道
+</div>
+<div id="stage5" class="stage-items">
+  <div class="nav-item" onclick="show('f51', '5-1 訪談通知單', '調查')"><span class="nav-num">5-1</span>訪談通知單</div>
+  <div class="nav-item" onclick="show('f52', '5-2 延長通知函', '調查')"><span class="nav-num">5-2</span>延長通知函</div>
+  <div class="nav-item" onclick="show('f53', '5-3 調查訪談大綱', '調查')"><span class="nav-num">5-3</span>調查訪談大綱</div>
+</div>
+    
     <!-- 調和階段 -->
     <div class="stage-group">
       <div class="stage-head s-mediate" onclick="toggleStage('s2')">
@@ -1928,115 +1958,94 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 </div>
 
-<!-- ══ 5-1 學生調查訪談通知單（含電話通知記錄單） ══ -->
-<div class="form-page" id="f51">
-<div class="doc">
-  <div class="doc-title">（學校全銜）<br>校園事件調查訪談通知單</div>
+<!-- ══ 5-1 調查訪談通知單（含電話記錄單） ══ -->
+<div class="form-page" id="f51" style="display:none;">
+  <div class="doc">
+    <!-- 💡 主任導引區塊 -->
+    <div style="background: #fff5f5; border-left: 6px solid #c0392b; padding: 15px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: flex-start; gap: 12px;">
+        <span style="font-size: 1.5rem;">🔍</span>
+        <div>
+          <strong style="color: #c0392b; font-size: 1.05rem;">調查程序：訪談通知作業</strong>
+          <p style="margin: 5px 0 10px 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
+            1. **當事人及檢舉人**：必須書面通知（含回執聯）。<br>
+            2. **一般相關人/證人**：可使用下方的「電話通知記錄單」。<br>
+            <span style="color: #c0392b; font-weight: bold;">⚠️ 提醒：</span>若當事人無正當理由拒絕配合，處理小組得不待其陳述，逕行作成調查報告。
+          </p>
+        </div>
+      </div>
+    </div>
 
-  <div class="law-banner">
-    <strong>⚠️ 法定必要記載（第39條第1項第3款）：</strong>通知應以書面為之，並記載「調查目的、時間、地點及不到場所生之效果」。<br>
-    <strong>不到場效果（第41條）：</strong>當事人無正當理由拒絕配合，經限期通知仍未配合，處理小組得不待其陳述，逕行作成調查報告。
-  </div>
+    <div class="doc-title">（學校全銜）<br>校園事件調查訪談通知單</div>
 
-  <div class="section">
-    <div class="ck-row">一、調查訪談事由：</div>
-    <div class="item"><span class="iblock"></span></div>
-    <div class="ck-row" style="margin-top:.4rem;">二、受訪人員：<span class="iline iline-lg"></span></div>
-    <div class="ck-row" style="margin-top:.3rem;">三、調查訪談時間：民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</div>
-    <div class="ck-row" style="margin-top:.3rem;">四、地點：<span class="iline iline-lg"></span></div>
-    <div class="ck-row" style="margin-top:.3rem;">五、敬請家長填寫回執聯後，交與貴子弟於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日前繳回本校。<br>&emsp;&emsp;（聯絡人：<span class="iline"></span>　電話：<span class="iline iline-lg"></span>）</div>
-  </div>
+    <div class="law-banner" style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; font-size: 0.9rem; margin-bottom: 15px;">
+      <strong>⚠️ 法定必要記載：</strong>通知應以書面為之，並記載「調查目的、時間、地點及不到場所生之效果」。
+    </div>
 
-  <div class="section" style="margin-top:.75rem;">
-    <div class="section-title">六、相關法規：</div>
-    <div class="item" style="font-size:.82rem; line-height:1.7; font-family:'Noto Sans TC',sans-serif;">
-      <p style="margin-bottom:.3rem;">1. 防制準則第39條第1款：訪談時，學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。</p>
-      <p style="margin-bottom:.3rem;">2. 防制準則第39條第2款：受訪人員應配合處理小組之調查，並提供相關文件、資料或陳述意見。接受調查時，行為人應親自出席；當事人為未成年者，得由法定代理人、實際照顧者或受委託之人員陪同。</p>
-      <p style="margin-bottom:.3rem;">3. 防制準則第39條第3款：依第1款規定通知當事人及檢舉人時，應以書面為之，並記載調查目的、時間、地點及<strong>不到場所生之效果</strong>。</p>
-      <p style="margin-bottom:.3rem;">4. 防制準則第39條第4款：接受調查時，行為人應親自出席。</p>
-      <p>5. 防制準則第41條第1項：當事人或檢舉人無正當理由拒絕配合調查，經處理小組通知限期配合調查，屆期仍未配合者，<strong>處理小組得不待其陳述，逕行作成調查報告</strong>。</p>
+    <div class="section">
+      <div class="ck-row">一、調查訪談事由：</div>
+      <div class="item"><span class="iblock" style="min-height: 25px;"></span></div>
+      <div class="ck-row" style="margin-top:.6rem;">二、受訪人員：<span class="iline iline-lg"></span></div>
+      <div class="ck-row" style="margin-top:.4rem;">三、調查訪談時間：民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</div>
+      <div class="ck-row" style="margin-top:.4rem;">四、地點：<span class="iline iline-lg"></span></div>
+      <div class="ck-row" style="margin-top:.4rem;">五、聯絡人：<span class="iline"></span>　電話：<span class="iline iline-lg"></span></div>
+    </div>
+
+    <div class="section" style="margin-top:1.5rem;">
+      <div class="section-title">六、相關法規告知：</div>
+      <div class="item" style="font-size:.85rem; line-height:1.7; color: #555;">
+        1. 學校應全程錄音或錄影；受訪談者不得自行錄音或錄影。<br>
+        2. 當事人為未成年者，得由法定代理人、實際照顧者陪同。<br>
+        3. 行為人應親自出席受訪。<br>
+        <strong>4. 不到場效果：</strong>無正當理由拒絕配合調查者，處理小組得不待其陳述，逕行作成調查報告。
+      </div>
     </div>
   </div>
-</div>
 
-<!-- 回執聯 -->
-<div class="doc" style="border-top: 3px dashed var(--line); margin-top: -1px;">
-  <div class="doc-title" style="font-size:.92rem;">（學校全銜）校園事件調查訪談通知單回執聯</div>
-  <p style="font-size:.88rem; margin-bottom:.75rem;">訂於民國<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日（星期<span class="iline iline-sm"></span>）<span class="iline iline-sm"></span>午<span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分於本校<span class="iline"></span>樓會議室進行調查訪談，請於下列□中勾選出席意願：</p>
-  <div style="font-size:.88rem;">
-    <div class="ck-row" style="margin-bottom:.4rem;"><span class="cb"></span><span>家長願意陪同學生 <span class="iline iline-sm"></span> 出席調查訪談會議。</span></div>
-    <div style="padding-left:1.4rem; margin-bottom:.5rem;">出席家長姓名：<span class="iline"></span>　與學生之關係為<span class="iline"></span>。</div>
-    <div class="ck-row"><span class="cb"></span><span>家長無法陪同出席，同意由學生 <span class="iline iline-sm"></span> 自行出席調查訪談會議。</span></div>
-    <div style="margin-top:.75rem; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap;">
-      <span>家長簽名：<span class="iline iline-lg"></span></span>
-      <span>填寫日期：<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
+  <!-- 回執聯 -->
+  <div class="doc" style="border-top: 3px dashed #999; margin-top: 20px; padding-top: 20px;">
+    <div class="doc-title" style="font-size:1.1rem; margin-bottom: 15px;">校園事件調查訪談通知單回執聯</div>
+    <p style="font-size:.95rem; margin-bottom:1rem;">茲定於上述時間地點進行調查訪談，請勾選出席意願：</p>
+    <div style="font-size:.95rem;">
+      <div class="ck-row" style="margin-bottom:.5rem;"><span class="cb"></span> <span>家長願意陪同學生 <span class="iline iline-sm"></span> 出席。</span></div>
+      <div style="padding-left:1.5rem; margin-bottom:.8rem;">家長姓名：<span class="iline"></span>　關係：<span class="iline"></span></div>
+      <div class="ck-row"><span class="cb"></span> <span>家長無法陪同，同意由學生 <span class="iline iline-sm"></span> 自行出席。</span></div>
+      <div style="margin-top:1.5rem; display:flex; justify-content:space-between;">
+        <span>家長簽名：<span class="iline iline-lg"></span></span>
+        <span>日期：<span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日</span>
+      </div>
     </div>
   </div>
-  <div class="note-box" style="margin-top:.6rem;">敬請貴家長填寫回執聯後，交與貴子弟於民國<span style="border-bottom:1px solid #999;display:inline-block;min-width:40px;"></span>年<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>月<span style="border-bottom:1px solid #999;display:inline-block;min-width:20px;"></span>日前繳回本校聯絡人。</div>
-</div>
 
-<div class="page-sep"><span>電話通知記錄單（通知當事人以外之相關人使用）</span></div>
+  <div class="page-sep"><span>電話通知記錄單（供相關人/證人使用）</span></div>
 
-<!-- 電話通知記錄單 -->
-<div class="doc">
-  <div class="doc-title" style="font-size:.92rem;">（學校全銜）<br>校園事件調查訪談電話通知記錄單</div>
-  <div class="note-box" style="margin-bottom:.75rem;">
-    <strong>說明：</strong>依防制準則第39條第1項第3款規定，通知<strong>當事人及檢舉人以外之相關人（含證人）</strong>接受訪談時，學校可以不用書面通知，改用電話通知並留下紀錄即可。
+  <!-- 電話通知記錄單 -->
+  <div class="doc">
+    <div class="doc-title" style="font-size:1.1rem;">校園事件調查訪談電話通知記錄單</div>
+    <table class="form-table">
+      <thead>
+        <tr style="background: #f8f9fa;">
+          <th style="width:25%;">訪談對象</th>
+          <th style="width:30%;">通知日期時間</th>
+          <th style="width:30%;">出席意願</th>
+          <th style="width:15%;">通知人</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>行為人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意 □陪同</td><td></td></tr>
+        <tr><td>被行為人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意 □陪同</td><td></td></tr>
+        <tr><td>關係人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意受訪</td><td></td></tr>
+        <tr><td>關係人：<span class="iblock"></span></td><td><span class="iline iline-sm"></span>/ <span class="iline iline-sm"></span> <span class="iline iline-sm"></span>時</td><td>□同意受訪</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <!-- 調查程序的下一步前進按鈕 -->
+    <div style="text-align: right; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
+      <button onclick="goToNextStep('f52', '5-2 延長通知函')" style="padding: 12px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+        ✅ 通知完畢，前往：5-2 延長通知函 →
+      </button>
+    </div>
   </div>
-  <table class="form-table">
-    <tr>
-      <th>訪談對象姓名</th>
-      <th>電話通知日期時間</th>
-      <th>是否同意出席受訪</th>
-      <th>通知人簽章</th>
-    </tr>
-    <tr>
-      <td>行為人學生<br><span class="iblock"></span></td>
-      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
-      <td>
-        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
-        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>被行為人學生<br><span class="iblock"></span></td>
-      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
-      <td>
-        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
-        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>其他相關人員<br><span class="iblock"></span></td>
-      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
-      <td>
-        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
-        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>其他相關人員<br><span class="iblock"></span></td>
-      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
-      <td>
-        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
-        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>其他相關人員<br><span class="iblock"></span></td>
-      <td><span class="iline iline-sm"></span>年<span class="iline iline-sm"></span>月<span class="iline iline-sm"></span>日<br><span class="iline iline-sm"></span>時<span class="iline iline-sm"></span>分</td>
-      <td>
-        <div class="ck-row"><span class="cb"></span>家長同意學生受訪</div>
-        <div class="ck-row"><span class="cb"></span>家長同意陪同出席</div>
-      </td>
-      <td></td>
-    </tr>
-  </table>
-</div>
 </div>
 
 <!-- ══ 5-2 處理程序延長通知函 ══ -->
