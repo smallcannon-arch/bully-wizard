@@ -158,6 +158,14 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .page-sep { border-top: 2px dashed var(--line); margin: 2rem 0 1.5rem; text-align: center; }
 .page-sep span { background: var(--paper); padding: 0 .5rem; font-size: .72rem; color: var(--line); font-family: 'Noto Sans TC', sans-serif; position: relative; top: -.55rem; }
 
+/* ── Modal 共用 (新增美化彈窗樣式) ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,.6); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 1rem; }
+.modal-box { background: #fff; border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,.25); overflow: hidden; animation: fadeUp .2s ease; display: flex; flex-direction: column; }
+@keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-head { background: var(--ink); color: #fff; padding: 1rem 1.5rem; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; flex-shrink: 0; }
+.modal-body { padding: 1.5rem; overflow-y: auto; }
+.modal-foot { padding: 1rem 1.5rem; background: var(--warm); display: flex; gap: .75rem; justify-content: flex-end; flex-shrink: 0; }
+
 /* ── 列印 ── */
 @media print {
   .top-bar, .sidebar { display: none !important; }
@@ -1002,29 +1010,29 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
   </div>
 
-  <!-- 盲點2：跨校案件 -->
+  <!-- 盲點2：跨校案件 (已修復為真實核取方塊) -->
   <div class="section" style="margin-top:1rem;">
     <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 跨校案件確認（第20條）</div>
-    <div class="ck-row">
-      <span class="cb"></span>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
+      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>雙方當事人均為本校在籍學生（非跨校案件）。</span>
-    </div>
-    <div class="ck-row">
-      <span class="cb"></span>
+    </label>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
+      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;display:block;">
           → 依第20條，以「先接獲檢舉之學校」調查；STAGE 06 防制委員會審議時，須通知行為人所屬學校派員列席。
         </span>
       </span>
-    </div>
-    <div class="ck-row">
-      <span class="cb"></span>
+    </label>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
+      <input type="checkbox" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
-        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;">
+        <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:.5rem;display:block;">
           → 依第19條，應於知悉後<strong>3個工作日內</strong>移送調查學校，並產出案件移送函。
         </span>
       </span>
-    </div>
+    </label>
   </div>
 
   <!-- 盲點3：保全證據 -->
@@ -1034,33 +1042,33 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       依第23條規定，學校知悉或接獲檢舉後，應先行保全或初步調查與事件有關之證據、資料。<br>
       <strong style="color:#8b1a1a;">監視器錄影通常僅保存7至30天，須立即確認！</strong>
     </div>
-    <div class="ck-row">
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
       <input type="checkbox" id="cbEvidence1" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>監視器錄影</strong>（若有），已備份或申請留存。</span>
-    </div>
-    <div class="ck-row">
+    </label>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
       <input type="checkbox" id="cbEvidence2" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>數位通訊紀錄</strong>（如 LINE 截圖、FB 貼文等），已請當事人提供或截圖存檔。</span>
-    </div>
-    <div class="ck-row">
+    </label>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
       <input type="checkbox" id="cbEvidence3" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>實物證據</strong>（如毀損物品、醫療診斷書等），已拍照或妥善保存。</span>
-    </div>
-    <div class="ck-row">
+    </label>
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
       <input type="checkbox" id="cbEvidenceNA" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>本案目前無可保全之相關證據，已記錄說明。</span>
-    </div>
+    </label>
   </div>
 
-  <!-- 校安通報確認 -->
+  <!-- 校安通報確認 (已修復為真實核取方塊) -->
   <div class="section" style="margin-top:1rem;">
     <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
-    <div class="ck-row">
+    <label class="ck-row" style="cursor:pointer; display:flex; align-items:baseline; gap:.4rem; margin:.3rem 0;">
       <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
       <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。<br>
-        <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
+        <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;display:block;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
       </span>
-    </div>
+    </label>
   </div>
 
   <div class="note-box" style="margin-top:1rem;">
@@ -2414,16 +2422,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <!-- ══ 盲點補強：STAGE 08 結案歸檔檢核表 Modal ══ -->
-<div id="modal-archive" style="display:none;position:fixed;inset:0;background:rgba(26,26,46,.6);z-index:999;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)closeArchiveModal()">
-  <div style="background:#fff;border-radius:6px;max-width:540px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.25);overflow:hidden;animation:modalIn .2s ease;">
-    <div style="background:#1a5c2e;color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;gap:.6rem;">
+<div class="modal-overlay" id="modal-archive" onclick="if(event.target===this)closeArchiveModal()">
+  <div class="modal-box" style="max-width:540px;">
+    <div class="modal-head" style="background:#1a5c2e; display:flex; align-items:center; gap:.6rem;">
       <span style="font-size:1.2rem;">📁</span>
       <div>
         <div style="font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;">結案歸檔檢核表</div>
         <div style="font-size:.75rem;opacity:.8;">依第40條、第47條規定，結案前須完成以下歸檔確認</div>
       </div>
     </div>
-    <div style="padding:1.5rem;">
+    <div class="modal-body">
       <div style="font-size:.85rem;line-height:1.8;color:#3a3a5c;margin-bottom:1rem;">
         案件結案前，請確認以下歸檔事項均已完成：
       </div>
@@ -2436,7 +2444,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
           <input type="checkbox" id="arc2" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
           <span>🔒 <strong>記載真實姓名之原始文書</strong>（如原始調查報告、訪談逐字稿）已實體封存，不得流出。（第47條）</span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88mm;cursor:pointer;">
+        <label style="display:flex;align-items:flex-start;gap:.5rem;font-size:.88rem;cursor:pointer;">
           <input type="checkbox" id="arc3" style="width:16px;height:16px;accent-color:#1a5c2e;margin-top:3px;flex-shrink:0;">
           <span>📋 <strong>對外文書均已完成匿名化</strong>（報告、通知函中姓名已全數轉為代號），符合第47條規定。</span>
         </label>
@@ -2453,9 +2461,20 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
         ✅ 所有歸檔項目已確認，可正式結案。
       </div>
     </div>
-    <div style="padding:1rem 1.5rem;background:#f5f3ee;display:flex;gap:.75rem;justify-content:flex-end;">
+    <div class="modal-foot">
       <button onclick="closeArchiveModal()" style="padding:.5rem 1.2rem;background:transparent;border:1px solid #c5bfb0;color:#3a3a5c;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;">取消</button>
       <button id="arc-confirm-btn" onclick="confirmArchive()" disabled style="padding:.5rem 1.5rem;background:#1a5c2e;color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;opacity:.45;">確認結案</button>
+    </div>
+  </div>
+</div>
+
+<!-- 系統專屬美化彈窗 -->
+<div class="modal-overlay" id="sysAlertModal" style="z-index: 9999;">
+  <div class="modal-box" style="max-width: 420px; text-align: center;">
+    <div class="modal-head" style="background: var(--info); font-size: 1.1rem;" id="sysAlertTitle">系統提示</div>
+    <div class="modal-body" style="padding: 2.5rem 1.5rem; font-size: .95rem; color: #333; line-height: 1.6; white-space: pre-wrap;" id="sysAlertMsg"></div>
+    <div class="modal-foot" style="justify-content: center; background: #fff; border-top: 1px solid var(--paper);">
+      <button class="print-btn" style="min-width: 120px; padding: .5rem 1rem; font-size: .9rem;" onclick="closeSysAlert()">確定</button>
     </div>
   </div>
 </div>
@@ -2467,10 +2486,23 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <script>
 
+// ── 專屬彈窗功能 ──
+function customAlert(msg, title = '系統提示') {
+  document.getElementById('sysAlertTitle').textContent = title;
+  document.getElementById('sysAlertMsg').textContent = msg;
+  document.getElementById('sysAlertModal').style.display = 'flex';
+}
+function closeSysAlert() {
+  document.getElementById('sysAlertModal').style.display = 'none';
+}
+
 // ── 下載 Word 功能
 function downloadWord() {
   const activePage = document.querySelector('.form-page.active');
-  if (!activePage) { alert('請先選擇一份表單'); return; }
+  if (!activePage) { 
+    customAlert('請先由左側選單選擇一份表單，再進行下載。', '⚠️ 操作提醒'); 
+    return; 
+  }
 
   const formName = document.getElementById('currentFormName').textContent || '霸凌表單';
 
@@ -2569,7 +2601,7 @@ function updateArchiveBtn() {
 }
 function confirmArchive() {
   closeArchiveModal();
-  alert('✅ 結案歸檔完成！\n案件狀態已更新為「已結案」。\n（實際系統將呼叫 GAS 更新 cases 工作表）');
+  customAlert('✅ 結案歸檔完成！\n案件狀態已更新為「已結案」。\n（實際系統將呼叫 GAS 更新 cases 工作表）', '🎉 歸檔成功');
 }
 document.addEventListener('change', function(e) {
   if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
@@ -2666,18 +2698,16 @@ function toggleStage(id) {
   arrow.classList.toggle('open', !isOpen);
 }
 
-// 預設開啟受理階段、顯示 3-1
+// 預設開啟受理前確認清單
 window.onload = function() {
-  const first = document.querySelector('.nav-item');
+  const first = document.querySelector('.nav-item'); // 指向受理前確認清單
   if (first) {
-    show('f31', '3-1 簽請組成防制委員會', '受理', first);
-    first.classList.add('active');
+    show('f_stage01_confirm', '受理前確認清單（建案前必讀）', '受理', first);
   }
   // 從 URL 載入案件資訊
   loadCaseFromUrl();
 };
 
-// nav-item active 狀態已由 show() 統一管理，無需額外 listener
 </script>
 </body>
 </html>
