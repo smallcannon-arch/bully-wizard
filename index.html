@@ -2509,8 +2509,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 </div>
 
 <script>
-
-// ── 專屬彈窗功能 ──
+// ── 1. 基礎彈窗與系統功能 ──
 function customAlert(msg, title = '系統提示') {
   document.getElementById('sysAlertTitle').textContent = title;
   document.getElementById('sysAlertMsg').textContent = msg;
@@ -2520,333 +2519,63 @@ function closeSysAlert() {
   document.getElementById('sysAlertModal').style.display = 'none';
 }
 
-// ── 下載 Word 功能
-function downloadWord() {
-  const activePage = document.querySelector('.form-page.active');
-  if (!activePage) { 
-    customAlert('請先由左側選單選擇一份表單，再進行下載。', '⚠️ 操作提醒'); 
-    return; 
-  }
+// ── 2. 移送函一鍵複製功能 (主任要求的省力神器) ──
+function copyTransferLetter() {
+  const caseId = getUrlParam('case_id') || '未編號';
+  const receiveDate = document.getElementById('b3_receive_date').value || '____年__月__日';
+  const awareDate = document.getElementById('b1_aware_date').value || '____年__月__日';
+  
+  const subject = `【移送函】關於本校受理編號 ${caseId} 之校園霸凌事件移送說明`;
+  const content = `主旨：關於本校於 ${receiveDate} 受理之校園霸凌事件（編號：${caseId}），經初步審查不具管轄權，特此移送貴校辦理。
 
-  const formName = document.getElementById('currentFormName').textContent || '霸凌表單';
+說明：
+一、本案係本校於 ${awareDate} 知悉，並於 ${receiveDate} 接獲檢舉在案。
+二、經查行為人目前就讀於貴校，依「校園霸凌防制準則」第19條規定，本案應由行為人現所屬學校具管轄權，爰依法移送。
+三、隨函檢附原始檢舉資料與相關保全證據影本，請貴校依權責續辦。`;
 
-  // 取得目前表單的 HTML 內容
-  const docHtml = activePage.querySelector('.doc') ?
-    Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') :
-    activePage.innerHTML;
-
-  // 建立可被 Word 開啟的 HTML 檔案（Word 支援讀取 .doc 格式的 HTML）
-  const wordContent = `
-<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="UTF-8">
-<title>${formName}</title>
-<!--[if gte mso 9]>
-<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
-<![endif]-->
-<style>
-  @page { size: A4; margin: 2cm 2.5cm; }
-  body { font-family: "微軟正黑體", "Microsoft JhengHei", "Noto Serif TC", serif; font-size: 12pt; line-height: 1.9; color: #1a1a2e; }
-  table { width: 100%; border-collapse: collapse; margin: 6pt 0; font-size: 11pt; }
-  th, td { border: 1pt solid #1a1a2e; padding: 4pt 6pt; vertical-align: top; }
-  th { background: #f0ece4; font-weight: bold; text-align: center; }
-  .doc-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 12pt; letter-spacing: 2pt; }
-  .section-title { font-weight: bold; }
-  .item { margin-left: 16pt; margin-bottom: 3pt; }
-  .sub-item { margin-left: 32pt; margin-bottom: 2pt; }
-  .note-box { background: #f8f6f0; border-left: 3pt solid #c5bfb0; padding: 6pt 8pt; font-size: 10pt; color: #555; margin-top: 8pt; }
-  .law-banner { background: #1a3a5c; color: white; padding: 6pt 8pt; margin-bottom: 8pt; font-size: 10pt; }
-  .quorum-notice { background: #ddeeff; border: 1pt solid #a0c0e0; padding: 6pt 8pt; margin-bottom: 8pt; font-size: 10pt; }
-  .iline { display: inline-block; border-bottom: 1pt solid #999; min-width: 60pt; }
-  .iline-sm { min-width: 25pt; }
-  .iline-lg { min-width: 120pt; }
-  .iblock { display: block; border-bottom: 1pt solid #999; min-height: 14pt; width: 100%; }
-  .iarea { display: block; min-height: 36pt; border-bottom: 1pt dashed #ddd; }
-  .cb { display: inline-block; width: 10pt; height: 10pt; border: 1.5pt solid #1a1a2e; }
-  .sign-row { display: flex; gap: 2rem; margin-top: 12pt; text-align: center; justify-content: center; }
-  .sign-item { text-align: center; min-width: 80pt; }
-  .sign-line { border-bottom: 1pt solid #1a1a2e; min-height: 18pt; }
-  .date-row { text-align: center; margin-top: 10pt; }
-  .gongwen-school { font-size: 13pt; font-weight: bold; text-align: center; border-bottom: 2pt solid #1a1a2e; padding-bottom: 4pt; margin-bottom: 8pt; }
-  .classified { border: 1.5pt solid #1a1a2e; padding: 0 4pt; font-size: 9pt; font-weight: bold; }
-  .history-table th, .history-table td { border: 1pt solid #1a1a2e; padding: 3pt 5pt; }
-  .relief-box { border: 1.5pt solid #c5bfb0; margin-top: 8pt; }
-  .relief-head { padding: 4pt 8pt; font-size: 10pt; font-weight: bold; }
-  .relief-head-victim { background: #ddeeff; color: #1a3a5c; }
-  .relief-head-perp { background: #fff3cd; color: #5c3a00; }
-  .relief-body { padding: 6pt 8pt; font-size: 10pt; }
-  .variant-badge { font-size: 9pt; border: 1pt solid #c5bfb0; padding: 1pt 6pt; margin-bottom: 4pt; }
-  .page-sep { border-top: 2pt dashed #c5bfb0; margin: 16pt 0; }
-  input[type="checkbox"] { display: none; }
-  .ck-row::before { content: "□ "; }
-</style>
-</head>
-<body>
-${docHtml}
-</body>
-</html>`;
-
-  // 建立 Blob 並下載
-  const blob = new Blob([wordContent], {
-    type: 'application/msword;charset=utf-8'
+  const fullText = subject + "\n\n" + content;
+  
+  navigator.clipboard.writeText(fullText).then(() => {
+    customAlert('✅ 移送函內文已複製！\n請直接至公文系統（筆硯）按 Ctrl+V 貼上即可。', '🎉 複製成功');
   });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  // 清理檔名（移除特殊字元）
-  const safeName = formName.replace(/[\/\\:*?"<>|]/g, '_');
-  a.download = `${safeName}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 
-
-function openArchiveModal() {
-  const modal = document.getElementById('modal-archive');
-  modal.style.display = 'flex';
-  updateArchiveBtn();
-}
-function closeArchiveModal() {
-  document.getElementById('modal-archive').style.display = 'none';
-}
-function updateArchiveBtn() {
-  const cbs = ['arc1','arc2','arc3','arc4','arc5'];
-  const allChecked = cbs.every(id => document.getElementById(id)?.checked);
-  const btn = document.getElementById('arc-confirm-btn');
-  const msg = document.getElementById('arc-ok-msg');
-  if (btn) btn.disabled = !allChecked;
-  if (btn) btn.style.opacity = allChecked ? '1' : '.45';
-  if (msg) msg.style.display = allChecked ? 'block' : 'none';
-}
-function confirmArchive() {
-  closeArchiveModal();
-  customAlert('✅ 結案歸檔完成！\n案件狀態已更新為「已結案」。\n（實際系統將呼叫 GAS 更新 cases 工作表）', '🎉 歸檔成功');
-}
-document.addEventListener('change', function(e) {
-  if (['arc1','arc2','arc3','arc4','arc5'].includes(e.target.id)) updateArchiveBtn();
-});
-
-// ── 案件串接：從 URL 讀取 case_id
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
-
-function getUrlParam(name) {
-  return new URLSearchParams(window.location.search).get(name);
-}
-
-function goBack() {
-  window.location.href = './dashboard.html';
-}
-
-async function loadCaseFromUrl() {
-  const caseId = getUrlParam('case_id');
-  const email = getUrlParam('email');
-  if (!caseId || !email) return;
-
-  // 顯示返回按鈕
-  document.getElementById('backBtn').style.display = 'inline-block';
-
-  try {
-     const currentToken = sessionStorage.getItem('bully_token'); // 🔑 從記憶體拿出鑰匙
-     const res = await fetch(GAS_URL, {
-       method: 'POST',
-       headers: { 'Content-Type': 'text/plain' },
-       body: JSON.stringify({ action: 'bully_load', email: email, token: currentToken, data: { case_id: caseId } })
-     });
-    const result = await res.json();
-    if (!result.ok) return;
-
-    const c = result.case;
-    const stageLabels = {
-      'STAGE_01':'01 知悉受理','STAGE_02':'02 審查小組','STAGE_03':'03 處理小組',
-      'STAGE_04':'04 會前會','STAGE_05A':'05A 調和','STAGE_05B':'05B 調查',
-      'STAGE_06':'06 防制委員會','STAGE_07':'07 終局處理','STAGE_08':'08 輔導追蹤'
-    };
-
-    // 顯示案件資訊列
-    const bar = document.getElementById('caseInfoBar');
-    bar.style.display = 'block';
-    bar.innerHTML = `📋 ${c.case_name}　🏫 ${c.school || ''}　📍 ${stageLabels[c.stage] || c.stage}`;
-
-    // 同步跳到對應階段的表單
-    const stageToForm = {
-      'STAGE_01':'f31','STAGE_02':'f35','STAGE_03':'f39',
-      'STAGE_04':'f43','STAGE_05A':'f41','STAGE_05B':'f51',
-      'STAGE_06':'f61','STAGE_07':'f63','STAGE_08':'f65'
-    };
-    const targetForm = stageToForm[c.stage];
-    if (targetForm) {
-      const navItem = document.querySelector(`[onclick*="${targetForm}"]`);
-      if (navItem) show(targetForm, navItem.textContent.trim(), '', navItem);
-    }
-
-  } catch(e) {
-    console.warn('案件載入失敗:', e.message);
-  }
-}
-
-// ── 導覽狀態
-let currentId = null;
-
-function show(id, name, stage, el) {
-  // 隱藏所有
-  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-  // 顯示目標
-  const page = document.getElementById(id);
-  if (page) page.classList.add('active');
-  currentId = id;
-
-  // 更新導覽高亮（用傳入的 el 或 event.currentTarget）
-  const navEl = el || (typeof event !== 'undefined' && event.currentTarget);
-  if (navEl) navEl.classList.add('active');
-
-  // 更新標題與麵包屑
-  document.getElementById('currentFormName').textContent = name;
-  document.getElementById('breadcrumb').innerHTML =
-    `<span>${stage}階段</span> › ${name}`;
-
-  // 捲回頂部
-  document.getElementById('mainContent').scrollTo(0, 0);
-}
-
-function toggleStage(id) {
-  const items = document.getElementById(id);
-  const arrow = document.getElementById('arr-' + id);
-  const isOpen = items.classList.contains('open');
-  items.classList.toggle('open', !isOpen);
-  arrow.classList.toggle('open', !isOpen);
-}
-
-// 預設開啟受理前確認清單
-window.onload = function() {
-  const first = document.querySelector('.nav-item'); // 指向受理前確認清單
-  if (first) {
-    show('f_stage01_confirm', '受理前確認清單（建案前必讀）', '受理', first);
-  }
-  // 從 URL 載入案件資訊
-  loadCaseFromUrl();
-};
-
-// ── 系統專屬 Confirm Promise 封裝 ──
-let confirmResolve = null;
-function customConfirm(msg, title = '確認操作') {
-  document.getElementById('sysConfirmTitle').textContent = title;
-  document.getElementById('sysConfirmMsg').innerHTML = msg;
-  document.getElementById('sysConfirmModal').style.display = 'flex';
-  return new Promise(resolve => { confirmResolve = resolve; });
-}
-function resolveSysConfirm(result) {
-  document.getElementById('sysConfirmModal').style.display = 'none';
-  if (confirmResolve) { confirmResolve(result); confirmResolve = null; }
-}
-
-// ── 模組一：STAGE 01 循序解鎖與狀態暫存邏輯 ──
-function initStage01Logic() {
-  const caseId = getUrlParam('case_id');
-  if (!caseId) return;
-
-  // 綁定監聽器
-  document.querySelectorAll('.b1-trigger').forEach(el => el.addEventListener('change', checkStage01));
-  document.querySelectorAll('.b2-trigger').forEach(el => el.addEventListener('change', checkStage01));
-  document.querySelectorAll('.b3-trigger').forEach(el => el.addEventListener('change', checkStage01));
-
-  // 讀取暫存
-  const savedState = JSON.parse(localStorage.getItem('stage01_' + caseId) || '{}');
-  if (savedState.b1_report) document.getElementById('b1_cb_report').checked = true;
-  if (savedState.b1_date) document.getElementById('b1_aware_date').value = savedState.b1_date;
-  if (savedState.b1_evidences) {
-    document.querySelectorAll('.b1-evidence').forEach((cb, i) => cb.checked = savedState.b1_evidences[i]);
-  }
-  if (savedState.b2_juris) document.querySelector(`input[name="b2_juris"][value="${savedState.b2_juris}"]`).checked = true;
-  if (savedState.b3_source) document.querySelector(`input[name="b3_source"][value="${savedState.b3_source}"]`).checked = true;
-  if (savedState.b3_date) document.getElementById('b3_receive_date').value = savedState.b3_date;
-
-  checkStage01(); // 初始檢查
-}
-
-function checkStage01() {
-  const caseId = getUrlParam('case_id');
-  if (!caseId) return;
-
-  // 狀態收集
-  const state = {
-    b1_report: document.getElementById('b1_cb_report').checked,
-    b1_date: document.getElementById('b1_aware_date').value,
-    b1_evidences: Array.from(document.querySelectorAll('.b1-evidence')).map(cb => cb.checked),
-    b2_juris: document.querySelector('input[name="b2_juris"]:checked')?.value,
-    b3_source: document.querySelector('input[name="b3_source"]:checked')?.value,
-    b3_date: document.getElementById('b3_receive_date').value
-  };
-  localStorage.setItem('stage01_' + caseId, JSON.stringify(state)); // 寫入暫存
-
-  // 判斷解鎖邏輯
-  const b1_pass = state.b1_report && state.b1_date && state.b1_evidences.some(v => v === true);
-  const b2 = document.getElementById('b2_jurisdiction');
-  b1_pass ? b2.classList.remove('locked-block') : b2.classList.add('locked-block');
-
-  const b3 = document.getElementById('b3_trigger');
-  const b4 = document.getElementById('b4_finish');
-  const transferBtn = document.getElementById('b2_transfer_btn');
-  const verbalBtn = document.getElementById('b3_verbal_btn');
-
-  // 無管轄權中斷邏輯
-  if (state.b2_juris === 'none') {
-    transferBtn.style.display = 'block';
-    b3.classList.add('locked-block'); b4.classList.add('locked-block');
-    return;
-  } else {
-    transferBtn.style.display = 'none';
-  }
-
-  const b2_pass = b1_pass && (state.b2_juris === 'full' || state.b2_juris === 'cross');
-  b2_pass ? b3.classList.remove('locked-block') : b3.classList.add('locked-block');
-
-  // 言詞檢舉列印按鈕
-  verbalBtn.style.display = state.b3_source === 'verbal' ? 'block' : 'none';
-
-  const b3_pass = b2_pass && state.b3_source && state.b3_date;
-  b3_pass ? b4.classList.remove('locked-block') : b4.classList.add('locked-block');
-}
-
-// 覆寫 window.onload 加入初始化
-const originalOnload = window.onload;
-window.onload = function() {
-  if (originalOnload) originalOnload();
-  initStage01Logic();
-};
-// 🚀 區塊四專用：自動推進至 STAGE 02 並連動後端時鐘
+// ── 3. 推進 STAGE 02 與日期防呆 (修正紅燈消不掉的問題) ──
 async function autoAdvanceToStage02() {
   const caseId = getUrlParam('case_id');
   if (!caseId) return;
 
-  // 1. 抓取區塊三的資料（將作為 20 工作日的起算基準）
-  const sourceMap = { 'written': '接獲書面檢舉', 'verbal': '言詞檢舉', 'media': '視同檢舉(機關/媒體)' };
-  const sourceVal = document.querySelector('input[name="b3_source"]:checked')?.value;
-  const milestone = sourceMap[sourceVal] || '接獲檢舉';
-  const triggerDate = document.getElementById('b3_receive_date').value;
+  // 🛡️ A. 日期防呆檢查
+  const awareVal = document.getElementById('b1_aware_date').value;   // 知悉日
+  const receiveVal = document.getElementById('b3_receive_date').value; // 檢舉日
 
-  if (!triggerDate) {
-    alert('⚠️ 請先確認已填寫「接獲檢舉日期」！');
+  if (!awareVal || !receiveVal) {
+    customAlert('⚠️ 主任，日期還沒填完喔！\n請確保填好「知悉日期」與「接獲檢舉日期」。', '操作提醒');
     return;
   }
 
-  // 2. 改變按鈕狀態，避免重複點擊
+  const dAware = new Date(awareVal);
+  const dReceive = new Date(receiveVal);
+
+  if (dAware < dReceive) {
+    customAlert('❌ 邏輯錯誤：【知悉日期】不能早於【受理檢舉日期】！\n（接到檢舉的那一刻就應該是知悉日了）', '日期錯誤');
+    return;
+  }
+
+  // 🚀 B. 執行推進
   const btn = document.querySelector('#b4_finish button');
   const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ 系統自動推進與寫入資料庫中...';
+  btn.innerHTML = '⏳ 系統處理中...';
   btn.disabled = true;
 
   try {
     const currentToken = sessionStorage.getItem('bully_token');
     const currentEmail = sessionStorage.getItem('bully_email');
     
-// 3. 呼叫後端 API，正式把案件推入 STAGE 02
+    const sourceMap = { 'written': '接獲書面檢舉', 'verbal': '言詞檢舉', 'media': '視同檢舉(機關/媒體)' };
+    const sourceVal = document.querySelector('input[name="b3_source"]:checked')?.value;
+    const milestone = sourceMap[sourceVal] || '接獲檢舉';
+
     const res = await fetch(GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
@@ -2855,29 +2584,147 @@ async function autoAdvanceToStage02() {
         token: currentToken,
         email: currentEmail,
         case_id: caseId,
-        from_stage: 'STAGE_01', // 🟢 關鍵修復：告訴後端我們是從哪來的，喚醒您的精準刪除迴圈！
-        stage: 'STAGE_02',      // 🟢 確保這行存在：告訴後端我們要去 STAGE_02 (讓右上角文字恢復)
+        from_stage: 'STAGE_01', 
+        stage: 'STAGE_02',     
         status: '進行中',
-        milestone: milestone,
-        done_date: triggerDate
+        milestone: milestone, 
+        done_date: receiveVal 
       })
     });
     
     const result = await res.json();
-    if (!result.ok) throw new Error(result.error || '後端回報錯誤');
+    if (!result.ok) throw new Error(result.error);
 
-    // 4. 推進成功，跳出提示並自動切換畫面
-    alert('✅ 案件已自動推進至「02 審查小組」！\n系統已依據您輸入的日期，正式啟動 20 工作日審查倒數時鐘。');
-    show('f35', '3-5 審查小組會議紀錄', '受理'); 
+    customAlert('✅ 案件已推進至「02 審查小組」！\n紅燈已清除，綠色 20 日時鐘已啟動。', '處理成功');
+    setTimeout(() => location.reload(), 1500); 
 
   } catch (err) {
-    alert('❌ 自動推進失敗：' + err.message + '\n(您可以回到儀表板大廳手動推進)');
+    customAlert('❌ 推進失敗：' + err.message, '系統錯誤');
   } finally {
-    // 恢復按鈕狀態
     btn.innerHTML = originalText;
     btn.disabled = false;
   }
-}  
+}
+
+// ── 4. 基礎載入與循序解鎖邏輯 ──
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
+
+async function loadCaseFromUrl() {
+  const caseId = getUrlParam('case_id');
+  const email = getUrlParam('email');
+  if (!caseId || !email) return;
+
+  document.getElementById('backBtn').style.display = 'inline-block';
+
+  try {
+    const currentToken = sessionStorage.getItem('bully_token');
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'bully_load', email: email, token: currentToken, data: { case_id: caseId } })
+    });
+    const result = await res.json();
+    if (!result.ok) return;
+
+    const c = result.case;
+    const bar = document.getElementById('caseInfoBar');
+    bar.style.display = 'block';
+    bar.innerHTML = `📋 ${c.case_name}　🏫 ${c.school || ''}　📍 階段：${c.stage}`;
+    
+    if (c.stage === 'STAGE_01') initStage01Logic();
+
+  } catch(e) { console.warn('載入失敗', e); }
+}
+
+function show(id, name, stage, el) {
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById(id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('currentFormName').textContent = name;
+  document.getElementById('breadcrumb').innerHTML = `<span>${stage}階段</span> › ${name}`;
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function initStage01Logic() {
+  const caseId = getUrlParam('case_id');
+  if (!caseId) return;
+  document.querySelectorAll('.b1-trigger, .b2-trigger, .b3-trigger').forEach(el => {
+    el.addEventListener('change', checkStage01);
+  });
+  checkStage01();
+}
+
+function checkStage01() {
+  const b1_report = document.getElementById('b1_cb_report').checked;
+  const b1_date = document.getElementById('b1_aware_date').value;
+  const b1_evidences = Array.from(document.querySelectorAll('.b1-evidence')).some(cb => cb.checked);
+  
+  const b1_pass = b1_report && b1_date && b1_evidences;
+  const b2 = document.getElementById('b2_jurisdiction');
+  b1_pass ? b2.classList.remove('locked-block') : b2.classList.add('locked-block');
+
+  const juris = document.querySelector('input[name="b2_juris"]:checked')?.value;
+  const transferBtn = document.getElementById('b2_transfer_btn');
+  const b3 = document.getElementById('b3_trigger');
+  
+  if (juris === 'none') {
+    transferBtn.style.display = 'block';
+    const btnHtml = `<button class="print-btn" style="background:#c0392b; width:100%; margin-top:10px;" onclick="copyTransferLetter()">📋 一鍵複製移送函文字</button>`;
+    transferBtn.innerHTML = `<div style="color:#c0392b; font-weight:600; font-size:.85rem;">⚠️ 本案不具管轄權，請點擊下方按鈕複製公文內容：</div>${btnHtml}`;
+    b3.classList.add('locked-block');
+    return;
+  } else {
+    transferBtn.style.display = 'none';
+  }
+
+  const b2_pass = b1_pass && (juris === 'full' || juris === 'cross');
+  b2_pass ? b3.classList.remove('locked-block') : b3.classList.add('locked-block');
+
+  const source = document.querySelector('input[name="b3_source"]:checked')?.value;
+  const receiveDate = document.getElementById('b3_receive_date').value;
+  const b4 = document.getElementById('b4_finish');
+
+  const b3_pass = b2_pass && source && receiveDate;
+  b3_pass ? b4.classList.remove('locked-block') : b4.classList.add('locked-block');
+}
+
+// ── 5. 結案與 Word 下載 (保留主任原本的功能) ──
+function downloadWord() {
+  const activePage = document.querySelector('.form-page.active');
+  if (!activePage) { customAlert('請先選擇表單再下載', '⚠️ 提醒'); return; }
+  const formName = document.getElementById('currentFormName').textContent;
+  const docHtml = activePage.querySelector('.doc') ? Array.from(activePage.querySelectorAll('.doc')).map(d => d.outerHTML).join('\n') : activePage.innerHTML;
+  const wordContent = `<html><head><meta charset="UTF-8"></head><body>${docHtml}</body></html>`;
+  const blob = new Blob([wordContent], { type: 'application/msword;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${formName}.doc`; a.click();
+}
+
+function openArchiveModal() { document.getElementById('modal-archive').style.display = 'flex'; updateArchiveBtn(); }
+function closeArchiveModal() { document.getElementById('modal-archive').style.display = 'none'; }
+function updateArchiveBtn() {
+  const allChecked = ['arc1','arc2','arc3','arc4','arc5'].every(id => document.getElementById(id)?.checked);
+  document.getElementById('arc-confirm-btn').disabled = !allChecked;
+  document.getElementById('arc-confirm-btn').style.opacity = allChecked ? '1' : '.45';
+}
+
+// ── 6. 輔助功能 ──
+function getUrlParam(name) { return new URLSearchParams(window.location.search).get(name); }
+function toggleStage(id) {
+  const items = document.getElementById(id);
+  const arrow = document.getElementById('arr-' + id);
+  items.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+function goBack() { window.location.href = './dashboard.html'; }
+
+window.onload = function() {
+  loadCaseFromUrl();
+  const firstNav = document.querySelector('.nav-item');
+  if (firstNav) firstNav.click();
+};
 </script>
+  
 </body>
 </html>
