@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校園霸凌事件處理流程</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --paper: #f5f3ee;
+  --warm: #ede9e0;
+  --line: #c5bfb0;
+  --accent: #8b1a1a;
+  --ok: #1a5c2e;
+  --warn: #7a4a00;
+  --info: #1a3a5c;
+  --ok-light: #d4edda;
+  --warn-light: #fff3cd;
+  --accent-pale: #fdf0f0;
+  --info-light: #ddeeff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 頂部 ── */
+.top-bar {
+  background: var(--ink);
+  color: #fff;
+  height: 52px;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  flex-shrink: 0;
+}
+.top-bar-left { display: flex; align-items: center; gap: .75rem; }
+.back-btn {
+  padding: .28rem .8rem;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,.3);
+  background: transparent;
+  color: #fff;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: .75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.back-btn:hover { background: rgba(255,255,255,.1); }
+.top-bar h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: .95rem;
+  font-weight: 700;
+}
+.case-info-bar {
+  font-size: .78rem;
+  color: rgba(255,255,255,.6);
+  border-left: 1px solid rgba(255,255,255,.2);
+  padding-left: .75rem;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 主體 ── */
+.main {
+  flex: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 1.5rem 4rem;
+  overflow-y: auto;
+}
+
+/* ── 載入中 ── */
+.loading-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--line);
+}
+.spinner {
+  display: inline-block;
+  width: 28px; height: 28px;
+  border: 2px solid var(--line);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-bottom: .75rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 期限狀態卡片 ── */
+.deadline-card {
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid;
+}
+.deadline-card.red {
+  background: var(--accent-pale);
+  border-color: #e8b0b0;
+  color: var(--accent);
+}
+.deadline-card.yellow {
+  background: var(--warn-light);
+  border-color: #f0d080;
+  color: var(--warn);
+}
+.deadline-card.green {
+  background: var(--ok-light);
+  border-color: #a8d5b5;
+  color: var(--ok);
+}
+.deadline-card.none {
+  background: var(--warm);
+  border-color: var(--line);
+  color: #666;
+}
+.deadline-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.deadline-card.red .deadline-dot { background: var(--accent); box-shadow: 0 0 0 4px rgba(139,26,26,.15); }
+.deadline-card.yellow .deadline-dot { background: #e6a817; box-shadow: 0 0 0 4px rgba(230,168,23,.15); }
+.deadline-card.green .deadline-dot { background: var(--ok); box-shadow: 0 0 0 4px rgba(26,92,46,.15); }
+.deadline-card.none .deadline-dot { background: var(--line); }
+.deadline-info { flex: 1; }
+.deadline-milestone { font-size: .88rem; font-weight: 600; }
+.deadline-dates { font-size: .78rem; margin-top: .2rem; opacity: .8; }
+.deadline-days {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── 區塊卡片 ── */
+.section-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.section-head {
+  padding: .75rem 1.25rem;
+  background: var(--warm);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 600;
+  font-size: .9rem;
+}
+.section-body { padding: 1rem 1.25rem; }
+
+/* ── 法規說明 ── */
+.law-note {
+  background: var(--info-light);
+  border-left: 3px solid var(--info);
+  padding: .6rem .9rem;
+  font-size: .8rem;
+  color: var(--info);
+  line-height: 1.7;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: .75rem;
+}
+
+/* ── 警告提示 ── */
+.warning-note {
+  background: var(--accent-pale);
+  border-left: 3px solid var(--accent);
+  padding: .6rem .9rem;
+  font-size: .8rem;
+  color: var(--accent);
+  line-height: 1.7;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: .75rem;
+}
+
+/* ── 檢核清單 ── */
+.checklist { display: flex; flex-direction: column; gap: .5rem; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .5rem .75rem;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: background .12s;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.check-item:hover { background: var(--paper); }
+.check-item.checked {
+  background: var(--ok-light);
+  border-color: #a8d5b5;
+}
+.check-item input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--ok);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.check-item.required-check { border-color: #e8b0b0; }
+.check-item.required-check.checked { background: var(--ok-light); border-color: #a8d5b5; }
+
+/* ── 時間輸入 ── */
+.time-input-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: .75rem;
+}
+.time-field { display: flex; flex-direction: column; gap: .25rem; }
+.time-field label { font-size: .78rem; color: #666; }
+.time-field input {
+  padding: .4rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: .85rem;
+  outline: none;
+}
+.time-field input:focus { border-color: var(--ink); }
+.time-status {
+  font-size: .82rem;
+  font-weight: 600;
+  padding: .35rem .75rem;
+  border-radius: 4px;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+.time-status.ok { background: var(--ok-light); color: var(--ok); }
+.time-status.warn { background: var(--warn-light); color: var(--warn); }
+.time-status.error { background: var(--accent-pale); color: var(--accent); }
+
+/* ── 表單下載區 ── */
+.download-list { display: flex; flex-direction: column; gap: .4rem; }
+.download-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: .85rem;
+  color: var(--info);
+  text-decoration: none;
+  transition: background .12s;
+}
+.download-item:hover { background: var(--info-light); }
+.download-item span { flex: 1; }
+
+/* ── 分流選擇 ── */
+.branch-options { display: flex; flex-direction: column; gap: .5rem; }
+.branch-option {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .75rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.branch-option:hover { border-color: var(--ink); background: var(--warm); }
+.branch-option.selected { border-color: var(--ok); background: var(--ok-light); }
+.branch-option input[type="radio"] {
+  width: 16px; height: 16px;
+  accent-color: var(--ok);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.branch-label { font-weight: 600; }
+.branch-desc { font-size: .78rem; color: #666; margin-top: .15rem; }
+
+/* ── 人數驗證 ── */
+.number-input-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.number-field { display: flex; flex-direction: column; gap: .25rem; }
+.number-field label { font-size: .78rem; color: #666; }
+.number-field input {
+  width: 80px;
+  padding: .4rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: .85rem;
+  text-align: center;
+  outline: none;
+}
+.number-field input:focus { border-color: var(--ink); }
+.number-result {
+  font-size: .82rem;
+  padding: .35rem .75rem;
+  border-radius: 4px;
+  margin-top: 18px;
+}
+.number-result.ok { background: var(--ok-light); color: var(--ok); }
+.number-result.fail { background: var(--accent-pale); color: var(--accent); }
+
+/* ── 推進按鈕區 ── */
+.advance-area {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.advance-btn {
+  display: block;
+  width: 100%;
+  padding: .85rem 1.5rem;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+  text-align: center;
+}
+.advance-btn:hover { opacity: .88; }
+.advance-btn:disabled { opacity: .35; cursor: not-allowed; }
+.advance-hint {
+  font-size: .78rem;
+  color: #aaa;
+  text-align: center;
+  margin-top: .5rem;
+}
+
+/* ── 載入中 Toast ── */
+#loadingToast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: .75rem 1.5rem;
+  border-radius: 40px;
+  font-size: .88rem;
+  display: none;
+  align-items: center;
+  gap: .75rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,.35);
+  z-index: 9999;
+}
+</style>
+</head>
+<body>
+
+<!-- 頂部 -->
+<header class="top-bar">
+  <div class="top-bar-left">
+    <button class="back-btn" onclick="goBack()">← 返回儀表板</button>
+    <h1>🏫 霸凌事件處理流程</h1>
+    <div class="case-info-bar" id="caseInfoBar"></div>
+  </div>
+</header>
+
+<!-- 主體 -->
+<main class="main" id="mainContent">
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>載入案件資料中...</p>
+  </div>
+</main>
+
+<!-- Toast -->
+<div id="loadingToast">
+  <span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></span>
+  <span id="toastMsg">處理中...</span>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXSckDnFFrjbr-IPdRmnJAcebfmg_gP1n5r2TLC3IEmNIrdGRBuaql4GAuDSnW8LP7dw/exec';
+
+// ── 狀態
+let caseData = null;
+let deadlines = [];
+let currentEmail = '';
+let currentCaseId = '';
+
+// ── 工具函式
+function getUrlParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function goBack() {
+  window.location.href = './dashboard.html';
+}
+
+async function callGAS(action, data = {}) {
+  const body = JSON.stringify({ action, email: currentEmail, data, ...data });
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body
+  });
+  return await res.json();
+}
+
+function showToast(msg) {
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('loadingToast').style.display = 'flex';
+}
+function hideToast() {
+  document.getElementById('loadingToast').style.display = 'none';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  return dateStr.replace(/-/g, '/');
+}
+
+function getLightClass(light) {
+  return light || 'none';
+}
+
+// ── 載入案件
+async function init() {
+  currentCaseId = getUrlParam('case_id');
+  currentEmail = getUrlParam('email');
+
+  if (!currentCaseId || !currentEmail) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading-state">
+        <p style="color:var(--accent);">❌ 找不到案件資訊，請從儀表板進入。</p>
+        <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
+      </div>`;
+    return;
+  }
+
+  try {
+    const [caseResult, dlResult] = await Promise.all([
+      callGAS('bully_load', { case_id: currentCaseId }),
+      callGAS('bully_deadline_list', { case_id: currentCaseId })
+    ]);
+
+    if (!caseResult.ok) throw new Error(caseResult.error);
+
+    caseData = caseResult.case;
+    deadlines = dlResult.deadlines || [];
+
+    // 頂部案件資訊
+    document.getElementById('caseInfoBar').textContent =
+      `📋 ${caseData.case_name}　🏫 ${caseData.school || ''}`;
+
+    // 渲染對應階段
+    renderStage(caseData.stage);
+
+  } catch(e) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading-state">
+        <p style="color:var(--accent);">載入失敗：${e.message}</p>
+      </div>`;
+  }
+}
+
+// ── 渲染對應階段
+function renderStage(stage) {
+  const renders = {
+    'STAGE_01': renderStage01,
+    'STAGE_02': renderStage02,
+    'PRE_STAGE': renderPreStage,
+  };
+  const fn = renders[stage];
+  if (fn) {
+    fn();
+  } else {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading-state">
+        <p>階段「${stage}」的流程介面尚在建置中。</p>
+      </div>`;
+  }
+}
+
+// ── 期限卡片 HTML
+function deadlineCardHtml() {
+  if (!deadlines.length) return '';
+  // 找最近的截止日
+  const sorted = [...deadlines].sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
+  const dl = sorted[0];
+  const light = dl.light || 'none';
+  const daysText = dl.days_left < 0
+    ? `逾期 ${Math.abs(dl.days_left)} 天`
+    : `剩 ${dl.days_left} 天`;
+
+  return `
+  <div class="deadline-card ${light}">
+    <div class="deadline-dot"></div>
+    <div class="deadline-info">
+      <div class="deadline-milestone">⏱ ${dl.milestone}</div>
+      <div class="deadline-dates">截止日：${formatDate(dl.due_date)}</div>
+    </div>
+    <div class="deadline-days">${daysText}</div>
+  </div>`;
+}
+
+// ══════════════════════════════
+// PRE_STAGE 通報列管中
+// ══════════════════════════════
+function renderPreStage() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 通報列管中</div>
+      <div class="section-body">
+        <div class="law-note">
+          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。
+          通報完成後若尚未接獲檢舉，案件進入「通報列管」狀態，20工作日的審查時鐘尚未開始。
+        </div>
+        <p style="font-size:.88rem;color:#666;line-height:1.7;">
+          目前案件處於通報列管狀態。請等待家長或相關人員提出正式檢舉後，再回到儀表板建立正式案件。
+        </p>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head">📥 相關表單</div>
+      <div class="section-body">
+        <div class="download-list">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>📄 桃園市公版表單下載（教師專審會）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════
+// STAGE_01 知悉受理
+// ══════════════════════════════
+function renderStage01() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <!-- 法規說明 -->
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 01｜知悉受理</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第17條：</strong>學校知悉疑似霸凌事件，應於<strong>24小時內</strong>向主管機關通報。<br>
+          <strong>第23條：</strong>知悉後應先行保全相關證據及資料。<br>
+          <strong>第18條：</strong>接獲檢舉後，20工作日審查時鐘才正式啟動。
+        </div>
+      </div>
+    </div>
+
+    <!-- 校安通報確認 -->
+    <div class="section-card">
+      <div class="section-head">🔔 校安通報確認（第17條）</div>
+      <div class="section-body">
+        <div class="time-input-row">
+          <div class="time-field">
+            <label>知悉日期時間 *</label>
+            <input type="datetime-local" id="timeKnown" onchange="checkTimeStatus()">
+          </div>
+          <div class="time-field">
+            <label>完成通報時間 *</label>
+            <input type="datetime-local" id="timeReported" onchange="checkTimeStatus()">
+          </div>
+          <div class="time-status" id="timeStatus"></div>
+        </div>
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>校安通報序號</label>
+          <input type="text" id="reportNo" placeholder="請輸入校安通報序號" style="width:200px;">
+        </div>
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbReport">
+            <span>已完成校安通報（含主管機關與社政機關）</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管轄權確認 -->
+    <div class="section-card">
+      <div class="section-head">⚖️ 案件管轄權確認（第19、20條）</div>
+      <div class="section-body">
+        <div class="branch-options" id="jurisdictionOptions">
+          <label class="branch-option" onclick="selectBranch('jurisdiction', 'local', this)">
+            <input type="radio" name="jurisdiction" value="local" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">本校案件</div>
+              <div class="branch-desc">雙方當事人均為本校在籍學生</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('jurisdiction', 'cross', this)">
+            <input type="radio" name="jurisdiction" value="cross" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">跨校案件</div>
+              <div class="branch-desc">依第20條，由先接獲檢舉學校調查；STAGE_06 須通知行為人所屬學校派員列席</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('jurisdiction', 'none', this)">
+            <input type="radio" name="jurisdiction" value="none" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">不具管轄權</div>
+              <div class="branch-desc">依第19條，應於3工作日內移送調查學校</div>
+            </div>
+          </label>
+        </div>
+        <div id="jurisdictionNoneWarn" style="display:none;margin-top:.75rem;">
+          <div class="warning-note">
+            ⚠️ 本案不具管轄權，請於知悉後 <strong>3個工作日內</strong> 移送調查學校，並產出移送函。案件不得在本系統繼續推進。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 保全證據 -->
+    <div class="section-card">
+      <div class="section-head">🔒 初步保全證據（第23條）</div>
+      <div class="section-body">
+        <div class="warning-note">
+          ⚠️ <strong>監視器錄影通常僅保存 7–30 天，須立即確認！</strong>
+        </div>
+        <div class="checklist">
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbEv1">
+            <span>已確認並保全<strong>監視器錄影</strong>（已備份或申請留存）</span>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbEv2">
+            <span>已確認並保全<strong>數位通訊紀錄</strong>（LINE、FB 截圖等）</span>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbEv3">
+            <span>已確認並保全<strong>實物證據</strong>（毀損物品、診斷書等）</span>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbEv4">
+            <span>已要求相關人員提供<strong>初步文書或說明</strong>（依第23條）</span>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbEvNA">
+            <span>本案目前無可保全之相關證據，已記錄說明</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 接獲檢舉 -->
+    <div class="section-card">
+      <div class="section-head">📨 接獲檢舉立案（第18條）— 啟動20工作日審查時鐘</div>
+      <div class="section-body">
+        <div class="law-note">
+          以下為法定「檢舉」的三種形式，擇一勾選。選擇後，以「接獲檢舉日期」為起算點，審查小組須於 <strong>20個工作日內</strong> 書面通知是否受理。
+        </div>
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>接獲檢舉日期 *</label>
+          <input type="date" id="complainDate" onchange="checkAdvanceReady()" style="width:180px;">
+        </div>
+        <div class="branch-options" id="complainOptions">
+          <label class="branch-option" onclick="selectBranch('complain', 'written', this)">
+            <input type="radio" name="complain" value="written" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">書面檢舉（第18條）</div>
+              <div class="branch-desc">家長已遞交書面檢舉書</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('complain', 'verbal', this)">
+            <input type="radio" name="complain" value="verbal" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">言詞檢舉（第18條）</div>
+              <div class="branch-desc">家長口頭投訴，學校應協助填寫檢舉書</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('complain', 'media', this)">
+            <input type="radio" name="complain" value="media" onchange="checkAdvanceReady()">
+            <div>
+              <div class="branch-label">視同檢舉（第18條）</div>
+              <div class="branch-desc">大眾媒體、警政或醫療社政機關通知，依法視同檢舉</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 表單下載 -->
+    <div class="section-card">
+      <div class="section-head">📥 相關表單下載</div>
+      <div class="section-body">
+        <div class="download-list">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-3 檢舉書（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-1 簽請組成防制委員會</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn" disabled onclick="advanceStage01()">
+        ✅ 確認完成，推進至 STAGE_02 審查小組 →
+      </button>
+      <p class="advance-hint" id="advanceHint">請完成上方所有必要項目後才能推進</p>
+    </div>
+  `;
+
+  // 從 data_json 帶入已儲存的資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.report_date) {
+      document.getElementById('complainDate').value = saved.report_date;
+      checkAdvanceReady();
+    }
+  } catch(e) {}
+}
+
+// ══════════════════════════════
+// STAGE_02 審查小組
+// ══════════════════════════════
+function renderStage02() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <!-- 法規說明 -->
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 02｜審查小組</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第24條：</strong>校長應於防制委員會委員中指派 <strong>3人</strong> 組成審查小組。<br>
+          <strong>第25條：</strong>審查小組應於接獲檢舉之日起 <strong>20個工作日內</strong>，書面通知是否受理。<br>
+          <strong>第26條：</strong>不受理時，檢舉人於收受次日起 <strong>30日內</strong> 得向主管機關陳情。
+        </div>
+      </div>
+    </div>
+
+    <!-- 審查小組組成 -->
+    <div class="section-card">
+      <div class="section-head">👥 審查小組組成確認（第24條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbGroup1">
+            <span>校長已於防制委員會委員中指派 <strong>3人</strong> 組成審查小組</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbGroup2">
+            <span>已確認委員無行政程序法第32、33條應迴避事由</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 審查小組會議 -->
+    <div class="section-card">
+      <div class="section-head">📝 審查小組會議（第25條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbMeeting1">
+            <span>已召開審查小組會議（全程錄音錄影）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this)">
+            <input type="checkbox" id="cbMeeting2">
+            <span>已完成會議紀錄並經出席委員確認</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 決議分流 -->
+    <div class="section-card">
+      <div class="section-head">🔀 審查小組決議</div>
+      <div class="section-body">
+        <div class="branch-options">
+          <label class="branch-option" onclick="selectBranch('verdict', 'accept', this); showVerdictDetail('accept')">
+            <input type="radio" name="verdict" value="accept" onchange="checkAdvanceReady02()">
+            <div>
+              <div class="branch-label">✅ 決議受理</div>
+              <div class="branch-desc">進入 STAGE_03，5工作日內組成處理小組</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('verdict', 'reject', this); showVerdictDetail('reject')">
+            <input type="radio" name="verdict" value="reject" onchange="checkAdvanceReady02()">
+            <div>
+              <div class="branch-label">❌ 決議不受理</div>
+              <div class="branch-desc">依法書面通知檢舉人，告知陳情管道</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 不受理防呆 -->
+        <div id="rejectWarning" style="display:none;margin-top:.75rem;">
+          <div class="warning-note">
+            🚨 <strong>超級地雷！決議不受理前強制確認：</strong><br>
+            依教育部1130073484號函釋，不受理前應先審酌是否準用第71條（故意傷害）規定處理。
+          </div>
+          <div class="checklist" style="margin-top:.5rem;">
+            <label class="check-item required-check" onclick="toggleCheck(this); checkAdvanceReady02()">
+              <input type="checkbox" id="cbArticle71">
+              <span><strong>已審酌本案是否符合第71條故意傷害情形</strong>（確認不符合才得不受理）</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 受理後 -->
+        <div id="acceptDetail" style="display:none;margin-top:.75rem;">
+          <div class="time-field">
+            <label>決議受理日期 *</label>
+            <input type="date" id="acceptDate" onchange="checkAdvanceReady02()" style="width:180px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通知函 -->
+    <div class="section-card">
+      <div class="section-head">✉️ 書面通知檢舉人（第25條第4項）</div>
+      <div class="section-body">
+        <div class="law-note">
+          無論決議受理或不受理，均應於接獲檢舉之日起 20個工作日內，<strong>書面通知</strong>檢舉人。
+        </div>
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this); checkAdvanceReady02()">
+            <input type="checkbox" id="cbNotify">
+            <span>已發出書面通知函並留存送達紀錄</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-5 審查小組會議紀錄（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-6 受理或不受理通知函（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-8 送達證書（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn02" disabled onclick="advanceStage02()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint02">請完成上方所有必要項目後才能推進</p>
+    </div>
+  `;
+}
+
+// ══════════════════════════════
+// 互動函式
+// ══════════════════════════════
+
+function toggleCheck(el) {
+  const cb = el.querySelector('input[type="checkbox"]');
+  if (cb) {
+    cb.checked = !cb.checked;
+    el.classList.toggle('checked', cb.checked);
+  }
+  checkAdvanceReady();
+  checkAdvanceReady02();
+}
+
+function selectBranch(name, value, el) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    r.closest('.branch-option')?.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input[type="radio"]').checked = true;
+}
+
+function checkTimeStatus() {
+  const tKnown = document.getElementById('timeKnown')?.value;
+  const tReported = document.getElementById('timeReported')?.value;
+  const statusEl = document.getElementById('timeStatus');
+  if (!statusEl) return;
+
+  if (!tKnown || !tReported) { statusEl.textContent = ''; statusEl.className = 'time-status'; return; }
+
+  const diff = (new Date(tReported) - new Date(tKnown)) / 3600000;
+  if (diff < 0) {
+    statusEl.textContent = '❌ 時間邏輯錯誤';
+    statusEl.className = 'time-status error';
+  } else if (diff > 24) {
+    statusEl.textContent = `⚠️ 逾時 ${Math.floor(diff)} 小時`;
+    statusEl.className = 'time-status warn';
+  } else {
+    statusEl.textContent = `✅ 符合24小時`;
+    statusEl.className = 'time-status ok';
+  }
+  checkAdvanceReady();
+}
+
+function checkAdvanceReady() {
+  const btn = document.getElementById('advanceBtn');
+  const hint = document.getElementById('advanceHint');
+  if (!btn) return;
+
+  const cbReport = document.getElementById('cbReport')?.checked;
+  const jurisdiction = document.querySelector('input[name="jurisdiction"]:checked')?.value;
+  const evChecked = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA'].some(id => document.getElementById(id)?.checked);
+  const complainDate = document.getElementById('complainDate')?.value;
+  const complain = document.querySelector('input[name="complain"]:checked')?.value;
+
+  // 不具管轄權時顯示警告，禁止推進
+  const noneWarn = document.getElementById('jurisdictionNoneWarn');
+  if (noneWarn) noneWarn.style.display = jurisdiction === 'none' ? 'block' : 'none';
+
+  const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && complainDate && complain;
+  btn.disabled = !ready;
+  if (ready) {
+    btn.textContent = '✅ 確認完成，推進至 STAGE_02 審查小組 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '確認完成，推進至 STAGE_02 審查小組 →';
+    if (hint) hint.textContent = '請完成上方所有必要項目後才能推進';
+  }
+}
+
+function showVerdictDetail(verdict) {
+  const rejectWarn = document.getElementById('rejectWarning');
+  const acceptDetail = document.getElementById('acceptDetail');
+  if (rejectWarn) rejectWarn.style.display = verdict === 'reject' ? 'block' : 'none';
+  if (acceptDetail) acceptDetail.style.display = verdict === 'accept' ? 'block' : 'none';
+  checkAdvanceReady02();
+}
+
+function checkAdvanceReady02() {
+  const btn = document.getElementById('advanceBtn02');
+  const hint = document.getElementById('advanceHint02');
+  if (!btn) return;
+
+  const cbGroup1 = document.getElementById('cbGroup1')?.checked;
+  const cbGroup2 = document.getElementById('cbGroup2')?.checked;
+  const cbMeeting1 = document.getElementById('cbMeeting1')?.checked;
+  const cbMeeting2 = document.getElementById('cbMeeting2')?.checked;
+  const verdict = document.querySelector('input[name="verdict"]:checked')?.value;
+  const cbNotify = document.getElementById('cbNotify')?.checked;
+
+  let verdictReady = false;
+  if (verdict === 'accept') {
+    const acceptDate = document.getElementById('acceptDate')?.value;
+    verdictReady = !!acceptDate;
+  } else if (verdict === 'reject') {
+    const cb71 = document.getElementById('cbArticle71')?.checked;
+    verdictReady = !!cb71;
+  }
+
+  const ready = cbGroup1 && cbGroup2 && cbMeeting1 && cbMeeting2 && verdict && verdictReady && cbNotify;
+  btn.disabled = !ready;
+
+  if (verdict === 'accept' && ready) {
+    btn.textContent = '✅ 決議受理，推進至 STAGE_03 處理小組 →';
+  } else if (verdict === 'reject' && ready) {
+    btn.textContent = '📋 決議不受理，標記結案 →';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+  }
+  if (hint) hint.textContent = ready ? '' : '請完成上方所有必要項目後才能推進';
+}
+
+// ══════════════════════════════
+// 推進函式
+// ══════════════════════════════
+
+async function advanceStage01() {
+  const complainDate = document.getElementById('complainDate').value;
+  const complain = document.querySelector('input[name="complain"]:checked')?.value;
+  const reportNo = document.getElementById('reportNo')?.value || '';
+  const timeKnown = document.getElementById('timeKnown')?.value || '';
+  const timeReported = document.getElementById('timeReported')?.value || '';
+
+  const milestoneMap = {
+    'written': '接獲檢舉——書面檢舉（第18條）',
+    'verbal': '接獲檢舉——言詞檢舉（第18條）',
+    'media': '視同檢舉——機關/媒體通報（第18條）'
+  };
+  const milestone = milestoneMap[complain];
+
+  showToast('正在推進至審查小組階段...');
+  try {
+    const result = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone,
+      done_date: complainDate,
+      stage: 'STAGE_02',
+      data_json: JSON.stringify({
+        report_date: complainDate,
+        report_no: reportNo,
+        aware_datetime: timeKnown,
+        reported_datetime: timeReported,
+        complain_type: complain
+      })
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    alert(`✅ 已推進至「02 審查小組」\n20工作日截止日已自動計算。`);
+    // 重新載入
+    deadlines = [];
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = 'STAGE_02';
+    renderStage02();
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+async function advanceStage02() {
+  const verdict = document.querySelector('input[name="verdict"]:checked')?.value;
+  const acceptDate = document.getElementById('acceptDate')?.value;
+
+  if (verdict === 'reject') {
+    showToast('標記不受理結案...');
+    try {
+      const result = await callGAS('bully_advance_stage', {
+        case_id: currentCaseId,
+        email: currentEmail,
+        milestone: '決議不受理',
+        done_date: new Date().toISOString().split('T')[0],
+        stage: 'STAGE_02',
+        status: '不受理結案'
+      });
+      if (!result.ok) throw new Error(result.error);
+      hideToast();
+      alert('📋 案件已標記為「不受理結案」\n\n請確認已於20工作日內書面通知檢舉人，並告知陳情管道（第26條，30日內得向主管機關陳情）。');
+      window.location.href = './dashboard.html';
+    } catch(e) {
+      hideToast();
+      alert('操作失敗：' + e.message);
+    }
+    return;
+  }
+
+  // 受理
+  showToast('正在推進至處理小組階段...');
+  try {
+    const result = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone: '決議受理',
+      done_date: acceptDate,
+      stage: 'STAGE_03'
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    alert('✅ 已推進至「03 處理小組」\n5工作日內組成處理小組的截止日已自動計算。');
+    deadlines = [];
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = 'STAGE_03';
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading-state">
+        <p>STAGE_03 處理小組流程介面建置中，請從儀表板繼續追蹤。</p>
+        <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
+      </div>`;
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ── 啟動
+window.onload = init;
+</script>
+</body>
+</html>
