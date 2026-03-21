@@ -1030,17 +1030,17 @@ function checkAdvanceReady() {
   const noneWarn = document.getElementById('jurisdictionNoneWarn');
   if (noneWarn) noneWarn.style.display = jurisdiction === 'none' ? 'block' : 'none';
 
-  // 切換管轄權時重新觸發保全證據判斷（讓後續卡片正確顯示/隱藏）
-  const evChecked = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA'].some(id => document.getElementById(id)?.checked);
+  // 切換管轄權時重新觸發保全證據判斷
+  const evChecked2 = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA'].some(id => document.getElementById(id)?.checked);
 
   const noneStepsCard = document.getElementById('noneStepsCard');
   if (noneStepsCard) {
-    noneStepsCard.style.display = (evChecked && jurisdiction === 'none') ? 'block' : 'none';
+    noneStepsCard.style.display = (evChecked2 && jurisdiction === 'none') ? 'block' : 'none';
     if (evChecked && jurisdiction === 'none') showNoneDeadline();
   }
 
   const branchCard = document.getElementById('complainBranchCard');
-  if (branchCard) branchCard.style.display = (evChecked && jurisdiction && jurisdiction !== 'none') ? 'block' : 'none';
+  if (branchCard) branchCard.style.display = (evChecked2 && jurisdiction && jurisdiction !== 'none') ? 'block' : 'none';
 
   // 切換離開不具管轄權時，重置四步驟
   if (jurisdiction !== 'none') {
