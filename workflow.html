@@ -438,6 +438,11 @@ function hideToast() {
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
+  // 處理 ISO 格式（含時區）
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  }
   return dateStr.replace(/-/g, '/');
 }
 
@@ -634,7 +639,36 @@ function renderStage01() {
         </div>
         <div id="jurisdictionNoneWarn" style="display:none;margin-top:.75rem;">
           <div class="warning-note">
-            ⚠️ 本案不具管轄權，請於知悉後 <strong>3個工作日內</strong> 移送調查學校，並產出移送函。案件不得在本系統繼續推進。
+            ⚠️ 本案不具管轄權，依第19條須完成以下四個步驟後結案。
+          </div>
+          <div class="checklist" style="margin-top:.5rem;">
+            <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+              <input type="checkbox" id="cbNone1">
+              <span>① 已完成24小時內校安通報（第17條，絕對義務）</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+              <input type="checkbox" id="cbNone2">
+              <span>② 已對當事人啟動初步關懷與輔導</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+              <input type="checkbox" id="cbNone3">
+              <span>③ 已於3工作日內移送案件至具管轄權之調查學校</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+              <input type="checkbox" id="cbNone4">
+              <span>④ 已通知當事人法定代理人或實際照顧者</span>
+            </label>
+          </div>
+          <div style="margin-top:.75rem;padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.82rem;color:var(--warn);" id="noneDeadlineInfo"></div>
+          <div style="margin-top:.5rem;display:flex;gap:.5rem;">
+            <button onclick="downloadTransferDoc()" style="padding:.4rem 1rem;background:var(--info);color:#fff;border:none;border-radius:4px;font-size:.82rem;cursor:pointer;">
+              📄 產出案件移送函
+            </button>
+          </div>
+          <div id="noneDoneArea" style="display:none;margin-top:.75rem;">
+            <button onclick="closeNoneCase()" style="padding:.6rem 1.2rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.88rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
+              ✅ 四步驟完成，標記移送結案
+            </button>
           </div>
         </div>
       </div>
@@ -666,7 +700,7 @@ function renderStage01() {
           </label>
           <label class="check-item" onclick="toggleCheck(this)">
             <input type="checkbox" id="cbEvNA">
-            <span>本案目前無可保全之相關證據，已記錄說明</span>
+            <span>本案目前無可保全之相關證據（已記錄說明原因）— <strong>勾選此項仍為必要步驟</strong></span>
           </label>
         </div>
       </div>
@@ -730,6 +764,11 @@ function renderStage01() {
         ✅ 確認完成，推進至 STAGE_02 審查小組 →
       </button>
       <p class="advance-hint" id="advanceHint">請完成上方所有必要項目後才能推進</p>
+      <div style="margin-top:.75rem;text-align:center;">
+        <button onclick="setListingStatus()" style="padding:.4rem 1rem;background:transparent;border:1px solid var(--line);color:#888;border-radius:20px;font-size:.78rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
+          📋 通報完成但尚未接獲檢舉 → 暫停列管
+        </button>
+      </div>
     </div>
   `;
 
@@ -933,9 +972,12 @@ function checkAdvanceReady() {
   const complainDate = document.getElementById('complainDate')?.value;
   const complain = document.querySelector('input[name="complain"]:checked')?.value;
 
-  // 不具管轄權時顯示警告，禁止推進
+  // 不具管轄權時顯示四步驟，禁止一般推進
   const noneWarn = document.getElementById('jurisdictionNoneWarn');
-  if (noneWarn) noneWarn.style.display = jurisdiction === 'none' ? 'block' : 'none';
+  if (noneWarn) {
+    noneWarn.style.display = jurisdiction === 'none' ? 'block' : 'none';
+    if (jurisdiction === 'none') showNoneDeadline();
+  }
 
   const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && complainDate && complain;
   btn.disabled = !ready;
@@ -1091,6 +1133,73 @@ async function advanceStage02() {
     hideToast();
     alert('推進失敗：' + e.message);
   }
+}
+
+// ── 通報列管
+async function setListingStatus() {
+  if (!confirm('確定要將此案件標記為「通報列管中」嗎？\n\n案件將暫停在此狀態，待接獲檢舉後再繼續推進。')) return;
+  showToast('標記通報列管中...');
+  try {
+    const result = await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: 'PRE_STAGE',
+      status: '通報列管中'
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    alert('📋 案件已標記為「通報列管中」\n\n待接獲正式檢舉後，請回到儀表板繼續處理。');
+    window.location.href = './dashboard.html';
+  } catch(e) {
+    hideToast();
+    alert('操作失敗：' + e.message);
+  }
+}
+
+// ── 不具管轄權
+function checkNoneReady() {
+  const allDone = ['cbNone1','cbNone2','cbNone3','cbNone4'].every(id => document.getElementById(id)?.checked);
+  const doneArea = document.getElementById('noneDoneArea');
+  if (doneArea) doneArea.style.display = allDone ? 'block' : 'none';
+}
+
+async function closeNoneCase() {
+  if (!confirm('確定要標記此案件為「移送結案」嗎？')) return;
+  showToast('標記移送結案...');
+  try {
+    const result = await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: 'STAGE_01',
+      status: '移送結案'
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    alert('✅ 案件已標記為「移送結案」');
+    window.location.href = './dashboard.html';
+  } catch(e) {
+    hideToast();
+    alert('操作失敗：' + e.message);
+  }
+}
+
+function downloadTransferDoc() {
+  window.open('http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14', '_blank');
+}
+
+// 管轄權選擇時顯示移送截止日
+function showNoneDeadline() {
+  const infoEl = document.getElementById('noneDeadlineInfo');
+  if (!infoEl) return;
+  // 計算 3 工作日（簡化版，不含假日）
+  const today = new Date();
+  let count = 0, d = new Date(today);
+  while (count < 3) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) count++;
+  }
+  const deadline = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  infoEl.innerHTML = `⏱ 移送期限：<strong>${deadline}</strong>（3工作日內，依第19條）`;
 }
 
 // ── 啟動
