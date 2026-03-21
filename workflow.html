@@ -419,7 +419,7 @@ function goBack() {
 }
 
 async function callGAS(action, data = {}) {
-  const body = JSON.stringify({ action, email: currentEmail, data, ...data });
+  const body = JSON.stringify({ action, email: currentEmail, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
