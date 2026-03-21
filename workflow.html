@@ -419,7 +419,7 @@ function goBack() {
 }
 
 async function callGAS(action, data = {}) {
-  const body = JSON.stringify({ action, email: currentEmail, ...data });
+  const body = JSON.stringify({ action, email: currentEmail, data, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
@@ -682,23 +682,23 @@ function renderStage01() {
           ⚠️ <strong>監視器錄影通常僅保存 7–30 天，須立即確認！</strong>
         </div>
         <div class="checklist">
-          <label class="check-item" onclick="toggleCheck(this)">
+          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
             <input type="checkbox" id="cbEv1">
             <span>已確認並保全<strong>監視器錄影</strong>（已備份或申請留存）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this)">
+          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
             <input type="checkbox" id="cbEv2">
             <span>已確認並保全<strong>數位通訊紀錄</strong>（LINE、FB 截圖等）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this)">
+          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
             <input type="checkbox" id="cbEv3">
             <span>已確認並保全<strong>實物證據</strong>（毀損物品、診斷書等）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this)">
+          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
             <input type="checkbox" id="cbEv4">
             <span>已要求相關人員提供<strong>初步文書或說明</strong>（依第23條）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this)">
+          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
             <input type="checkbox" id="cbEvNA">
             <span>本案目前無可保全之相關證據（已記錄說明原因）— <strong>勾選此項仍為必要步驟</strong></span>
           </label>
@@ -706,8 +706,46 @@ function renderStage01() {
       </div>
     </div>
 
+    <!-- 是否接獲檢舉 分流 -->
+    <div class="section-card" id="complainBranchCard" style="display:none;">
+      <div class="section-head">❓ 目前是否已接獲正式檢舉？</div>
+      <div class="section-body">
+        <div class="law-note">
+          依第18條，「接獲檢舉」才是啟動20工作日審查時鐘的法定要件。<br>
+          若尚未有人提出檢舉，案件可暫停列管，待接獲檢舉後再繼續。
+        </div>
+        <div class="branch-options">
+          <label class="branch-option" onclick="selectBranch('hasComplain', 'yes', this); showComplainSection(true)">
+            <input type="radio" name="hasComplain" value="yes">
+            <div>
+              <div class="branch-label">✅ 已接獲正式檢舉</div>
+              <div class="branch-desc">繼續填寫檢舉資料，啟動20工作日審查時鐘</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('hasComplain', 'no', this); showComplainSection(false)">
+            <input type="radio" name="hasComplain" value="no">
+            <div>
+              <div class="branch-label">📋 尚未接獲檢舉</div>
+              <div class="branch-desc">通報完成，案件暫停列管，待後續接獲檢舉再繼續</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 尚未檢舉 → 列管按鈕 -->
+        <div id="listingArea" style="display:none;margin-top:.75rem;">
+          <div style="background:var(--warm);border-radius:4px;padding:.75rem;font-size:.85rem;color:#666;line-height:1.7;margin-bottom:.75rem;">
+            案件將標記為「通報列管中」，20工作日時鐘尚未啟動。<br>
+            待家長或相關人員提出正式檢舉後，請回到儀表板繼續處理。
+          </div>
+          <button onclick="setListingStatus()" style="padding:.6rem 1.2rem;background:var(--warn);color:#fff;border:none;border-radius:6px;font-size:.88rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
+            📋 確認通報列管，暫停案件
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- 接獲檢舉 -->
-    <div class="section-card">
+    <div class="section-card" id="complainDetailCard" style="display:none;">
       <div class="section-head">📨 接獲檢舉立案（第18條）— 啟動20工作日審查時鐘</div>
       <div class="section-body">
         <div class="law-note">
@@ -764,11 +802,7 @@ function renderStage01() {
         ✅ 確認完成，推進至 STAGE_02 審查小組 →
       </button>
       <p class="advance-hint" id="advanceHint">請完成上方所有必要項目後才能推進</p>
-      <div style="margin-top:.75rem;text-align:center;">
-        <button onclick="setListingStatus()" style="padding:.4rem 1rem;background:transparent;border:1px solid var(--line);color:#888;border-radius:20px;font-size:.78rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
-          📋 通報完成但尚未接獲檢舉 → 暫停列管
-        </button>
-      </div>
+
     </div>
   `;
 
@@ -979,7 +1013,8 @@ function checkAdvanceReady() {
     if (jurisdiction === 'none') showNoneDeadline();
   }
 
-  const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && complainDate && complain;
+  const hasComplain = document.querySelector('input[name="hasComplain"]:checked')?.value;
+  const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && hasComplain === 'yes' && complainDate && complain;
   btn.disabled = !ready;
   if (ready) {
     btn.textContent = '✅ 確認完成，推進至 STAGE_02 審查小組 →';
@@ -1133,6 +1168,23 @@ async function advanceStage02() {
     hideToast();
     alert('推進失敗：' + e.message);
   }
+}
+
+// ── 保全證據完成後顯示分流問題
+function checkEvidenceDone() {
+  const evChecked = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA'].some(id => document.getElementById(id)?.checked);
+  const branchCard = document.getElementById('complainBranchCard');
+  if (branchCard) branchCard.style.display = evChecked ? 'block' : 'none';
+  checkAdvanceReady();
+}
+
+// ── 是否接獲檢舉的分流顯示
+function showComplainSection(hasComplain) {
+  const detailCard = document.getElementById('complainDetailCard');
+  const listingArea = document.getElementById('listingArea');
+  if (detailCard) detailCard.style.display = hasComplain ? 'block' : 'none';
+  if (listingArea) listingArea.style.display = hasComplain ? 'none' : 'block';
+  checkAdvanceReady();
 }
 
 // ── 通報列管
