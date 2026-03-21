@@ -667,7 +667,7 @@ function renderStage01() {
           </div>
           <div id="noneDoneArea" style="display:none;margin-top:.75rem;">
             <button onclick="closeNoneCase()" style="padding:.6rem 1.2rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.88rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
-              ✅ 四步驟完成，標記移送結案
+              ✅ 以上步驟完成，標記移送結案
             </button>
           </div>
         </div>
@@ -1012,6 +1012,11 @@ function checkAdvanceReady() {
     noneWarn.style.display = jurisdiction === 'none' ? 'block' : 'none';
     if (jurisdiction === 'none') showNoneDeadline();
   }
+  // 非不具管轄權時，隱藏後續保全/分流區塊中的結案按鈕
+  if (jurisdiction !== 'none') {
+    const noneDoneArea = document.getElementById('noneDoneArea');
+    if (noneDoneArea) noneDoneArea.style.display = 'none';
+  }
 
   const hasComplain = document.querySelector('input[name="hasComplain"]:checked')?.value;
   const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && hasComplain === 'yes' && complainDate && complain;
@@ -1173,8 +1178,10 @@ async function advanceStage02() {
 // ── 保全證據完成後顯示分流問題
 function checkEvidenceDone() {
   const evChecked = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA'].some(id => document.getElementById(id)?.checked);
+  const jurisdiction = document.querySelector('input[name="jurisdiction"]:checked')?.value;
+  // 不具管轄權時不顯示接獲檢舉分流
   const branchCard = document.getElementById('complainBranchCard');
-  if (branchCard) branchCard.style.display = evChecked ? 'block' : 'none';
+  if (branchCard) branchCard.style.display = (evChecked && jurisdiction !== 'none') ? 'block' : 'none';
   checkAdvanceReady();
 }
 
@@ -1213,6 +1220,13 @@ function checkNoneReady() {
   const allDone = ['cbNone1','cbNone2','cbNone3','cbNone4'].every(id => document.getElementById(id)?.checked);
   const doneArea = document.getElementById('noneDoneArea');
   if (doneArea) doneArea.style.display = allDone ? 'block' : 'none';
+}
+
+// 不具管轄權時顯示四步驟（不依賴保全證據）
+function showNoneSteps() {
+  const noneWarn = document.getElementById('jurisdictionNoneWarn');
+  if (noneWarn) noneWarn.style.display = 'block';
+  showNoneDeadline();
 }
 
 async function closeNoneCase() {
