@@ -1020,13 +1020,14 @@ function toggleCheck(el, event) {
       el.classList.toggle('checked', cb.checked);
     }
   }
-  if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
+if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
   if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
   if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
   if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
+  if (typeof checkAdvanceReady07 === 'function') checkAdvanceReady07(); //
 }
 
 function selectBranch(name, value, el) {
@@ -2428,8 +2429,8 @@ function validateCommittee() {
     return;
   }
 
-  const quorum = Math.ceil(total / 2);       // 出席門檻：過半
-  const majority = Math.ceil(attend / 2);    // 決議門檻：出席過半
+  const quorum = Math.ceil(total / 2);           // 出席門檻：二分之一以上 (無條件進位)
+  const majority = Math.floor(attend / 2) + 1;   // 決議門檻：過半數 (絕對大於一半)
 
   const quorumOk = attend >= quorum;
   const majorityOk = agree >= majority;
