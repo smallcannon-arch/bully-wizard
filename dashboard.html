@@ -610,13 +610,18 @@ async function confirmSwitch() {
   btn.disabled = true; btn.textContent = '切換中…';
   showLoadingToast('正在切換程序...');
 
-  try {
-    const result = await callGAS('bully_advance_stage', {
+ try {
+    // 💡 優化：改用 bully_save，避免後端誤判而重新計算期限時鐘
+    const result = await callGAS('bully_save', {
       case_id: _switchCaseId,
       email: currentEmail,
-      milestone,
-      done_date: switchDate,
-      stage: toStage
+      stage: toStage,
+      // 這裡不傳 done_date 和 milestone，因為我們不是在「推進」，只是「平行切換」
+      // 但我們可以把切換的動作記錄在 data_json 裡，留下軌跡
+      data_json: JSON.stringify({
+        last_switch_date: switchDate,
+        last_switch_reason: milestone
+      })
     });
     if (!result.ok) throw new Error(result.error);
     closeSwitchModal();
