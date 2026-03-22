@@ -1030,17 +1030,28 @@ function toggleCheck(el, event) {
 }
 
 function selectBranch(name, value, el) {
+  // 1. 切換外觀與選取狀態
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
     r.closest('.branch-option')?.classList.remove('selected');
   });
   el.classList.add('selected');
-  el.querySelector('input[type="radio"]').checked = true;
+  const radio = el.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+
+  // 2. 關鍵修復：手動喚醒卡片連動與防呆機制 (之前被覆蓋掉的就在這裡 👇)
+  if (name === 'jurisdiction' && typeof checkEvidenceDone === 'function') {
+    checkEvidenceDone(); // 如果切換的是管轄權，強制更新不具管轄權卡片
+  }
+  
+  // 3. 喚醒所有階段的推進按鈕檢查
   if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
   if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
+  if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03(); // 補上03
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
   if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
+  if (typeof checkAdvanceReady07 === 'function') checkAdvanceReady07();
 }
 
 function confirmTimeInput() {
