@@ -2545,17 +2545,198 @@ if (decision === 'return') {
   }
 }
 
-// ── STAGE_07 預留
+// ══════════════════════════════
+// STAGE_07 終局處理與書面通知
+// ══════════════════════════════
 function renderStage07() {
   document.getElementById('mainContent').innerHTML = `
     ${deadlineCardHtml()}
+
     <div class="section-card">
       <div class="section-head">📋 STAGE 07｜終局處理與書面通知</div>
       <div class="section-body">
         <div class="law-note">
-          <strong>第46條：</strong>學校應於防制委員會決議後<strong>15個工作日內</strong>作成終局實體處理，並於<strong>10個工作日內</strong>書面通知雙方當事人。
+          <strong>第46條第1項：</strong>學校應於防制委員會決議後 <strong>15個工作日內</strong> 作成終局實體處理。<br>
+          <strong>第46條第2項：</strong>學校應於作成終局實體處理後 <strong>10個工作日內</strong> 以書面通知雙方當事人及其法定代理人。<br>
+          <strong>第49條：</strong>被行為人或行為人於收受通知之次日起 <strong>30日內</strong> 得向學校提出申復，同一事件以一次為限。
         </div>
-        <p style="color:#888;font-size:.88rem;margin-top:.75rem;">STAGE_07 流程介面建置中，請從儀表板繼續追蹤。</p>
+      </div>
+    </div>
+
+    <!-- 終局處理確認 -->
+    <div class="section-card">
+      <div class="section-head">📝 終局實體處理（第46條第1項）</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>終局實體處理日期（校長核定日）*</label>
+          <input type="date" id="finalDecisionDate" onchange="checkAdvanceReady07()" style="width:200px;">
+        </div>
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbFinal1">
+            <span>終局處理決議已記載於防制委員會會議紀錄，並經校長核定</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbFinal2">
+            <span>懲處與輔導措施已依決議內容確認執行單位及期程</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>6-3 被行為人結果通知函（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>6-4 行為人結果通知函（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 書面通知送達 -->
+    <div class="section-card">
+      <div class="section-head">✉️ 書面通知送達（第46條第2項）</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>書面通知送達日期（發文送達日）*</label>
+          <input type="date" id="noticeDeliveredDate" onchange="checkAdvanceReady07()" style="width:200px;">
+        </div>
+        <div class="warning-note">
+          ⚠️ 送達日期是申復期限（30日）的起算點，請務必正確記錄。
+        </div>
+        <div class="checklist" style="margin-top:.75rem;">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbNotice1">
+            <span>已以書面分別通知<strong>被行為人及行為人</strong>（含法定代理人）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbNotice2">
+            <span><strong>書面通知內已載明：</strong>收受通知次日起 <strong>30 日內</strong> 得向學校提出申復，同一事件以一次為限（第49條）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbNotice3">
+            <span>送達證書（3-8）已完成並留存，作為送達日期之佐證</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-8 送達證書（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn07" disabled onclick="advanceStage07()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint07">請填寫兩個日期並完成所有確認項目</p>
+    </div>
+  `;
+
+  // 回填已儲存資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.final_decision_date) document.getElementById('finalDecisionDate').value = saved.final_decision_date;
+    if (saved.notice_delivered_date) document.getElementById('noticeDeliveredDate').value = saved.notice_delivered_date;
+    checkAdvanceReady07();
+  } catch(e) {}
+}
+
+function checkAdvanceReady07() {
+  const btn = document.getElementById('advanceBtn07');
+  const hint = document.getElementById('advanceHint07');
+  if (!btn) return;
+
+  const finalDate = document.getElementById('finalDecisionDate')?.value;
+  const noticeDate = document.getElementById('noticeDeliveredDate')?.value;
+  const allChecked = ['cbFinal1','cbFinal2','cbNotice1','cbNotice2','cbNotice3']
+    .every(id => document.getElementById(id)?.checked);
+
+  const ready = finalDate && noticeDate && allChecked;
+  btn.disabled = !ready;
+
+  if (ready) {
+    // 計算並顯示申復截止日
+    const noticeD = new Date(noticeDate);
+    noticeD.setDate(noticeD.getDate() + 31); // 次日起算30日
+    const appealDeadline = `${noticeD.getFullYear()}/${String(noticeD.getMonth()+1).padStart(2,'0')}/${String(noticeD.getDate()).padStart(2,'0')}`;
+    btn.textContent = `✅ 確認完成，進入 STAGE_08 申復列管（申復截止：${appealDeadline}）→`;
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!finalDate) missing.push('終局處理日期');
+    if (!noticeDate) missing.push('通知送達日期');
+    if (!allChecked) missing.push('確認項目未完成');
+    if (hint) hint.textContent = missing.join('、');
+  }
+}
+
+async function advanceStage07() {
+  const finalDate = document.getElementById('finalDecisionDate')?.value;
+  const noticeDate = document.getElementById('noticeDeliveredDate')?.value;
+
+  // 計算申復截止日（次日起算30日）
+  const noticeD = new Date(noticeDate);
+  noticeD.setDate(noticeD.getDate() + 31);
+  const appealDeadline = noticeD.toISOString().split('T')[0];
+
+  showToast('正在推進至申復列管階段...');
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    const res = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone: '作成終局實體處理',
+      done_date: finalDate,
+      stage: 'STAGE_08',
+      data_json: JSON.stringify({
+        ...saved,
+        final_decision_date: finalDate,
+        notice_delivered_date: noticeDate,
+        appeal_deadline: appealDeadline
+      })
+    });
+    if (!res.ok) throw new Error(res.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = 'STAGE_08';
+    hideToast();
+    alert(`✅ 已推進至「08 申復列管」\n申復截止日：${appealDeadline.replace(/-/g,'/')}`);
+    renderStage('STAGE_08');
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ══════════════════════════════
+// STAGE_08 申復列管與輔導追蹤
+// ══════════════════════════════
+function renderStage08() {
+  let appealDeadline = '';
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.appeal_deadline) {
+      appealDeadline = saved.appeal_deadline.replace(/-/g, '/');
+    }
+  } catch(e) {}
+
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 08｜申復列管與輔導追蹤</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第49條：</strong>當事人於收受終局實體處理通知之次日起 <strong>30日內</strong> 得向學校提出申復，同一事件以一次為限。<br>
+          <strong>第58條：</strong>學校應訂定輔導計畫，持續輔導行為人，並定期評估是否改善。
+        </div>
+        ${appealDeadline ? `
+        <div style="margin-top:.75rem;padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.88rem;color:var(--warn);">
+          ⏱ <strong>申復截止日：${appealDeadline}</strong>（逾期視同放棄申復權利）
+        </div>` : ''}
+        <p style="color:#888;font-size:.88rem;margin-top:.75rem;">STAGE_08 申復列管與輔導追蹤介面建置中，請從儀表板繼續追蹤。</p>
       </div>
     </div>
     <div class="advance-area">
