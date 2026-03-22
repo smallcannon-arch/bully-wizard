@@ -390,6 +390,9 @@ async function loadCases() {
 
 // ── 渲染案件卡片
 function renderCases(cases) {
+  // 💡 終極修復：把標記為「已刪除」的幽靈案件從陣列中踢掉！
+  cases = cases.filter(c => c.status !== '已刪除');
+
   // 統計
   const active = cases.filter(c => c.status === '進行中');
   const red    = active.filter(c => c.deadline?.light === 'red').length;
@@ -893,11 +896,20 @@ async function confirmAdvance() {
 // ── 刪除案件
 async function confirmDelete(caseId, caseName) {
   if (!confirm(`確定要刪除案件「${caseName}」嗎？\n（資料將標記為已刪除，不會永久移除）`)) return;
+  
+  // 💡 增加過場動畫與防呆
+  showLoadingToast('正在刪除案件...'); 
+  
   try {
     const result = await callGAS('bully_delete', { case_id: caseId });
     if (!result.ok) throw new Error(result.error);
-    await loadCases();
+    
+    hideLoadingToast();
+    alert('✅ 刪除成功！'); 
+    
+    await loadCases(); // 重新載入，這時候剛剛加的 filter 就會發揮作用，卡片就會消失
   } catch (e) {
+    hideLoadingToast();
     alert('刪除失敗：' + e.message);
   }
 }
