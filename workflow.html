@@ -2226,7 +2226,7 @@ async function advanceStage05B() {
     const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
-      milestone: '防制委員會議通過',
+      milestone: '調查報告完成',
       done_date: endDate,
       stage: 'STAGE_06',
       data_json: JSON.stringify({
