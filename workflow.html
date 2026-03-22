@@ -1014,11 +1014,25 @@ function toggleCheck(el, event) {
 }
 
 function selectBranch(name, value, el) {
+  // 1. 更新 UI 的 .selected 樣式
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
     r.closest('.branch-option')?.classList.remove('selected');
   });
   el.classList.add('selected');
-  el.querySelector('input[type="radio"]').checked = true;
+  
+  // 2. 勾選 radio
+  const radio = el.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+
+  // 3. 強制喚醒所有防呆與卡片連動邏輯
+  if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
+  if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
+  if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
+
+  // 4. 針對「管轄權」切換，額外喚醒證據卡片的連動
+  if (name === 'jurisdiction' && typeof checkEvidenceDone === 'function') {
+    checkEvidenceDone();
+  }
 }
 
 function confirmTimeInput() {
