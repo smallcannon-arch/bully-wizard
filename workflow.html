@@ -547,12 +547,15 @@ function renderPreStage() {
       <div class="section-head">📋 通報列管中</div>
       <div class="section-body">
         <div class="law-note">
-          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。
+          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。<br>
           通報完成後若尚未接獲檢舉，案件進入「通報列管」狀態，20工作日的審查時鐘尚未開始。
         </div>
-        <p style="font-size:.88rem;color:#666;line-height:1.7;">
-          目前案件處於通報列管狀態。請等待家長或相關人員提出正式檢舉後，再回到儀表板建立正式案件。
+        <p style="font-size:.88rem;color:#666;line-height:1.7;margin-bottom:1.2rem;">
+          目前案件處於通報列管狀態。若後續家長或相關人員提出正式檢舉，請點擊下方按鈕重啟案件流程。
         </p>
+        <button onclick="resumeToStage01()" style="padding:.7rem 1.2rem;background:var(--ok);color:#fff;border:none;border-radius:6px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;width:100%;text-align:center;">
+          📨 已接獲正式檢舉，重啟 STAGE_01 流程
+        </button>
       </div>
     </div>
 
@@ -2561,6 +2564,29 @@ function renderStage07() {
   `;
 }
 
+// ── 重啟通報列管案件
+async function resumeToStage01() {
+  if (!confirm('確定已接獲正式檢舉，要重啟此案件的處理流程嗎？')) return;
+  showToast('正在重啟案件流程...');
+  try {
+    const result = await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: 'STAGE_01',
+      status: '辦理中'
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    
+    // 更新本地狀態並重新渲染 STAGE_01
+    caseData.stage = 'STAGE_01';
+    renderStage01();
+  } catch(e) {
+    hideToast();
+    alert('重啟失敗：' + e.message);
+  }
+}
+  
 // ── 啟動
 window.onload = init;
 </script>
