@@ -495,6 +495,7 @@ function renderStage(stage) {
   const renders = {
     'STAGE_01': renderStage01,
     'STAGE_02': renderStage02,
+    'STAGE_03': renderStage03,
     'PRE_STAGE': renderPreStage,
   };
   const fn = renders[stage];
@@ -606,7 +607,7 @@ function renderStage01() {
           <input type="text" id="reportNo" placeholder="請輸入校安通報序號" style="width:200px;">
         </div>
         <div class="checklist">
-          <label class="check-item required-check" onclick="toggleCheck(this)">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbReport">
             <span>已完成校安通報（含主管機關與社政機關）</span>
           </label>
@@ -657,23 +658,23 @@ function renderStage01() {
           ⚠️ <strong>監視器錄影通常僅保存 7–30 天，須立即確認！</strong>
         </div>
         <div class="checklist">
-          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
+          <label class="check-item" onclick="toggleCheck(this, event); checkEvidenceDone()">
             <input type="checkbox" id="cbEv1">
             <span>已確認並保全<strong>監視器錄影</strong>（已備份或申請留存）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
+          <label class="check-item" onclick="toggleCheck(this, event); checkEvidenceDone()">
             <input type="checkbox" id="cbEv2">
             <span>已確認並保全<strong>數位通訊紀錄</strong>（LINE、FB 截圖等）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
+          <label class="check-item" onclick="toggleCheck(this, event); checkEvidenceDone()">
             <input type="checkbox" id="cbEv3">
             <span>已確認並保全<strong>實物證據</strong>（毀損物品、診斷書等）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
+          <label class="check-item" onclick="toggleCheck(this, event); checkEvidenceDone()">
             <input type="checkbox" id="cbEv4">
             <span>已要求相關人員提供<strong>初步文書或說明</strong>（依第23條）</span>
           </label>
-          <label class="check-item" onclick="toggleCheck(this); checkEvidenceDone()">
+          <label class="check-item" onclick="toggleCheck(this, event); checkEvidenceDone()">
             <input type="checkbox" id="cbEvNA">
             <span>本案目前無可保全之相關證據（已記錄說明原因）— <strong>勾選此項仍為必要步驟</strong></span>
           </label>
@@ -687,19 +688,19 @@ function renderStage01() {
       <div class="section-body">
         <div style="padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.82rem;color:var(--warn);margin-bottom:.75rem;" id="noneDeadlineInfo"></div>
         <div class="checklist">
-          <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkNoneReady()">
             <input type="checkbox" id="cbNone1">
             <span>① 已完成24小時內校安通報（第17條，絕對義務）</span>
           </label>
-          <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkNoneReady()">
             <input type="checkbox" id="cbNone2">
             <span>② 已對當事人啟動初步關懷與輔導</span>
           </label>
-          <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkNoneReady()">
             <input type="checkbox" id="cbNone3">
             <span>③ 已於3工作日內移送案件至具管轄權之調查學校</span>
           </label>
-          <label class="check-item required-check" onclick="toggleCheck(this); checkNoneReady()">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkNoneReady()">
             <input type="checkbox" id="cbNone4">
             <span>④ 已通知當事人法定代理人或實際照顧者</span>
           </label>
@@ -820,11 +821,45 @@ function renderStage01() {
   // 從 data_json 帶入已儲存的資料
   try {
     const saved = JSON.parse(caseData.data_json || '{}');
-    if (saved.report_date) {
-      document.getElementById('complainDate').value = saved.report_date;
-      checkAdvanceReady();
+    if (saved.aware_datetime) document.getElementById('timeKnown').value = saved.aware_datetime;
+    if (saved.reported_datetime) document.getElementById('timeReported').value = saved.reported_datetime;
+    if (saved.aware_datetime && saved.reported_datetime) {
+      checkTimeStatus();
+      document.getElementById('timeConfirmed').style.display = 'block';
     }
-  } catch(e) {}
+    if (saved.report_no) document.getElementById('reportNo').value = saved.report_no;
+    if (saved.report_date) {
+      document.getElementById('complainDate').value = saved.report_date || '';
+    }
+    // 管轄權回填
+    if (saved.jurisdiction) {
+      const jurEl = document.querySelector(`input[name="jurisdiction"][value="${saved.jurisdiction}"]`);
+      if (jurEl) {
+        jurEl.checked = true;
+        jurEl.closest('.branch-option')?.classList.add('selected');
+      }
+    }
+    // 保全證據回填
+    if (saved.evidence && Array.isArray(saved.evidence)) {
+      saved.evidence.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.checked = true; el.closest('.check-item')?.classList.add('checked'); }
+      });
+      checkEvidenceDone();
+    }
+    // 檢舉方式回填
+    if (saved.complain_type) {
+      const complainEl = document.querySelector(`input[name="complain"][value="${saved.complain_type}"]`);
+      if (complainEl) {
+        complainEl.checked = true;
+        complainEl.closest('.branch-option')?.classList.add('selected');
+        showComplainSection(true);
+        const hasEl = document.querySelector('input[name="hasComplain"][value="yes"]');
+        if (hasEl) { hasEl.checked = true; hasEl.closest('.branch-option')?.classList.add('selected'); }
+      }
+    }
+    checkAdvanceReady();
+  } catch(e) { console.warn('資料回填失敗:', e); }
 }
 
 // ══════════════════════════════
@@ -851,11 +886,11 @@ function renderStage02() {
       <div class="section-head">👥 審查小組組成確認（第24條）</div>
       <div class="section-body">
         <div class="checklist">
-          <label class="check-item required-check" onclick="toggleCheck(this)">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbGroup1">
             <span>校長已於防制委員會委員中指派 <strong>3人</strong> 組成審查小組</span>
           </label>
-          <label class="check-item required-check" onclick="toggleCheck(this)">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbGroup2">
             <span>已確認委員無行政程序法第32、33條應迴避事由</span>
           </label>
@@ -868,11 +903,11 @@ function renderStage02() {
       <div class="section-head">📝 審查小組會議（第25條）</div>
       <div class="section-body">
         <div class="checklist">
-          <label class="check-item required-check" onclick="toggleCheck(this)">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbMeeting1">
             <span>已召開審查小組會議（全程錄音錄影）</span>
           </label>
-          <label class="check-item required-check" onclick="toggleCheck(this)">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbMeeting2">
             <span>已完成會議紀錄並經出席委員確認</span>
           </label>
@@ -908,7 +943,7 @@ function renderStage02() {
             依教育部1130073484號函釋，不受理前應先審酌是否準用第71條（故意傷害）規定處理。
           </div>
           <div class="checklist" style="margin-top:.5rem;">
-            <label class="check-item required-check" onclick="toggleCheck(this); checkAdvanceReady02()">
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady02()">
               <input type="checkbox" id="cbArticle71">
               <span><strong>已審酌本案是否符合第71條故意傷害情形</strong>（確認不符合才得不受理）</span>
             </label>
@@ -933,7 +968,7 @@ function renderStage02() {
           無論決議受理或不受理，均應於接獲檢舉之日起 20個工作日內，<strong>書面通知</strong>檢舉人。
         </div>
         <div class="checklist">
-          <label class="check-item required-check" onclick="toggleCheck(this); checkAdvanceReady02()">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady02()">
             <input type="checkbox" id="cbNotify">
             <span>已發出書面通知函並留存送達紀錄</span>
           </label>
@@ -966,14 +1001,16 @@ function renderStage02() {
 // 互動函式
 // ══════════════════════════════
 
-function toggleCheck(el) {
-  const cb = el.querySelector('input[type="checkbox"]');
-  if (cb) {
-    cb.checked = !cb.checked;
-    el.classList.toggle('checked', cb.checked);
+function toggleCheck(el, event) {
+  // 終極解法：只攔截 INPUT 的觸發，放手讓瀏覽器原生 <label> 去連動
+  if (event && event.target.tagName === 'INPUT') {
+    el.classList.toggle('checked', event.target.checked);
+    
+    // 動態呼叫對應階段的防呆檢核（安全呼叫）
+    if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
+    if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
+    if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
   }
-  checkAdvanceReady();
-  checkAdvanceReady02();
 }
 
 function selectBranch(name, value, el) {
@@ -1036,7 +1073,7 @@ function checkAdvanceReady() {
   const noneStepsCard = document.getElementById('noneStepsCard');
   if (noneStepsCard) {
     noneStepsCard.style.display = (evChecked2 && jurisdiction === 'none') ? 'block' : 'none';
-    if (evChecked && jurisdiction === 'none') showNoneDeadline();
+    if (evChecked2 && jurisdiction === 'none') showNoneDeadline();
   }
 
   const branchCard = document.getElementById('complainBranchCard');
@@ -1053,7 +1090,10 @@ function checkAdvanceReady() {
   }
 
   const hasComplain = document.querySelector('input[name="hasComplain"]:checked')?.value;
-  const ready = cbReport && jurisdiction && jurisdiction !== 'none' && evChecked && hasComplain === 'yes' && complainDate && complain;
+  const timeKnown = document.getElementById('timeKnown')?.value;
+  const timeReported = document.getElementById('timeReported')?.value;
+  const timeConfirmed = document.getElementById('timeConfirmed')?.style.display !== 'none';
+  const ready = cbReport && timeKnown && timeReported && timeConfirmed && jurisdiction && jurisdiction !== 'none' && evChecked && hasComplain === 'yes' && complainDate && complain;
   btn.disabled = !ready;
   if (ready) {
     btn.textContent = '✅ 確認完成，推進至 STAGE_02 審查小組 →';
@@ -1126,6 +1166,9 @@ async function advanceStage01() {
 
   showToast('正在推進至審查小組階段...');
   try {
+    const jurisdiction = document.querySelector('input[name="jurisdiction"]:checked')?.value || '';
+    const evidence = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA']
+      .filter(id => document.getElementById(id)?.checked);
     const result = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
@@ -1137,18 +1180,19 @@ async function advanceStage01() {
         report_no: reportNo,
         aware_datetime: timeKnown,
         reported_datetime: timeReported,
-        complain_type: complain
+        complain_type: complain,
+        jurisdiction,
+        evidence
       })
     });
     if (!result.ok) throw new Error(result.error);
     hideToast();
-    alert(`✅ 已推進至「02 審查小組」\n20工作日截止日已自動計算。`);
-    // 重新載入
-    deadlines = [];
+    // 重新載入期限後再 render
     const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
     deadlines = dlResult.deadlines || [];
     caseData.stage = 'STAGE_02';
     renderStage02();
+    alert(`✅ 已推進至「02 審查小組」\n20工作日截止日已自動計算。`);
   } catch(e) {
     hideToast();
     alert('推進失敗：' + e.message);
@@ -1193,8 +1237,6 @@ async function advanceStage02() {
     });
     if (!result.ok) throw new Error(result.error);
     hideToast();
-    alert('✅ 已推進至「03 處理小組」\n5工作日內組成處理小組的截止日已自動計算。');
-    deadlines = [];
     const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
     deadlines = dlResult.deadlines || [];
     caseData.stage = 'STAGE_03';
@@ -1217,8 +1259,8 @@ function checkEvidenceDone() {
   // 不具管轄權 → 顯示四步驟卡片
   const noneStepsCard = document.getElementById('noneStepsCard');
   if (noneStepsCard) {
-    noneStepsCard.style.display = (evChecked && jurisdiction === 'none') ? 'block' : 'none';
-    if (evChecked && jurisdiction === 'none') showNoneDeadline();
+    noneStepsCard.style.display = jurisdiction === 'none' ? 'block' : 'none';
+    if (jurisdiction === 'none') showNoneDeadline();
   }
 
   // 本校/跨校 → 顯示接獲檢舉分流
@@ -1241,12 +1283,20 @@ function showComplainSection(hasComplain) {
 async function setListingStatus() {
   if (!confirm('確定要將此案件標記為「通報列管中」嗎？\n\n案件將暫停在此狀態，待接獲檢舉後再繼續推進。')) return;
   showToast('標記通報列管中...');
+  const reportNo = document.getElementById('reportNo')?.value || '';
+  const timeKnown = document.getElementById('timeKnown')?.value || '';
+  const timeReported = document.getElementById('timeReported')?.value || '';
   try {
     const result = await callGAS('bully_save', {
       case_id: currentCaseId,
       email: currentEmail,
       stage: 'PRE_STAGE',
-      status: '通報列管中'
+      status: '通報列管中',
+      data_json: JSON.stringify({
+        report_no: reportNo,
+        aware_datetime: timeKnown,
+        reported_datetime: timeReported
+      })
     });
     if (!result.ok) throw new Error(result.error);
     hideToast();
@@ -1309,6 +1359,238 @@ function showNoneDeadline() {
   }
   const deadline = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
   infoEl.innerHTML = `⏱ 移送期限：<strong>${deadline}</strong>（3工作日內，依第19條）`;
+}
+
+
+// ══════════════════════════════
+// STAGE_03 處理小組組成
+// ══════════════════════════════
+function renderStage03() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 03｜處理小組組成</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第27條：</strong>學校應於決議受理後 <strong>5個工作日內</strong> 組成處理小組，人數以3人或5人為原則，<strong>外聘委員須過半數</strong>（3人組至少2位外聘；5人組至少3位外聘）。<br>
+          <strong>第28條：</strong>外聘委員應自教育部生對生霸凌事件專業調和及調查人才庫遴聘。<br>
+          <strong>第60條：</strong>委員有行政程序法第32、33條應迴避情事者，應自行迴避。
+        </div>
+      </div>
+    </div>
+
+    <!-- 人數選擇 -->
+    <div class="section-card">
+      <div class="section-head">👥 處理小組人數與委員名單（第27條）</div>
+      <div class="section-body">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+          <div class="time-field">
+            <label>處理小組人數</label>
+            <select id="memberCount" onchange="updateMemberRows()" style="padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;outline:none;">
+              <option value="3">3 人</option>
+              <option value="5">5 人</option>
+            </select>
+          </div>
+          <div id="proportionResult" style="padding:.35rem .75rem;border-radius:4px;font-size:.82rem;font-weight:600;align-self:flex-end;"></div>
+        </div>
+        <div id="memberRows" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;"></div>
+        <div class="law-note" style="margin-top:.5rem;">
+          偏遠地區學校：外聘委員比例得放寬為至少 <strong>三分之一</strong>（第27條第2項）。
+        </div>
+      </div>
+    </div>
+
+    <!-- 迴避檢核 -->
+    <div class="section-card">
+      <div class="section-head">⚠️ 強制迴避與資格檢核（第60條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady03()">
+            <input type="checkbox" id="cbAvoid1">
+            <span>已確認所有委員無行政程序法第32、33條應迴避事由</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady03()">
+            <input type="checkbox" id="cbAvoid2">
+            <span>已確認無同一法律事務所律師於同一案件分任不同職能（教育部函釋）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady03()">
+            <input type="checkbox" id="cbAvoid3">
+            <span>已確認外聘委員無利益衝突且同意受聘，並取得同意書</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 表單下載 -->
+    <div class="section-card">
+      <div class="section-head">📥 相關表單下載</div>
+      <div class="section-body">
+        <div class="download-list">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-2 防制委員會委員名冊（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>3-9 處理小組委員開會通知單（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn03" disabled onclick="advanceStage03()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint03">外聘比例需達標 + 所有姓名填寫 + 三項迴避確認</p>
+    </div>
+  `;
+
+  // 初始渲染委員欄位
+  updateMemberRows();
+
+  // 回填已儲存資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.members && Array.isArray(saved.members)) {
+      const count = saved.members.length;
+      if (count === 3 || count === 5) {
+        document.getElementById('memberCount').value = String(count);
+        updateMemberRows();
+        saved.members.forEach((m, i) => {
+          const nameEl = document.getElementById('memberName_' + i);
+          const typeEl = document.getElementById('memberType_' + i);
+          if (nameEl) nameEl.value = m.name || '';
+          if (typeEl) typeEl.value = m.type || 'external';
+        });
+        calculateProportion();
+      }
+    }
+  } catch(e) {}
+}
+
+function updateMemberRows() {
+  const count = parseInt(document.getElementById('memberCount')?.value || '3');
+  const container = document.getElementById('memberRows');
+  if (!container) return;
+
+  container.innerHTML = Array.from({length: count}, (_, i) => `
+    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:.78rem;color:#888;min-width:2em;">委員${i+1}</span>
+      <input type="text" id="memberName_${i}" placeholder="委員姓名"
+        oninput="checkAdvanceReady03()"
+        style="flex:1;min-width:120px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;outline:none;">
+      <select id="memberType_${i}" onchange="calculateProportion(); checkAdvanceReady03()"
+        style="padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;outline:none;">
+        <option value="external">外聘（人才庫）</option>
+        <option value="internal">內聘</option>
+      </select>
+    </div>
+  `).join('');
+
+  // 預設3人時外聘2、內聘1；5人時外聘3、內聘2
+  const defaults = count === 3 ? ['external','external','internal'] : ['external','external','external','internal','internal'];
+  defaults.forEach((type, i) => {
+    const el = document.getElementById('memberType_' + i);
+    if (el) el.value = type;
+  });
+
+  calculateProportion();
+  checkAdvanceReady03();
+}
+
+function calculateProportion() {
+  const count = parseInt(document.getElementById('memberCount')?.value || '3');
+  let externalCount = 0;
+  for (let i = 0; i < count; i++) {
+    const type = document.getElementById('memberType_' + i)?.value;
+    if (type === 'external') externalCount++;
+  }
+
+  const required = Math.floor(count / 2) + 1; // 過半數
+  const passed = externalCount >= required;
+  const resultEl = document.getElementById('proportionResult');
+  if (resultEl) {
+    resultEl.textContent = passed
+      ? `✅ 外聘 ${externalCount}/${count} 人，比例達標`
+      : `❌ 外聘 ${externalCount}/${count} 人，需至少 ${required} 位外聘`;
+    resultEl.style.background = passed ? 'var(--ok-light)' : 'var(--accent-pale)';
+    resultEl.style.color = passed ? 'var(--ok)' : 'var(--accent)';
+  }
+  return passed;
+}
+
+function checkAdvanceReady03() {
+  const btn = document.getElementById('advanceBtn03');
+  const hint = document.getElementById('advanceHint03');
+  if (!btn) return;
+
+  const count = parseInt(document.getElementById('memberCount')?.value || '3');
+
+  // 所有姓名填寫
+  const allNamesFilled = Array.from({length: count}, (_, i) =>
+    (document.getElementById('memberName_' + i)?.value || '').trim() !== ''
+  ).every(Boolean);
+
+  // 外聘比例達標
+  const proportionPassed = calculateProportion();
+
+  // 三項迴避勾選
+  const avoidChecked = ['cbAvoid1','cbAvoid2','cbAvoid3'].every(id => document.getElementById(id)?.checked);
+
+  const ready = allNamesFilled && proportionPassed && avoidChecked;
+  btn.disabled = !ready;
+  if (ready) {
+    btn.textContent = '✅ 確認組成完成，推進至 STAGE_04 會前會 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    if (hint) {
+      const missing = [];
+      if (!allNamesFilled) missing.push('委員姓名未填寫完整');
+      if (!proportionPassed) missing.push('外聘比例未達標');
+      if (!avoidChecked) missing.push('迴避確認未完成');
+      hint.textContent = missing.join('、');
+    }
+  }
+}
+
+async function advanceStage03() {
+  const count = parseInt(document.getElementById('memberCount')?.value || '3');
+  const members = Array.from({length: count}, (_, i) => ({
+    name: (document.getElementById('memberName_' + i)?.value || '').trim(),
+    type: document.getElementById('memberType_' + i)?.value || 'external'
+  }));
+
+  showToast('正在推進至會前會階段...');
+  try {
+    const result = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone: '處理小組組成完成',
+      done_date: new Date().toISOString().split('T')[0],
+      stage: 'STAGE_04',
+      data_json: JSON.stringify({
+        ...JSON.parse(caseData.data_json || '{}'),
+        members,
+        member_count: count
+      })
+    });
+    if (!result.ok) throw new Error(result.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = 'STAGE_04';
+    document.getElementById('mainContent').innerHTML = `
+      <div class="loading-state">
+        <p>✅ 已推進至「04 會前會」</p>
+        <p style="font-size:.82rem;color:#888;margin-top:.5rem;">STAGE_04 流程介面建置中，請從儀表板繼續追蹤。</p>
+        <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
+      </div>`;
+    hideToast();
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
 }
 
 // ── 啟動
