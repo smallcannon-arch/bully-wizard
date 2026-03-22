@@ -499,6 +499,8 @@ function renderStage(stage) {
     'STAGE_04': renderStage04,
     'STAGE_05A': renderStage05A,
     'STAGE_05B': renderStage05B,
+    'STAGE_06': renderStage06,
+    'STAGE_07': renderStage07,
     'PRE_STAGE': renderPreStage,
   };
   const fn = renders[stage];
@@ -545,15 +547,12 @@ function renderPreStage() {
       <div class="section-head">📋 通報列管中</div>
       <div class="section-body">
         <div class="law-note">
-          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。<br>
+          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。
           通報完成後若尚未接獲檢舉，案件進入「通報列管」狀態，20工作日的審查時鐘尚未開始。
         </div>
-        <p style="font-size:.88rem;color:#666;line-height:1.7;margin-bottom:1.2rem;">
-          目前案件處於通報列管狀態。若後續家長或相關人員提出正式檢舉，請點擊下方按鈕重啟案件流程。
+        <p style="font-size:.88rem;color:#666;line-height:1.7;">
+          目前案件處於通報列管狀態。請等待家長或相關人員提出正式檢舉後，再回到儀表板建立正式案件。
         </p>
-        <button onclick="resumeToStage01()" style="padding:.7rem 1.2rem;background:var(--ok);color:#fff;border:none;border-radius:6px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;width:100%;text-align:center;">
-          📨 已接獲正式檢舉，重啟 STAGE_01 流程
-        </button>
       </div>
     </div>
 
@@ -569,6 +568,7 @@ function renderPreStage() {
     </div>
   `;
 }
+
 // ══════════════════════════════
 // STAGE_01 知悉受理
 // ══════════════════════════════
@@ -1023,6 +1023,7 @@ function toggleCheck(el, event) {
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
+  if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
 }
 
 function selectBranch(name, value, el) {
@@ -1036,6 +1037,7 @@ function selectBranch(name, value, el) {
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
+  if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
 }
 
 function confirmTimeInput() {
@@ -2224,7 +2226,7 @@ async function advanceStage05B() {
     const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
-      milestone: '調查報告完成',
+      milestone: '防制委員會議通過',
       done_date: endDate,
       stage: 'STAGE_06',
       data_json: JSON.stringify({
@@ -2246,29 +2248,322 @@ async function advanceStage05B() {
   }
 }
 
-// ── 重啟通報列管案件
-async function resumeToStage01() {
-  if (!confirm('確定已接獲正式檢舉，要重啟此案件的處理流程嗎？')) return;
-  showToast('正在重啟案件流程...');
+// ══════════════════════════════
+// STAGE_06 防制委員會審議
+// ══════════════════════════════
+function renderStage06() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 06｜防制委員會審議</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第36條：</strong>防制委員會應有<strong>二分之一以上委員出席</strong>始得開會；<strong>出席委員過半數同意</strong>始得決議。<br>
+          <strong>第38條：</strong>防制委員會審議後，得為彈性處理出缺席、提供心理輔導、適當管教或懲處等決議。<br>
+          <strong>第46條：</strong>學校應於防制委員會決議後<strong>15個工作日內</strong>作成終局實體處理，並於<strong>10個工作日內</strong>書面通知雙方。
+        </div>
+      </div>
+    </div>
+
+    <!-- 會議組成合法性驗證 -->
+    <div class="section-card">
+      <div class="section-head">👥 委員會組成合法性驗證（第36條）</div>
+      <div class="section-body">
+        <div class="number-input-row" style="margin-bottom:.75rem;">
+          <div class="number-field">
+            <label>委員總人數</label>
+            <input type="number" id="totalMembers" min="1" max="30" placeholder="例：11"
+              oninput="validateCommittee()"
+              style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
+          </div>
+          <div class="number-field">
+            <label>實際出席人數</label>
+            <input type="number" id="attendMembers" min="1" max="30" placeholder="例：7"
+              oninput="validateCommittee()"
+              style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
+          </div>
+          <div class="number-field">
+            <label>同意決議人數</label>
+            <input type="number" id="agreeMembers" min="1" max="30" placeholder="例：5"
+              oninput="validateCommittee()"
+              style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
+          </div>
+        </div>
+        <div id="committeeValidResult" style="font-size:.82rem;padding:.35rem .75rem;border-radius:4px;display:none;"></div>
+      </div>
+    </div>
+
+    <!-- 程序確認 -->
+    <div class="section-card">
+      <div class="section-head">✅ 程序確認</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbComm1">
+            <span>已確認出席委員無應迴避事由（第60條）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbComm2">
+            <span>本案為跨校案件，已書面通知行為人所屬學校派員列席（第20條）— 非跨校案件請勾選「不適用」</span>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbComm2NA">
+            <span>不適用（非跨校案件）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbComm3">
+            <span>委員會會議紀錄已完成（6-1）並留存</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>6-1 防制委員會會議紀錄（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 審議結果分流 -->
+    <div class="section-card">
+      <div class="section-head">🔀 防制委員會審議結果</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>委員會審議日期 *</label>
+          <input type="date" id="committeeMeetingDate" onchange="checkAdvanceReady06()" style="width:180px;">
+        </div>
+        <div class="branch-options">
+          <label class="branch-option" onclick="selectBranch('committeeDecision', 'approve', this)">
+            <input type="radio" name="committeeDecision" value="approve">
+            <div>
+              <div class="branch-label">✅ 選項 A：確認通過，進入後續處理</div>
+              <div class="branch-desc">委員會同意調查/調和報告結果，進入 STAGE_07 作成終局實體處理（15工作日）</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('committeeDecision', 'return', this)">
+            <input type="radio" name="committeeDecision" value="return">
+            <div>
+              <div class="branch-label">🚨 選項 B：退回重啟調查程序</div>
+              <div class="branch-desc">委員會認定調查程序有重大瑕疵或有新事證，退回 STAGE_05B 重新調查</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 退回時的確認 -->
+        <div id="returnDetail" style="display:none;margin-top:.75rem;">
+          <div class="warning-note" style="font-size:.88rem;line-height:1.8;">
+            🚨 <strong>退回重新調查</strong><br>
+            委員會認定調查程序有重大瑕疵或發現足以影響結果之新事證，依法得退回學校命其繼續調查或另組處理小組調查（第64條）。<br>
+            退回後，系統將重新進入 STAGE_05B，期限依實際重啟日期重新計算。
+          </div>
+          <div class="checklist" style="margin-top:.5rem;">
+            <label class="check-item required-check" onclick="toggleCheck(this, event)">
+              <input type="checkbox" id="cbReturn1">
+              <span>已於會議紀錄中載明退回理由及要求事項</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this, event)">
+              <input type="checkbox" id="cbReturn2">
+              <span>已通知雙方當事人案件退回重新調查</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn06" disabled onclick="advanceStage06()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint06">請完成委員會組成驗證、程序確認並選定審議結果</p>
+    </div>
+  `;
+
+  // 回填已儲存資料
   try {
-    const result = await callGAS('bully_save', {
-      case_id: currentCaseId,
-      email: currentEmail,
-      stage: 'STAGE_01',
-      status: '辦理中'
-    });
-    if (!result.ok) throw new Error(result.error);
-    hideToast();
-    
-    // 更新本地狀態並重新渲染 STAGE_01
-    caseData.stage = 'STAGE_01';
-    renderStage01();
-  } catch(e) {
-    hideToast();
-    alert('重啟失敗：' + e.message);
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.committee_meeting_date) {
+      document.getElementById('committeeMeetingDate').value = saved.committee_meeting_date;
+    }
+    if (saved.committee_total) document.getElementById('totalMembers').value = saved.committee_total;
+    if (saved.committee_attend) document.getElementById('attendMembers').value = saved.committee_attend;
+    if (saved.committee_agree) document.getElementById('agreeMembers').value = saved.committee_agree;
+    if (saved.committee_total) validateCommittee();
+    if (saved.committee_decision) {
+      const el = document.querySelector(`input[name="committeeDecision"][value="${saved.committee_decision}"]`);
+      if (el) {
+        el.checked = true;
+        el.closest('.branch-option')?.classList.add('selected');
+        if (saved.committee_decision === 'return') {
+          document.getElementById('returnDetail').style.display = 'block';
+        }
+      }
+    }
+    checkAdvanceReady06();
+  } catch(e) {}
+}
+
+function validateCommittee() {
+  const total = parseInt(document.getElementById('totalMembers')?.value || '0');
+  const attend = parseInt(document.getElementById('attendMembers')?.value || '0');
+  const agree = parseInt(document.getElementById('agreeMembers')?.value || '0');
+  const resultEl = document.getElementById('committeeValidResult');
+  if (!resultEl || !total || !attend || !agree) {
+    if (resultEl) resultEl.style.display = 'none';
+    checkAdvanceReady06();
+    return;
+  }
+
+  const quorum = Math.ceil(total / 2);       // 出席門檻：過半
+  const majority = Math.ceil(attend / 2);    // 決議門檻：出席過半
+
+  const quorumOk = attend >= quorum;
+  const majorityOk = agree >= majority;
+  const logicOk = attend <= total && agree <= attend;
+
+  resultEl.style.display = 'block';
+  if (!logicOk) {
+    resultEl.textContent = '❌ 人數邏輯錯誤（出席不得超過總數，同意不得超過出席）';
+    resultEl.style.background = 'var(--accent-pale)';
+    resultEl.style.color = 'var(--accent)';
+  } else if (!quorumOk) {
+    resultEl.textContent = `❌ 出席不足（${attend}/${total}，需至少 ${quorum} 人出席）`;
+    resultEl.style.background = 'var(--accent-pale)';
+    resultEl.style.color = 'var(--accent)';
+  } else if (!majorityOk) {
+    resultEl.textContent = `❌ 決議未達門檻（同意 ${agree}/${attend}，需至少 ${majority} 人同意）`;
+    resultEl.style.background = 'var(--accent-pale)';
+    resultEl.style.color = 'var(--accent)';
+  } else {
+    resultEl.textContent = `✅ 出席合法（${attend}/${total}），決議有效（同意 ${agree}/${attend}）`;
+    resultEl.style.background = 'var(--ok-light)';
+    resultEl.style.color = 'var(--ok)';
+  }
+  checkAdvanceReady06();
+}
+
+function checkAdvanceReady06() {
+  const btn = document.getElementById('advanceBtn06');
+  const hint = document.getElementById('advanceHint06');
+  if (!btn) return;
+
+  const meetingDate = document.getElementById('committeeMeetingDate')?.value;
+
+  // 人數驗證
+  const total = parseInt(document.getElementById('totalMembers')?.value || '0');
+  const attend = parseInt(document.getElementById('attendMembers')?.value || '0');
+  const agree = parseInt(document.getElementById('agreeMembers')?.value || '0');
+  const quorum = Math.ceil(total / 2);
+  const majority = Math.ceil(attend / 2);
+  const committeeValid = total > 0 && attend >= quorum && agree >= majority && attend <= total && agree <= attend;
+
+  // 程序確認（跨校二擇一）
+  const cbComm1 = document.getElementById('cbComm1')?.checked;
+  const cbComm2 = document.getElementById('cbComm2')?.checked;
+  const cbComm2NA = document.getElementById('cbComm2NA')?.checked;
+  const cbComm3 = document.getElementById('cbComm3')?.checked;
+  const crossSchoolOk = cbComm2 || cbComm2NA;
+
+  // 決議選擇
+  const decision = document.querySelector('input[name="committeeDecision"]:checked')?.value;
+  const returnDetail = document.getElementById('returnDetail');
+  if (returnDetail) returnDetail.style.display = decision === 'return' ? 'block' : 'none';
+
+  let decisionReady = !!decision;
+  if (decision === 'return') {
+    decisionReady = document.getElementById('cbReturn1')?.checked &&
+                    document.getElementById('cbReturn2')?.checked;
+  }
+
+  const ready = meetingDate && committeeValid && cbComm1 && crossSchoolOk && cbComm3 && decisionReady;
+  btn.disabled = !ready;
+
+  if (ready) {
+    btn.textContent = decision === 'approve'
+      ? '✅ 確認通過，進入 STAGE_07 後續處理 →'
+      : '🚨 確認退回，重啟 STAGE_05B 調查程序 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!committeeValid) missing.push('委員會門檻驗證');
+    if (!meetingDate) missing.push('審議日期');
+    if (!cbComm1) missing.push('迴避確認');
+    if (!crossSchoolOk) missing.push('跨校通知確認');
+    if (!cbComm3) missing.push('會議紀錄確認');
+    if (!decisionReady) missing.push(decision === 'return' ? '退回確認項目' : '審議結果');
+    if (hint) hint.textContent = missing.join('、') + ' 尚未完成';
   }
 }
-  
+
+async function advanceStage06() {
+  const decision = document.querySelector('input[name="committeeDecision"]:checked')?.value;
+  const meetingDate = document.getElementById('committeeMeetingDate')?.value;
+  const total = document.getElementById('totalMembers')?.value || '';
+  const attend = document.getElementById('attendMembers')?.value || '';
+  const agree = document.getElementById('agreeMembers')?.value || '';
+
+  const nextStage = decision === 'approve' ? 'STAGE_07' : 'STAGE_05B';
+  const nextLabel = decision === 'approve' ? '07 終局處理' : '05B 調查程序（重啟）';
+  const milestone = decision === 'approve' ? '防制委員會議通過' : '退回重新調查';
+
+  if (decision === 'return') {
+    const confirmed = confirm('🚨 確認退回重新調查？
+
+退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
+    if (!confirmed) return;
+  }
+
+  showToast(`正在推進至${nextLabel}...`);
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    const res = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone,
+      done_date: meetingDate,
+      stage: nextStage,
+      data_json: JSON.stringify({
+        ...saved,
+        committee_meeting_date: meetingDate,
+        committee_decision: decision,
+        committee_total: total,
+        committee_attend: attend,
+        committee_agree: agree
+      })
+    });
+    if (!res.ok) throw new Error(res.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = nextStage;
+    hideToast();
+    alert(`✅ 已推進至「${nextLabel}」`);
+    renderStage(nextStage);
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ── STAGE_07 預留
+function renderStage07() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 07｜終局處理與書面通知</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第46條：</strong>學校應於防制委員會決議後<strong>15個工作日內</strong>作成終局實體處理，並於<strong>10個工作日內</strong>書面通知雙方當事人。
+        </div>
+        <p style="color:#888;font-size:.88rem;margin-top:.75rem;">STAGE_07 流程介面建置中，請從儀表板繼續追蹤。</p>
+      </div>
+    </div>
+    <div class="advance-area">
+      <button onclick="goBack()" style="padding:.6rem 1.2rem;background:transparent;border:1px solid var(--line);border-radius:6px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;">← 返回儀表板</button>
+    </div>
+  `;
+}
+
 // ── 啟動
 window.onload = init;
 </script>
