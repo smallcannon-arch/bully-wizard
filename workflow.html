@@ -2507,13 +2507,10 @@ async function advanceStage06() {
   const nextLabel = decision === 'approve' ? '07 終局處理' : '05B 調查程序（重啟）';
   const milestone = decision === 'approve' ? '防制委員會議通過' : '退回重新調查';
 
-  if (decision === 'return') {
-    const confirmed = confirm('🚨 確認退回重新調查？
-
-退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
+if (decision === 'return') {
+    const confirmed = confirm('🚨 確認退回重新調查？\n\n退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
     if (!confirmed) return;
   }
-
   showToast(`正在推進至${nextLabel}...`);
   try {
     const saved = JSON.parse(caseData.data_json || '{}');
