@@ -496,6 +496,9 @@ function renderStage(stage) {
     'STAGE_01': renderStage01,
     'STAGE_02': renderStage02,
     'STAGE_03': renderStage03,
+    'STAGE_04': renderStage04,
+    'STAGE_05A': renderStage05A,
+    'STAGE_05B': renderStage05B,
     'PRE_STAGE': renderPreStage,
   };
   const fn = renders[stage];
@@ -1002,37 +1005,35 @@ function renderStage02() {
 // ══════════════════════════════
 
 function toggleCheck(el, event) {
-  // 終極解法：只攔截 INPUT 的觸發，放手讓瀏覽器原生 <label> 去連動
+  // 避免 label 和 checkbox 雙重觸發
   if (event && event.target.tagName === 'INPUT') {
     el.classList.toggle('checked', event.target.checked);
-    
-    // 動態呼叫對應階段的防呆檢核（安全呼叫）
-    if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
-    if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
-    if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
+  } else if (!event) {
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (cb) {
+      cb.checked = !cb.checked;
+      el.classList.toggle('checked', cb.checked);
+    }
   }
+  if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
+  if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
+  if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
+  if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
+  if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
+  if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
 }
 
 function selectBranch(name, value, el) {
-  // 1. 更新 UI 的 .selected 樣式
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
     r.closest('.branch-option')?.classList.remove('selected');
   });
   el.classList.add('selected');
-  
-  // 2. 勾選 radio
-  const radio = el.querySelector('input[type="radio"]');
-  if (radio) radio.checked = true;
-
-  // 3. 強制喚醒所有防呆與卡片連動邏輯
+  el.querySelector('input[type="radio"]').checked = true;
   if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
   if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
-  if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
-
-  // 4. 針對「管轄權」切換，額外喚醒證據卡片的連動
-  if (name === 'jurisdiction' && typeof checkEvidenceDone === 'function') {
-    checkEvidenceDone();
-  }
+  if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
+  if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
+  if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
 }
 
 function confirmTimeInput() {
@@ -1601,6 +1602,642 @@ async function advanceStage03() {
         <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
       </div>`;
     hideToast();
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ══════════════════════════════
+// STAGE_04 會前會與調和意願徵詢
+// ══════════════════════════════
+function renderStage04() {
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 04｜會前會與調和意願徵詢</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第29條：</strong>處理小組應先召開會前會，分別與當事人及其法定代理人進行個別會談，說明調和與調查程序，並徵詢雙方調和意願。<br>
+          <strong>第29條第2項：</strong>調和程序<strong>應經雙方當事人同意</strong>始得為之；任一方拒絕或小組評估不適宜，應直接進入調查程序。<br>
+          <strong>第31條第2項：</strong>調和程序中委員的勸導及雙方不利於己之陳述，於調和不成立後之調查<strong>不得採為調查報告之基礎</strong>。
+        </div>
+      </div>
+    </div>
+
+    <!-- 會前會資訊 -->
+    <div class="section-card">
+      <div class="section-head">📅 會前會資訊（第29條）</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>會前會召開日期 *</label>
+          <input type="date" id="preMeetingDate" onchange="checkAdvanceReady04()" style="width:180px;">
+        </div>
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady04()">
+            <input type="checkbox" id="cbPreMeeting1">
+            <span>已分別對被行為人及行為人（含法定代理人）進行個別會談</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady04()">
+            <input type="checkbox" id="cbPreMeeting2">
+            <span>已說明調和程序與調查程序之差異及各自權利義務</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady04()">
+            <input type="checkbox" id="cbPreMeeting3">
+            <span>個別會談紀錄已完成並留存（實體保管）</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>4-1 程序說明書（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>4-3 個別會談紀錄（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 調和意願分流 -->
+    <div class="section-card">
+      <div class="section-head">🔀 調和意願徵詢結果（第29條）— 決定後續程序走向</div>
+      <div class="section-body">
+        <div class="warning-note">
+          ⚠️ 此選擇將決定後續程序走向，請審慎確認。一旦進入調和程序，調和中的陳述依第31條第2項具有<strong>法定證據排除效力</strong>。
+        </div>
+        <div class="branch-options" style="margin-top:.75rem;">
+          <label class="branch-option" onclick="selectBranch('track', 'reconciliation', this); checkAdvanceReady04()">
+            <input type="radio" name="track" value="reconciliation" onchange="checkAdvanceReady04()">
+            <div>
+              <div class="branch-label">🤝 選項 A：進入調和程序（STAGE_05A）</div>
+              <div class="branch-desc">
+                雙方當事人均同意調和，且無權力極度不對等之情形。<br>
+                調和程序自第一次會議起 <strong>1個月內</strong> 須完成調和報告（第32條）。
+              </div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('track', 'investigation', this); checkAdvanceReady04()">
+            <input type="radio" name="track" value="investigation" onchange="checkAdvanceReady04()">
+            <div>
+              <div class="branch-label">🔍 選項 B：進入調查程序（STAGE_05B）</div>
+              <div class="branch-desc">
+                任一方拒絕調和，或處理小組評估不適宜進行調和。<br>
+                調查程序自第一次會議起 <strong>2個月內</strong> 須完成調查報告（第43條）。
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 調和時額外確認 -->
+        <div id="reconciliationExtra" style="display:none;margin-top:.75rem;">
+          <div class="checklist">
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady04()">
+              <input type="checkbox" id="cbReconciliation1">
+              <span>已確認雙方當事人間無明顯權力不對等情形（如持續性霸凌、人身安全疑慮）</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady04()">
+              <input type="checkbox" id="cbReconciliation2">
+              <span>雙方已簽署調和意願書（4-2）</span>
+            </label>
+          </div>
+          <div class="download-list" style="margin-top:.75rem;">
+            <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+              <span>4-2 調和意願書（公版範本）</span>→
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn04" disabled onclick="advanceStage04()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint04">請填寫會前會日期、完成檢核清單並選定程序走向</p>
+    </div>
+  `;
+
+  // 回填已儲存資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.pre_meeting_date) {
+      document.getElementById('preMeetingDate').value = saved.pre_meeting_date;
+    }
+    if (saved.track_decision) {
+      const trackEl = document.querySelector(`input[name="track"][value="${saved.track_decision}"]`);
+      if (trackEl) {
+        trackEl.checked = true;
+        trackEl.closest('.branch-option')?.classList.add('selected');
+        if (saved.track_decision === 'reconciliation') {
+          document.getElementById('reconciliationExtra').style.display = 'block';
+        }
+      }
+    }
+    checkAdvanceReady04();
+  } catch(e) {}
+}
+
+function checkAdvanceReady04() {
+  const btn = document.getElementById('advanceBtn04');
+  const hint = document.getElementById('advanceHint04');
+  if (!btn) return;
+
+  const preMeetingDate = document.getElementById('preMeetingDate')?.value;
+  const cbPre1 = document.getElementById('cbPreMeeting1')?.checked;
+  const cbPre2 = document.getElementById('cbPreMeeting2')?.checked;
+  const cbPre3 = document.getElementById('cbPreMeeting3')?.checked;
+  const track = document.querySelector('input[name="track"]:checked')?.value;
+
+  // 調和時需額外確認
+  let extraReady = true;
+  const reconciliationExtra = document.getElementById('reconciliationExtra');
+  if (track === 'reconciliation') {
+    reconciliationExtra.style.display = 'block';
+    extraReady = document.getElementById('cbReconciliation1')?.checked &&
+                 document.getElementById('cbReconciliation2')?.checked;
+  } else if (track === 'investigation') {
+    if (reconciliationExtra) reconciliationExtra.style.display = 'none';
+  }
+
+  const ready = preMeetingDate && cbPre1 && cbPre2 && cbPre3 && track && extraReady;
+  btn.disabled = !ready;
+
+  if (ready) {
+    if (track === 'reconciliation') {
+      btn.textContent = '🤝 確認進入調和程序，推進至 STAGE_05A →';
+    } else {
+      btn.textContent = '🔍 確認進入調查程序，推進至 STAGE_05B →';
+    }
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!preMeetingDate) missing.push('會前會日期');
+    if (!cbPre1 || !cbPre2 || !cbPre3) missing.push('會前會檢核');
+    if (!track) missing.push('程序走向選擇');
+    if (track === 'reconciliation' && !extraReady) missing.push('調和額外確認');
+    if (hint) hint.textContent = missing.join('、') + ' 尚未完成';
+  }
+}
+
+async function advanceStage04() {
+  const track = document.querySelector('input[name="track"]:checked')?.value;
+  const preMeetingDate = document.getElementById('preMeetingDate')?.value;
+  const nextStage = track === 'reconciliation' ? 'STAGE_05A' : 'STAGE_05B';
+  const nextLabel = track === 'reconciliation' ? '05A 調和程序' : '05B 調查程序';
+  const milestone = track === 'reconciliation'
+    ? '第一次調和會議召開(換入調和)'
+    : '第一次調查會議召開(換入調查)';
+
+  showToast(`正在推進至${nextLabel}...`);
+  try {
+    const result = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone,
+      done_date: preMeetingDate,
+      stage: nextStage,
+      data_json: JSON.stringify({
+        ...JSON.parse(caseData.data_json || '{}'),
+        pre_meeting_date: preMeetingDate,
+        track_decision: track,
+        first_meeting_date: preMeetingDate  // 共用時鐘起算點
+      })
+    });
+    if (!result.ok) throw new Error(result.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = nextStage;
+    hideToast();
+    alert(`✅ 已推進至「${nextLabel}」\n期限已自動計算。`);
+    renderStage(nextStage);
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ══════════════════════════════
+// STAGE_05A 調和程序
+// ══════════════════════════════
+function renderStage05A() {
+  // 取得共用時鐘起算點
+  let firstMeetingDate = '';
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    firstMeetingDate = saved.first_meeting_date || saved.pre_meeting_date || '';
+  } catch(e) {}
+
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 05A｜調和程序</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第32條：</strong>處理小組應於召開第一次調和或調查會議之日起 <strong>1個月內</strong> 完成調和報告；必要時得延長，延長以2次為限，每次不得逾1個月。<br>
+          <strong>第31條第2項：</strong>調和程序中委員之勸導，及雙方所為不利於己之陳述或讓步，於調和不成立後之調查，<strong>不得採為調查報告之基礎</strong>。
+        </div>
+        ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
+      </div>
+    </div>
+
+    <!-- 調和程序執行確認 -->
+    <div class="section-card">
+      <div class="section-head">✅ 調和程序執行確認（第31條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+            <input type="checkbox" id="cbRecon1">
+            <span>已召開調和會議，全程錄音錄影</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+            <input type="checkbox" id="cbRecon2">
+            <span>調和會議紀錄已完成（4-4）</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>4-4 調和會議紀錄（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 調和結果分流 -->
+    <div class="section-card">
+      <div class="section-head">🔀 調和結果（第32條）</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>調和程序結束日期 *</label>
+          <input type="date" id="reconciliationEndDate" onchange="checkAdvanceReady05A()" style="width:180px;">
+        </div>
+        <div class="branch-options">
+          <label class="branch-option" onclick="selectBranch('reconResult', 'success', this); showReconDetail('success')">
+            <input type="radio" name="reconResult" value="success" onchange="checkAdvanceReady05A()">
+            <div>
+              <div class="branch-label">✅ 調和成立</div>
+              <div class="branch-desc">雙方達成共識並簽署調和協議書，進入 STAGE_06 防制委員會審議</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('reconResult', 'fail', this); showReconDetail('fail')">
+            <input type="radio" name="reconResult" value="fail" onchange="checkAdvanceReady05A()">
+            <div>
+              <div class="branch-label">🚨 調和不成立</div>
+              <div class="branch-desc">無法達成共識，依法轉入 STAGE_05B 調查程序</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 調和成立的額外確認 -->
+        <div id="reconSuccessDetail" style="display:none;margin-top:.75rem;">
+          <div class="checklist">
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+              <input type="checkbox" id="cbReconSuccess1">
+              <span>雙方當事人已簽署調和協議書（4-5）</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+              <input type="checkbox" id="cbReconSuccess2">
+              <span>行為人已簽署保證書（4-6）</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+              <input type="checkbox" id="cbReconSuccess3">
+              <span>調和報告已完成（4-7）並經處理小組確認</span>
+            </label>
+          </div>
+          <div class="download-list" style="margin-top:.75rem;">
+            <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+              <span>4-5 調和協議書（公版範本）</span>→
+            </a>
+            <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+              <span>4-6 保證書（公版範本）</span>→
+            </a>
+            <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+              <span>4-7 調和報告（公版範本）</span>→
+            </a>
+          </div>
+        </div>
+
+        <!-- 調和不成立的證據排除防呆 -->
+        <div id="reconFailDetail" style="display:none;margin-top:.75rem;">
+          <div class="warning-note" style="border-color:var(--accent);background:#fff0f0;font-size:.88rem;line-height:1.8;">
+            🔒 <strong>法定證據排除防火牆（第31條第2項）</strong><br>
+            調和程序中之勸導，及雙方所為<strong>不利於己之陳述或讓步</strong>，依法<strong>不得採為後續調查報告之基礎</strong>。<br>
+            請確認相關調和紀錄已封存，且不得移交給調查委員作為調查依據。
+          </div>
+          <div class="checklist" style="margin-top:.5rem;">
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+              <input type="checkbox" id="cbReconFail1">
+              <span><strong>已確認調和紀錄已封存，不移交調查委員</strong>（第31條第2項強制聲明）</span>
+            </label>
+            <label class="check-item required-check" onclick="toggleCheck(this, event); checkAdvanceReady05A()">
+              <input type="checkbox" id="cbReconFail2">
+              <span>已告知雙方當事人轉入調查程序，並說明後續權利</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn05A" disabled onclick="advanceStage05A()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint05A">請填寫結束日期、選定結果並完成對應確認項目</p>
+    </div>
+  `;
+
+  // 回填已儲存資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.reconciliation_end_date) {
+      document.getElementById('reconciliationEndDate').value = saved.reconciliation_end_date;
+    }
+    if (saved.reconciliation_result) {
+      const el = document.querySelector(`input[name="reconResult"][value="${saved.reconciliation_result}"]`);
+      if (el) {
+        el.checked = true;
+        el.closest('.branch-option')?.classList.add('selected');
+        showReconDetail(saved.reconciliation_result);
+      }
+    }
+    checkAdvanceReady05A();
+  } catch(e) {}
+}
+
+function showReconDetail(result) {
+  const successEl = document.getElementById('reconSuccessDetail');
+  const failEl = document.getElementById('reconFailDetail');
+  if (successEl) successEl.style.display = result === 'success' ? 'block' : 'none';
+  if (failEl) failEl.style.display = result === 'fail' ? 'block' : 'none';
+  checkAdvanceReady05A();
+}
+
+function checkAdvanceReady05A() {
+  const btn = document.getElementById('advanceBtn05A');
+  const hint = document.getElementById('advanceHint05A');
+  if (!btn) return;
+
+  const endDate = document.getElementById('reconciliationEndDate')?.value;
+  const cbRecon1 = document.getElementById('cbRecon1')?.checked;
+  const cbRecon2 = document.getElementById('cbRecon2')?.checked;
+  const result = document.querySelector('input[name="reconResult"]:checked')?.value;
+
+  let resultReady = false;
+  if (result === 'success') {
+    resultReady = ['cbReconSuccess1','cbReconSuccess2','cbReconSuccess3']
+      .every(id => document.getElementById(id)?.checked);
+  } else if (result === 'fail') {
+    resultReady = ['cbReconFail1','cbReconFail2']
+      .every(id => document.getElementById(id)?.checked);
+  }
+
+  const ready = endDate && cbRecon1 && cbRecon2 && result && resultReady;
+  btn.disabled = !ready;
+
+  if (ready) {
+    btn.textContent = result === 'success'
+      ? '✅ 調和成立，推進至 STAGE_06 防制委員會 →'
+      : '🚨 調和不成立，轉入 STAGE_05B 調查程序 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!endDate) missing.push('結束日期');
+    if (!cbRecon1 || !cbRecon2) missing.push('程序執行確認');
+    if (!result) missing.push('調和結果');
+    if (result && !resultReady) missing.push('對應確認項目');
+    if (hint) hint.textContent = missing.join('、') + ' 尚未完成';
+  }
+}
+
+async function advanceStage05A() {
+  const result = document.querySelector('input[name="reconResult"]:checked')?.value;
+  const endDate = document.getElementById('reconciliationEndDate')?.value;
+  const nextStage = result === 'success' ? 'STAGE_06' : 'STAGE_05B';
+  const nextLabel = result === 'success' ? '06 防制委員會' : '05B 調查程序';
+  const milestone = result === 'success'
+    ? '調和成立'
+    : '調和不成立 (切換調查)';
+
+  if (result === 'fail') {
+    const confirmed = confirm(
+      '🚨 確認轉入調查程序？\n\n請再次確認：調和紀錄已封存，且不得移交調查委員（第31條第2項）。'
+    );
+    if (!confirmed) return;
+  }
+
+  showToast(`正在推進至${nextLabel}...`);
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    const res = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone,
+      done_date: endDate,
+      stage: nextStage,
+      data_json: JSON.stringify({
+        ...saved,
+        reconciliation_end_date: endDate,
+        reconciliation_result: result
+        // first_meeting_date 保留不動（共用時鐘）
+      })
+    });
+    if (!res.ok) throw new Error(res.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = nextStage;
+    hideToast();
+    alert(`✅ 已推進至「${nextLabel}」`);
+    renderStage(nextStage);
+  } catch(e) {
+    hideToast();
+    alert('推進失敗：' + e.message);
+  }
+}
+
+// ══════════════════════════════
+// STAGE_05B 調查程序
+// ══════════════════════════════
+function renderStage05B() {
+  let firstMeetingDate = '';
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    firstMeetingDate = saved.first_meeting_date || saved.pre_meeting_date || '';
+  } catch(e) {}
+
+  document.getElementById('mainContent').innerHTML = `
+    ${deadlineCardHtml()}
+
+    <div class="section-card">
+      <div class="section-head">📋 STAGE 05B｜調查程序</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第43條：</strong>處理小組應於召開第一次調查會議之日起 <strong>2個月內</strong> 完成調查報告；必要時得延長，以2次為限，每次不得逾1個月，並應通知當事人。<br>
+          <strong>第37條：</strong>調查過程中，<strong>不得讓雙方當事人或檢舉人進行對質</strong>。<br>
+          <strong>第36條：</strong>訪談時應全程錄音錄影，受訪者應被告知保密義務。
+        </div>
+        ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
+      </div>
+    </div>
+
+    <!-- 調查程序防呆檢核 -->
+    <div class="section-card">
+      <div class="section-head">⚠️ 調查程序法定防呆確認（第36、37條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbInv1">
+            <span>已告知所有受訪者<strong>保密義務</strong>及違反之法律效果（第36條）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbInv2">
+            <span>確認調查過程中<strong>未安排雙方當事人或檢舉人進行對質</strong>（第37條禁止對質）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbInv3">
+            <span>所有訪談紀錄已完成，並經受訪者<strong>閱覽確認後簽名</strong></span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbInv4">
+            <span>調查報告已完成，並經所有處理小組委員<strong>簽名確認</strong></span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>5-1 訪談通知單（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>5-3 訪談大綱（公版範本）</span>→
+          </a>
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>5-4 調查報告（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 調查結果分流 -->
+    <div class="section-card">
+      <div class="section-head">🔀 調查結果認定（第43條）</div>
+      <div class="section-body">
+        <div class="time-field" style="margin-bottom:.75rem;">
+          <label>調查報告完成日期 *</label>
+          <input type="date" id="investigationEndDate" onchange="checkAdvanceReady05B()" style="width:180px;">
+        </div>
+        <div class="branch-options">
+          <label class="branch-option" onclick="selectBranch('invResult', 'established', this)">
+            <input type="radio" name="invResult" value="established">
+            <div>
+              <div class="branch-label">🚨 選項 A：霸凌行為成立</div>
+              <div class="branch-desc">調查報告認定霸凌行為成立，移送防制委員會審議懲處與輔導措施</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('invResult', 'other_conflict', this)">
+            <input type="radio" name="invResult" value="other_conflict">
+            <div>
+              <div class="branch-label">⚠️ 選項 B：霸凌不成立，但有不當管教或重大衝突</div>
+              <div class="branch-desc">霸凌不成立，但建議附帶移送其他行政程序處理（如管教爭議、輔導機制等）</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('invResult', 'not_established', this)">
+            <input type="radio" name="invResult" value="not_established">
+            <div>
+              <div class="branch-label">✅ 選項 C：霸凌不成立（查無實據）</div>
+              <div class="branch-desc">調查報告認定霸凌行為不成立，仍移送防制委員會確認並通知雙方</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進 -->
+    <div class="advance-area">
+      <button class="advance-btn" id="advanceBtn05B" disabled onclick="advanceStage05B()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint05B">請完成調查防呆確認、填寫報告完成日期並選定調查結果</p>
+    </div>
+  `;
+
+  // 回填已儲存資料
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.investigation_end_date) {
+      document.getElementById('investigationEndDate').value = saved.investigation_end_date;
+    }
+    if (saved.investigation_result) {
+      const el = document.querySelector(`input[name="invResult"][value="${saved.investigation_result}"]`);
+      if (el) {
+        el.checked = true;
+        el.closest('.branch-option')?.classList.add('selected');
+      }
+    }
+    checkAdvanceReady05B();
+  } catch(e) {}
+}
+
+function checkAdvanceReady05B() {
+  const btn = document.getElementById('advanceBtn05B');
+  const hint = document.getElementById('advanceHint05B');
+  if (!btn) return;
+
+  const endDate = document.getElementById('investigationEndDate')?.value;
+  const invChecked = ['cbInv1','cbInv2','cbInv3','cbInv4']
+    .every(id => document.getElementById(id)?.checked);
+  const result = document.querySelector('input[name="invResult"]:checked')?.value;
+
+  const ready = endDate && invChecked && result;
+  btn.disabled = !ready;
+
+  if (ready) {
+    btn.textContent = '📄 調查報告完成，推進至 STAGE_06 防制委員會審議 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!invChecked) missing.push('調查防呆確認');
+    if (!endDate) missing.push('報告完成日期');
+    if (!result) missing.push('調查結果');
+    if (hint) hint.textContent = missing.join('、') + ' 尚未完成';
+  }
+}
+
+async function advanceStage05B() {
+  const result = document.querySelector('input[name="invResult"]:checked')?.value;
+  const endDate = document.getElementById('investigationEndDate')?.value;
+
+  const resultLabel = {
+    'established': '霸凌成立',
+    'other_conflict': '不成立（有其他衝突）',
+    'not_established': '不成立（查無實據）'
+  }[result] || result;
+
+  showToast('正在推進至防制委員會審議...');
+  try {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    const res = await callGAS('bully_advance_stage', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      milestone: '防制委員會議通過',
+      done_date: endDate,
+      stage: 'STAGE_06',
+      data_json: JSON.stringify({
+        ...saved,
+        investigation_end_date: endDate,
+        investigation_result: result
+      })
+    });
+    if (!res.ok) throw new Error(res.error);
+    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+    deadlines = dlResult.deadlines || [];
+    caseData.stage = 'STAGE_06';
+    hideToast();
+    alert(`✅ 調查結果：${resultLabel}\n已推進至「06 防制委員會」`);
+    renderStage('STAGE_06');
   } catch(e) {
     hideToast();
     alert('推進失敗：' + e.message);
