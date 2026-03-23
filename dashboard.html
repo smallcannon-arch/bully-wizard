@@ -466,7 +466,7 @@ async function loadCases() {
 }
 
 function renderCases(cases) {
-  cases = cases.filter(c => c.status !== '已刪除');
+  cases = cases.filter(c => c.status !== '已刪除' && c.case_name);
 
   const active = cases.filter(c => !['已結案','不受理結案','移送結案'].includes(c.status));
   const red    = active.filter(c => c.deadline?.light === 'red').length;
