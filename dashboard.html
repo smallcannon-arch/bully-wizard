@@ -456,7 +456,7 @@ async function callGAS(action, data = {}) {
 async function loadCases() {
   document.getElementById('caseArea').innerHTML = '<div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>';
   try {
-    const result = await callGAS('bully_list');
+    const result = await callGAS('bully_list', { refresh: true });
     if (!result.ok) throw new Error(result.error);
     casesCache = result.cases;
     renderCases(casesCache);
