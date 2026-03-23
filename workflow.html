@@ -1403,8 +1403,12 @@ async function closeNoneCase() {
     const result = await callGAS('bully_save', {
       case_id: currentCaseId,
       email: currentEmail,
-      stage: 'STAGE_01',
-      status: '移送結案'
+      stage: caseData.stage,
+      status: '移送結案',
+      case_name: caseData.case_name,
+      school: caseData.school,
+      case_type: caseData.case_type,
+      data_json: caseData.data_json
     });
     if (!result.ok) throw new Error(result.error);
     hideToast();
