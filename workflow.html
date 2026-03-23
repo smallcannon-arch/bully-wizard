@@ -442,7 +442,7 @@ function getUrlParam(name) {
 }
 
 function goBack() {
-  window.location.href = './dashboard.html';
+  goBack();
 }
 
 async function callGAS(action, data = {}) {
@@ -1290,7 +1290,7 @@ async function advanceStage02() {
       if (!result.ok) throw new Error(result.error);
       hideToast();
       alert('📋 案件已標記為「不受理結案」\n\n請確認已於20工作日內書面通知檢舉人，並告知陳情管道（第26條，30日內得向主管機關陳情）。');
-      window.location.href = './dashboard.html';
+      goBack();
     } catch(e) {
       hideToast();
       alert('操作失敗：' + e.message);
@@ -1374,7 +1374,7 @@ async function setListingStatus() {
     if (!result.ok) throw new Error(result.error);
     hideToast();
     alert('📋 案件已標記為「通報列管中」\n\n待接獲正式檢舉後，請回到儀表板繼續處理。');
-    window.location.href = './dashboard.html';
+    goBack();
   } catch(e) {
     hideToast();
     alert('操作失敗：' + e.message);
@@ -1408,7 +1408,7 @@ async function closeNoneCase() {
     if (!result.ok) throw new Error(result.error);
     hideToast();
     alert('✅ 案件已標記為「移送結案」');
-    window.location.href = './dashboard.html';
+    goBack();
   } catch(e) {
     hideToast();
     alert('操作失敗：' + e.message);
@@ -2979,7 +2979,7 @@ async function advanceStage08() {
     if (!res.ok) throw new Error(res.error);
     hideToast();
     alert('🎉 恭喜！本案已圓滿結案歸檔。');
-    window.location.href = './dashboard.html';
+    goBack();
   } catch(e) {
     hideToast();
     alert('結案失敗：' + e.message);
@@ -3069,16 +3069,16 @@ async function confirmSwitchModal() {
   showToast(`正在切換至${toLabel}...`);
 
   try {
-    const res = await callGAS('bully_advance_stage', {
+    const res = await callGAS('bully_save', {
       case_id: currentCaseId,
       email: currentEmail,
-      milestone,
-      done_date: switchDate,
       stage: toStage,
+      status: '進行中',
       data_json: JSON.stringify({
         ...JSON.parse(caseData.data_json || '{}'),
         switch_date: switchDate,
-        switched_from: stage
+        switched_from: stage,
+        switch_reason: milestone
       })
     });
     if (!res.ok) throw new Error(res.error);
