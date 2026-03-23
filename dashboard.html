@@ -500,7 +500,7 @@ function renderCases(cases) {
 
     // 判斷 badge 樣式
     const isPre = c.stage === 'PRE_STAGE';
-    const isClosed = ['已結案','不受理結案','移送結案'].includes(c.status);
+    const isClosed = ['已結案','不受理結案'].includes(c.status);
     const badgeClass = isPre ? 'stage-badge pre' : isClosed ? 'stage-badge closed' : 'stage-badge';
 
     return `
@@ -512,7 +512,7 @@ function renderCases(cases) {
       </div>
       <div class="case-card-body">
         <div>🏫 ${c.school || '（未填學校）'}</div>
-        <div>📋 ${c.case_type} | ${c.status}</div>
+        <div>📋 ${c.case_type} | ${c.status === '移送結案' ? '⚠️ 不具管轄權，移送結案（可回退重啟）' : c.status}</div>
         ${dl ? `<div style="margin-top:.3rem;">${dlTag}</div>` : ''}
       </div>
       <div class="case-card-foot">
