@@ -1341,6 +1341,7 @@ async function advanceStage02() {
       milestone: '決議受理',
       done_date: acceptDate,
       stage: 'STAGE_03'
+      status: '進行中'
     });
     if (!result.ok) throw new Error(result.error);
     hideToast();
