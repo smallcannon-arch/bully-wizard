@@ -164,6 +164,38 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   .stat-row { grid-template-columns: repeat(2, 1fr); }
   .case-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Tab 切換 ── */
+.tab-bar {
+  display: flex; gap: 0; margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--line);
+}
+.tab-btn {
+  padding: .6rem 1.4rem; font-size: .9rem;
+  font-family: 'Noto Sans TC', sans-serif; font-weight: 500;
+  background: transparent; border: none; cursor: pointer;
+  color: #888; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: color .15s;
+}
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 600; }
+.tab-btn:hover { color: var(--ink); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── 通報紀錄卡片 ── */
+.report-list { display: flex; flex-direction: column; gap: .75rem; }
+.report-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 4px;
+  padding: .75rem 1rem; display: flex; align-items: center; gap: 1rem;
+}
+.report-time-badge {
+  font-size: .72rem; padding: 2px 8px; border-radius: 20px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.rt-ok { background: var(--ok-light); color: var(--ok); border: 1px solid #a8d5b5; }
+.rt-warn { background: var(--accent-pale); color: var(--accent); border: 1px solid #e8b0b0; }
+.report-info { flex: 1; font-size: .85rem; line-height: 1.6; }
+.report-actions { display: flex; gap: .4rem; flex-shrink: 0; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -201,23 +233,44 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
 <!-- 主內容 -->
 <main class="main">
-  <div class="toolbar">
-    <h2>案件列表</h2>
-    <div style="display:flex;gap:.5rem;">
-      <button class="btn btn-ghost" onclick="loadCases()">🔄 重新整理</button>
-      <button class="btn btn-primary" onclick="openNewCaseModal()">＋ 新增案件</button>
+  <!-- Tab 切換列 -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('cases')">📋 案件列表</button>
+    <button class="tab-btn" onclick="switchTab('reports')">🔔 通報紀錄</button>
+  </div>
+
+  <!-- 案件列表 Tab -->
+  <div class="tab-panel active" id="tab-cases">
+    <div class="toolbar">
+      <h2>案件列表</h2>
+      <div style="display:flex;gap:.5rem;">
+        <button class="btn btn-ghost" onclick="loadCases()">🔄 重新整理</button>
+        <button class="btn btn-primary" onclick="openNewCaseModal()">＋ 新增案件</button>
+      </div>
+    </div>
+    <div class="stat-row" id="statRow">
+      <div class="stat-card stat-all"><div class="stat-num" id="statAll">—</div><div class="stat-label">總案件數</div></div>
+      <div class="stat-card stat-red"><div class="stat-num" id="statRed" style="color:#c0392b;">—</div><div class="stat-label">🔴 緊急（≤3天）</div></div>
+      <div class="stat-card stat-yellow"><div class="stat-num" id="statYellow" style="color:#e6a817;">—</div><div class="stat-label">🟡 注意（4–7天）</div></div>
+      <div class="stat-card stat-green"><div class="stat-num" id="statGreen" style="color:var(--ok);">—</div><div class="stat-label">🟢 正常（>7天）</div></div>
+    </div>
+    <div id="caseArea">
+      <div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>
     </div>
   </div>
 
-  <div class="stat-row" id="statRow">
-    <div class="stat-card stat-all"><div class="stat-num" id="statAll">—</div><div class="stat-label">總案件數</div></div>
-    <div class="stat-card stat-red"><div class="stat-num" id="statRed" style="color:#c0392b;">—</div><div class="stat-label">🔴 緊急（≤3天）</div></div>
-    <div class="stat-card stat-yellow"><div class="stat-num" id="statYellow" style="color:#e6a817;">—</div><div class="stat-label">🟡 注意（4–7天）</div></div>
-    <div class="stat-card stat-green"><div class="stat-num" id="statGreen" style="color:var(--ok);">—</div><div class="stat-label">🟢 正常（>7天）</div></div>
-  </div>
-
-  <div id="caseArea">
-    <div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>
+  <!-- 通報紀錄 Tab -->
+  <div class="tab-panel" id="tab-reports">
+    <div class="toolbar">
+      <h2>通報紀錄</h2>
+      <div style="display:flex;gap:.5rem;">
+        <button class="btn btn-ghost" onclick="loadReports()">🔄 重新整理</button>
+        <button class="btn btn-primary" onclick="openNewReportModal()">＋ 新增通報</button>
+      </div>
+    </div>
+    <div id="reportArea">
+      <div class="loading-msg"><p style="color:#aaa;">切換到此頁籤時自動載入</p></div>
+    </div>
   </div>
 </main>
 
@@ -253,6 +306,36 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeNewCaseModal()">取消</button>
       <button class="btn btn-primary" id="createCaseBtn" onclick="createCase()">建立案件</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增通報 Modal -->
+<div class="modal-overlay" id="newReportModal">
+  <div class="modal-box">
+    <div class="modal-head">新增校安通報紀錄</div>
+    <div class="modal-body">
+      <div class="field">
+        <label>校安通報序號</label>
+        <input type="text" id="rptReportNo" placeholder="請輸入校安通報序號">
+      </div>
+      <div class="field">
+        <label>學校名稱</label>
+        <input type="text" id="rptSchool" placeholder="例：內湖國小">
+      </div>
+      <div class="field">
+        <label>知悉日期時間 *</label>
+        <input type="datetime-local" id="rptAwareDatetime">
+      </div>
+      <div class="field">
+        <label>完成通報時間 *</label>
+        <input type="datetime-local" id="rptReportedDatetime" oninput="checkReportTimeDiff()">
+      </div>
+      <div id="rptTimeDiff" style="font-size:.82rem;padding:.35rem .75rem;border-radius:4px;display:none;margin-top:-.5rem;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeNewReportModal()">取消</button>
+      <button class="btn btn-primary" id="createReportBtn" onclick="createReport()">儲存通報</button>
     </div>
   </div>
 </div>
@@ -494,6 +577,17 @@ async function createCase() {
     closeNewCaseModal();
     hideLoadingToast();
     await loadCases();
+
+    // 如果是從通報紀錄轉過來，回寫關聯
+    if (window._convertFromReportId) {
+      await callGAS('bully_report_link', {
+        report_id: window._convertFromReportId,
+        case_id: result.case_id
+      });
+      window._convertFromReportId = null;
+      await loadReports();
+    }
+
     alert(`✅ 案件「${name}」已建立！\n案件編號：${result.case_id}`);
   } catch(e) {
     hideLoadingToast();
@@ -610,18 +704,13 @@ async function confirmSwitch() {
   btn.disabled = true; btn.textContent = '切換中…';
   showLoadingToast('正在切換程序...');
 
- try {
-    // 💡 優化：改用 bully_save，避免後端誤判而重新計算期限時鐘
-    const result = await callGAS('bully_save', {
+  try {
+    const result = await callGAS('bully_advance_stage', {
       case_id: _switchCaseId,
       email: currentEmail,
-      stage: toStage,
-      // 這裡不傳 done_date 和 milestone，因為我們不是在「推進」，只是「平行切換」
-      // 但我們可以把切換的動作記錄在 data_json 裡，留下軌跡
-      data_json: JSON.stringify({
-        last_switch_date: switchDate,
-        last_switch_reason: milestone
-      })
+      milestone,
+      done_date: switchDate,
+      stage: toStage
     });
     if (!result.ok) throw new Error(result.error);
     closeSwitchModal();
@@ -671,6 +760,172 @@ function showLoadingToast(msg) {
 function hideLoadingToast() {
   const toast = document.getElementById('loadingToast');
   if (toast) toast.style.display = 'none';
+}
+
+
+// ══════════════════════════════
+// Tab 切換
+// ══════════════════════════════
+let _currentTab = 'cases';
+
+function switchTab(tab) {
+  _currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'cases') || (i === 1 && tab === 'reports'));
+  });
+  document.getElementById('tab-cases').classList.toggle('active', tab === 'cases');
+  document.getElementById('tab-reports').classList.toggle('active', tab === 'reports');
+  if (tab === 'reports') loadReports();
+}
+
+// ══════════════════════════════
+// 通報紀錄
+// ══════════════════════════════
+let reportsCache = [];
+
+async function loadReports() {
+  document.getElementById('reportArea').innerHTML = '<div class="loading-msg"><div class="spinner"></div><p style="margin-top:.75rem;">載入中...</p></div>';
+  try {
+    const result = await callGAS('bully_report_list');
+    if (!result.ok) throw new Error(result.error);
+    reportsCache = result.reports;
+    renderReports(reportsCache);
+  } catch(e) {
+    document.getElementById('reportArea').innerHTML = `<div class="loading-msg"><p style="color:#c0392b;">載入失敗：${e.message}</p></div>`;
+  }
+}
+
+function renderReports(reports) {
+  if (reports.length === 0) {
+    document.getElementById('reportArea').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔔</div>
+        <p>尚無通報紀錄。點選「新增通報」開始建立。</p>
+      </div>`;
+    return;
+  }
+
+  const cards = reports.map(r => {
+    const awareD = r.aware_datetime ? new Date(r.aware_datetime) : null;
+    const reportedD = r.reported_datetime ? new Date(r.reported_datetime) : null;
+    const diffHrs = (awareD && reportedD) ? Math.round((reportedD - awareD) / 3600000 * 10) / 10 : null;
+    const isOnTime = r.is_on_time;
+    const badgeClass = isOnTime ? 'rt-ok' : 'rt-warn';
+    const badgeText = isOnTime
+      ? `✅ 符合（${diffHrs}小時）`
+      : `🔴 逾時（${diffHrs}小時）`;
+
+    const awareStr = awareD ? `${awareD.getFullYear()}/${String(awareD.getMonth()+1).padStart(2,'0')}/${String(awareD.getDate()).padStart(2,'0')} ${String(awareD.getHours()).padStart(2,'0')}:${String(awareD.getMinutes()).padStart(2,'0')}` : '—';
+    const hasCase = r.linked_case_id;
+    const linkedLabel = hasCase
+      ? `<span style="font-size:.72rem;color:var(--ok);background:var(--ok-light);padding:1px 6px;border-radius:10px;border:1px solid #a8d5b5;">已關聯案件</span>`
+      : `<span style="font-size:.72rem;color:#888;background:var(--warm);padding:1px 6px;border-radius:10px;border:1px solid var(--line);">尚未立案</span>`;
+
+    return `
+    <div class="report-card">
+      <span class="report-time-badge ${badgeClass}">${badgeText}</span>
+      <div class="report-info">
+        <div><strong>${r.report_no || '（未填序號）'}</strong>　${r.school || ''}　${linkedLabel}</div>
+        <div style="font-size:.78rem;color:#888;">知悉：${awareStr}</div>
+      </div>
+      <div class="report-actions">
+        ${!hasCase ? `<button class="btn btn-ghost" style="padding:.2rem .6rem;font-size:.72rem;background:#f0faf4;border-color:#a8d5b5;color:var(--ok);"
+          onclick="convertReportToCase('${r.report_id}','${r.report_no || ''}','${r.school || ''}','${r.aware_datetime || ''}')">→ 轉為案件</button>` : ''}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('reportArea').innerHTML = `<div class="report-list">${cards.join('')}</div>`;
+}
+
+// ── 新增通報
+function openNewReportModal() {
+  document.getElementById('newReportModal').classList.add('show');
+  // 預設知悉時間為現在
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0,16);
+  document.getElementById('rptAwareDatetime').value = local;
+  document.getElementById('rptReportedDatetime').value = '';
+  document.getElementById('rptTimeDiff').style.display = 'none';
+  document.getElementById('rptReportNo').value = '';
+  document.getElementById('rptSchool').value = '';
+}
+
+function closeNewReportModal() {
+  document.getElementById('newReportModal').classList.remove('show');
+  const btn = document.getElementById('createReportBtn');
+  if (btn) { btn.disabled = false; btn.textContent = '儲存通報'; }
+}
+
+function checkReportTimeDiff() {
+  const aware = document.getElementById('rptAwareDatetime')?.value;
+  const reported = document.getElementById('rptReportedDatetime')?.value;
+  const diffEl = document.getElementById('rptTimeDiff');
+  if (!aware || !reported || !diffEl) return;
+
+  const diffMs = new Date(reported) - new Date(aware);
+  const diffHrs = Math.round(diffMs / 3600000 * 10) / 10;
+  diffEl.style.display = 'block';
+
+  if (diffMs < 0) {
+    diffEl.textContent = '❌ 通報時間不可早於知悉時間';
+    diffEl.style.background = 'var(--accent-pale)';
+    diffEl.style.color = 'var(--accent)';
+  } else if (diffHrs > 24) {
+    diffEl.textContent = `⚠️ 逾時通報（已超過 ${diffHrs} 小時）`;
+    diffEl.style.background = 'var(--warn-light)';
+    diffEl.style.color = 'var(--warn)';
+  } else {
+    diffEl.textContent = `✅ 符合24小時規定（差 ${diffHrs} 小時）`;
+    diffEl.style.background = 'var(--ok-light)';
+    diffEl.style.color = 'var(--ok)';
+  }
+}
+
+async function createReport() {
+  const aware = document.getElementById('rptAwareDatetime')?.value;
+  const reported = document.getElementById('rptReportedDatetime')?.value;
+  if (!aware || !reported) { alert('請填寫知悉時間和通報時間'); return; }
+  if (new Date(reported) < new Date(aware)) { alert('通報時間不可早於知悉時間'); return; }
+
+  const btn = document.getElementById('createReportBtn');
+  btn.disabled = true; btn.textContent = '儲存中…';
+  showLoadingToast('正在儲存通報紀錄...');
+
+  try {
+    const result = await callGAS('bully_report_save', {
+      report_no: document.getElementById('rptReportNo')?.value || '',
+      school: document.getElementById('rptSchool')?.value || '',
+      aware_datetime: aware,
+      reported_datetime: reported
+    });
+    if (!result.ok) throw new Error(result.error);
+    closeNewReportModal();
+    hideLoadingToast();
+    await loadReports();
+    const msg = result.is_on_time ? '✅ 通報紀錄已儲存（符合24小時規定）' : '⚠️ 通報紀錄已儲存（逾時，請備註說明原因）';
+    alert(msg);
+  } catch(e) {
+    hideLoadingToast();
+    alert('儲存失敗：' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '儲存通報';
+  }
+}
+
+// ── 一鍵轉為案件
+function convertReportToCase(reportId, reportNo, school, awareDatetime) {
+  // 開啟新增案件 Modal 並預填資料
+  openNewCaseModal();
+  if (reportNo) document.getElementById('newCaseId').value = reportNo;
+  if (school) document.getElementById('newSchool').value = school;
+  if (awareDatetime) {
+    const d = new Date(awareDatetime);
+    const dateStr = d.toISOString().split('T')[0];
+    document.getElementById('newReportDate').value = dateStr;
+  }
+  // 記住這個 reportId，案件建立成功後要回寫關聯
+  window._convertFromReportId = reportId;
 }
 
 // ══════════════════════════════
