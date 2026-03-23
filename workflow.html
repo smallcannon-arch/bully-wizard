@@ -446,7 +446,6 @@ function goBack() {
 }
 
 async function callGAS(action, data = {}) {
-  // 💡 這裡的 currentEmail 絕對不能為空
   const body = JSON.stringify({ action, email: currentEmail, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
@@ -481,15 +480,12 @@ function getLightClass(light) {
 // ── 載入案件
 async function init() {
   currentCaseId = getUrlParam('case_id');
-  
-  // 💡 關鍵：必須從 sessionStorage 抓取登入資訊，否則 callGAS 會失敗
-  currentEmail = getUrlParam('email') || sessionStorage.getItem('bully_email');
-  const token = sessionStorage.getItem('bully_token');
+  currentEmail = getUrlParam('email');
 
   if (!currentCaseId || !currentEmail) {
     document.getElementById('mainContent').innerHTML = `
       <div class="loading-state">
-        <p style="color:var(--accent);">❌ 找不到案件或登入資訊，請從儀表板重新進入。</p>
+        <p style="color:var(--accent);">❌ 找不到案件資訊，請從儀表板進入。</p>
         <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
       </div>`;
     return;
@@ -2472,8 +2468,8 @@ function validateCommittee() {
     return;
   }
 
-  const quorum = Math.ceil(total / 2);           // 出席門檻：二分之一以上 (含本數)
-  const majority = Math.floor(attend / 2) + 1;   // 決議門檻：過半數 (絕對大於一半)
+  const quorum = Math.ceil(total / 2);       // 出席門檻：過半
+  const majority = Math.ceil(attend / 2);    // 決議門檻：出席過半
 
   const quorumOk = attend >= quorum;
   const majorityOk = agree >= majority;
@@ -2948,12 +2944,19 @@ function checkAdvanceReady08() {
 }
 
 async function advanceStage08() {
-  if (!confirm('確定要將此案件標記為「結案歸檔」嗎？
+  if (document.getElementById('advanceBtn08').disabled) return;
 
-結案後，案件將於儀表板顯示為【已結案】，且無法再修改。')) return;
+  if (!confirm('確定要將此案件標記為「結案歸檔」嗎？\n\n結案後，案件將於儀表板顯示為【已結案】，且無法再修改。')) return;
 
   const appealStatus = document.querySelector('input[name="appealStatus"]:checked')?.value;
   const appealDate = document.getElementById('appealDate')?.value || '';
+
+  const counselingData = {
+    cbCounseling1: document.getElementById('cbCounseling1')?.checked,
+    cbCounseling2: document.getElementById('cbCounseling2')?.checked,
+    cbCounseling3: document.getElementById('cbCounseling3')?.checked,
+    cbAppealDone: document.getElementById('cbAppealDone')?.checked
+  };
 
   showToast('正在結案歸檔...');
   try {
@@ -2967,6 +2970,7 @@ async function advanceStage08() {
       status: '已結案',
       data_json: JSON.stringify({
         ...saved,
+        ...counselingData,
         appeal_status: appealStatus,
         appeal_date: appealDate,
         closed_at: new Date().toISOString()
@@ -3065,16 +3069,16 @@ async function confirmSwitchModal() {
   showToast(`正在切換至${toLabel}...`);
 
   try {
-    const res = await callGAS('bully_save', {
+    const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
+      milestone,
+      done_date: switchDate,
       stage: toStage,
-      status: '進行中',
       data_json: JSON.stringify({
         ...JSON.parse(caseData.data_json || '{}'),
         switch_date: switchDate,
-        switched_from: stage,
-        switch_reason: milestone
+        switched_from: stage
       })
     });
     if (!res.ok) throw new Error(res.error);
