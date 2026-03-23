@@ -480,7 +480,7 @@ function getLightClass(light) {
 // ── 載入案件
 async function init() {
   currentCaseId = getUrlParam('case_id');
-  currentEmail = getUrlParam('email');
+  currentEmail = getUrlParam('email') || sessionStorage.getItem('bully_email');
 
   if (!currentCaseId || !currentEmail) {
     document.getElementById('mainContent').innerHTML = `
