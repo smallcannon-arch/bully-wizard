@@ -1689,9 +1689,10 @@ async function advanceStage03() {
       })
     });
     if (!result.ok) throw new Error(result.error);
-    const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
-    deadlines = dlResult.deadlines || [];
-   caseData.stage = 'STAGE_04';
+const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
+deadlines = dlResult.deadlines || [];
+caseData.stage = 'STAGE_04';
+hideToast();
 renderStage04();
 alert('✅ 已推進至「04 會前會」');
     hideToast();
