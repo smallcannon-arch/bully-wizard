@@ -1347,11 +1347,8 @@ async function advanceStage02() {
     const dlResult = await callGAS('bully_deadline_list', { case_id: currentCaseId });
     deadlines = dlResult.deadlines || [];
     caseData.stage = 'STAGE_03';
-    document.getElementById('mainContent').innerHTML = `
-      <div class="loading-state">
-        <p>STAGE_03 處理小組流程介面建置中，請從儀表板繼續追蹤。</p>
-        <button onclick="goBack()" style="margin-top:1rem;padding:.5rem 1rem;background:var(--ink);color:#fff;border:none;border-radius:4px;cursor:pointer;">返回儀表板</button>
-      </div>`;
+renderStage03();
+alert('✅ 已推進至「03 處理小組」');
   } catch(e) {
     hideToast();
     alert('推進失敗：' + e.message);
