@@ -613,10 +613,44 @@ function renderPreStage() {
           <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
             <span>📄 桃園市公版表單下載（教師專審會）</span>→
           </a>
-        </div>
+  </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head">✅ 重新進入程序</div>
+      <div class="section-body">
+        <p style="font-size:.88rem;color:#666;line-height:1.7;margin-bottom:1rem;">
+          若已接獲正式檢舉，或確認仍具管轄權，可點下方按鈕重新進入受理程序。
+        </p>
+        <button class="btn btn-primary" onclick="resumeFromListing()">✅ 已接獲檢舉，重新進入程序</button>
       </div>
     </div>
   `;
+}
+
+async function resumeFromListing() {
+  if (!confirm('確定要將此案件重新進入受理程序（01 知悉受理）嗎？')) return;
+  showToast('重新進入程序...');
+  try {
+    const result = await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: 'STAGE_01',
+      status: '進行中',
+      case_name: caseData.case_name,
+      school: caseData.school,
+      case_type: caseData.case_type,
+      data_json: caseData.data_json
+    });
+    if (!result.ok) throw new Error(result.error);
+    hideToast();
+    alert('✅ 案件已重新進入受理程序');
+    goBack();
+  } catch(e) {
+    hideToast();
+    alert('操作失敗：' + e.message);
+  }
 }
 
 // ══════════════════════════════
