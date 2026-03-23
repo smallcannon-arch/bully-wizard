@@ -1396,6 +1396,7 @@ function showNoneSteps() {
 }
 
 async function closeNoneCase() {
+  if (!currentCaseId) { alert('找不到案件編號，請重新從儀表板進入'); return; }
   if (!confirm('確定要標記此案件為「移送結案」嗎？')) return;
   showToast('標記移送結案...');
   try {
