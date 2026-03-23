@@ -446,6 +446,7 @@ function goBack() {
 }
 
 async function callGAS(action, data = {}) {
+  // 💡 這裡的 currentEmail 絕對不能為空
   const body = JSON.stringify({ action, email: currentEmail, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
