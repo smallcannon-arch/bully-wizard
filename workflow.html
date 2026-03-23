@@ -395,6 +395,33 @@ body {
 </main>
 
 <!-- Toast -->
+<!-- 切換程序 Modal -->
+<div id="switchModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(26,26,46,.55);align-items:center;justify-content:center;z-index:600;padding:1rem;">
+  <div style="background:#fff;border-radius:6px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.25);overflow:hidden;">
+    <div id="switchModalHead" style="color:#fff;padding:1rem 1.5rem;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;">⇄ 切換程序</div>
+    <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem;">
+      <div id="switchModalInfo" style="font-size:.88rem;line-height:1.8;color:#3a3a5c;"></div>
+      <div id="switchModalWarn"></div>
+      <div style="display:flex;flex-direction:column;gap:.25rem;">
+        <label style="font-size:.78rem;color:#666;">切換日期 *</label>
+        <input type="date" id="switchDate" style="padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;outline:none;width:180px;">
+      </div>
+      <div id="switchExtraCheck" style="display:none;">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbSwitch1">
+            <span id="switchCheckLabel"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div style="padding:1rem 1.5rem;background:var(--warm);display:flex;gap:.75rem;justify-content:flex-end;">
+      <button onclick="closeSwitchModal()" style="padding:.45rem 1.1rem;border-radius:4px;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;background:transparent;border:1px solid var(--line);color:var(--ink);cursor:pointer;">取消</button>
+      <button id="switchConfirmBtn" onclick="confirmSwitchModal()" style="padding:.45rem 1.1rem;border-radius:4px;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;background:var(--ink);color:#fff;border:none;cursor:pointer;">確認切換</button>
+    </div>
+  </div>
+</div>
+
 <div id="loadingToast">
   <span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></span>
   <span id="toastMsg">處理中...</span>
@@ -501,6 +528,7 @@ function renderStage(stage) {
     'STAGE_05B': renderStage05B,
     'STAGE_06': renderStage06,
     'STAGE_07': renderStage07,
+    'STAGE_08': renderStage08,
     'PRE_STAGE': renderPreStage,
   };
   const fn = renders[stage];
@@ -516,24 +544,46 @@ function renderStage(stage) {
 
 // ── 期限卡片 HTML
 function deadlineCardHtml() {
-  if (!deadlines.length) return '';
-  // 找最近的截止日
-  const sorted = [...deadlines].sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
-  const dl = sorted[0];
-  const light = dl.light || 'none';
-  const daysText = dl.days_left < 0
-    ? `逾期 ${Math.abs(dl.days_left)} 天`
-    : `剩 ${dl.days_left} 天`;
+  if (!deadlines.length && !['STAGE_05A','STAGE_05B'].includes(caseData?.stage)) return '';
 
-  return `
-  <div class="deadline-card ${light}">
-    <div class="deadline-dot"></div>
-    <div class="deadline-info">
-      <div class="deadline-milestone">⏱ ${dl.milestone}</div>
-      <div class="deadline-dates">截止日：${formatDate(dl.due_date)}</div>
-    </div>
-    <div class="deadline-days">${daysText}</div>
-  </div>`;
+  let deadlineHtml = '';
+  if (deadlines.length) {
+    const sorted = [...deadlines].sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
+    const dl = sorted[0];
+    const light = dl.light || 'none';
+    const daysText = dl.days_left < 0
+      ? `逾期 ${Math.abs(dl.days_left)} 天`
+      : `剩 ${dl.days_left} 天`;
+    deadlineHtml = `
+    <div class="deadline-card ${light}">
+      <div class="deadline-dot"></div>
+      <div class="deadline-info">
+        <div class="deadline-milestone">⏱ ${dl.milestone}</div>
+        <div class="deadline-dates">截止日：${formatDate(dl.due_date)}</div>
+      </div>
+      <div class="deadline-days">${daysText}</div>
+    </div>`;
+  }
+
+  // 切換程序按鈕（只在 05A/05B 顯示）
+  let switchHtml = '';
+  if (caseData?.stage === 'STAGE_05A') {
+    switchHtml = `
+    <div style="margin-bottom:1rem;text-align:right;">
+      <button onclick="openSwitchModal()" style="padding:.4rem 1rem;background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.82rem;cursor:pointer;">
+        ⇄ 切換至調查程序（STAGE_05B）
+      </button>
+    </div>`;
+  } else if (caseData?.stage === 'STAGE_05B') {
+    switchHtml = `
+    <div style="margin-bottom:1rem;text-align:right;">
+      <button onclick="openSwitchModal()" style="padding:.4rem 1rem;background:#1a5c2e;color:#fff;border:none;border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.82rem;cursor:pointer;">
+        ⇄ 切換至調和程序（STAGE_05A）
+      </button>
+    </div>`;
+  }
+
+  return deadlineHtml + switchHtml;
 }
 
 // ══════════════════════════════
@@ -547,15 +597,12 @@ function renderPreStage() {
       <div class="section-head">📋 通報列管中</div>
       <div class="section-body">
         <div class="law-note">
-          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。<br>
+          依第17條，學校知悉疑似霸凌事件後，不論是否有人提出檢舉，均應於<strong>24小時內</strong>完成校安通報。
           通報完成後若尚未接獲檢舉，案件進入「通報列管」狀態，20工作日的審查時鐘尚未開始。
         </div>
-        <p style="font-size:.88rem;color:#666;line-height:1.7;margin-bottom:1.2rem;">
-          目前案件處於通報列管狀態。若後續家長或相關人員提出正式檢舉，請點擊下方按鈕重啟案件流程。
+        <p style="font-size:.88rem;color:#666;line-height:1.7;">
+          目前案件處於通報列管狀態。請等待家長或相關人員提出正式檢舉後，再回到儀表板建立正式案件。
         </p>
-        <button onclick="resumeToStage01()" style="padding:.7rem 1.2rem;background:var(--ok);color:#fff;border:none;border-radius:6px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Noto Sans TC',sans-serif;width:100%;text-align:center;">
-          📨 已接獲正式檢舉，重啟 STAGE_01 流程
-        </button>
       </div>
     </div>
 
@@ -1020,39 +1067,31 @@ function toggleCheck(el, event) {
       el.classList.toggle('checked', cb.checked);
     }
   }
-if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
+  if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
   if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
   if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03();
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
   if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
-  if (typeof checkAdvanceReady07 === 'function') checkAdvanceReady07(); //
+  if (typeof checkAdvanceReady07 === 'function') checkAdvanceReady07();
+  if (typeof checkAdvanceReady08 === 'function') checkAdvanceReady08();
 }
 
 function selectBranch(name, value, el) {
-  // 1. 切換外觀與選取狀態
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
     r.closest('.branch-option')?.classList.remove('selected');
   });
   el.classList.add('selected');
-  const radio = el.querySelector('input[type="radio"]');
-  if (radio) radio.checked = true;
-
-  // 2. 關鍵修復：手動喚醒卡片連動與防呆機制 (之前被覆蓋掉的就在這裡 👇)
-  if (name === 'jurisdiction' && typeof checkEvidenceDone === 'function') {
-    checkEvidenceDone(); // 如果切換的是管轄權，強制更新不具管轄權卡片
-  }
-  
-  // 3. 喚醒所有階段的推進按鈕檢查
+  el.querySelector('input[type="radio"]').checked = true;
   if (typeof checkAdvanceReady === 'function') checkAdvanceReady();
   if (typeof checkAdvanceReady02 === 'function') checkAdvanceReady02();
-  if (typeof checkAdvanceReady03 === 'function') checkAdvanceReady03(); // 補上03
   if (typeof checkAdvanceReady04 === 'function') checkAdvanceReady04();
   if (typeof checkAdvanceReady05A === 'function') checkAdvanceReady05A();
   if (typeof checkAdvanceReady05B === 'function') checkAdvanceReady05B();
   if (typeof checkAdvanceReady06 === 'function') checkAdvanceReady06();
   if (typeof checkAdvanceReady07 === 'function') checkAdvanceReady07();
+  if (typeof checkAdvanceReady08 === 'function') checkAdvanceReady08();
 }
 
 function confirmTimeInput() {
@@ -2241,7 +2280,7 @@ async function advanceStage05B() {
     const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
-      milestone: '調查報告完成',
+      milestone: '防制委員會議通過',
       done_date: endDate,
       stage: 'STAGE_06',
       data_json: JSON.stringify({
@@ -2429,7 +2468,7 @@ function validateCommittee() {
     return;
   }
 
-  const quorum = Math.ceil(total / 2);           // 出席門檻：二分之一以上 (無條件進位)
+  const quorum = Math.ceil(total / 2);           // 出席門檻：二分之一以上 (含本數)
   const majority = Math.floor(attend / 2) + 1;   // 決議門檻：過半數 (絕對大於一半)
 
   const quorumOk = attend >= quorum;
@@ -2522,10 +2561,13 @@ async function advanceStage06() {
   const nextLabel = decision === 'approve' ? '07 終局處理' : '05B 調查程序（重啟）';
   const milestone = decision === 'approve' ? '防制委員會議通過' : '退回重新調查';
 
-if (decision === 'return') {
-    const confirmed = confirm('🚨 確認退回重新調查？\n\n退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
+  if (decision === 'return') {
+    const confirmed = confirm('🚨 確認退回重新調查？
+
+退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
     if (!confirmed) return;
   }
+
   showToast(`正在推進至${nextLabel}...`);
   try {
     const saved = JSON.parse(caseData.data_json || '{}');
@@ -2728,55 +2770,330 @@ async function advanceStage07() {
 // ══════════════════════════════
 function renderStage08() {
   let appealDeadline = '';
+  let saved = {};
   try {
-    const saved = JSON.parse(caseData.data_json || '{}');
-    if (saved.appeal_deadline) {
-      appealDeadline = saved.appeal_deadline.replace(/-/g, '/');
-    }
+    saved = JSON.parse(caseData.data_json || '{}');
+    if (saved.appeal_deadline) appealDeadline = saved.appeal_deadline.replace(/-/g, '/');
   } catch(e) {}
 
   document.getElementById('mainContent').innerHTML = `
     ${deadlineCardHtml()}
+
     <div class="section-card">
       <div class="section-head">📋 STAGE 08｜申復列管與輔導追蹤</div>
       <div class="section-body">
         <div class="law-note">
           <strong>第49條：</strong>當事人於收受終局實體處理通知之次日起 <strong>30日內</strong> 得向學校提出申復，同一事件以一次為限。<br>
-          <strong>第58條：</strong>學校應訂定輔導計畫，持續輔導行為人，並定期評估是否改善。
+          <strong>第51～54條：</strong>申復審議由學校申復審議委員會辦理，應於受理後 <strong>30日內</strong> 完成審議。<br>
+          <strong>第58條：</strong>學校應訂定輔導計畫，明列輔導內容、分工、期程，持續輔導行為人，並定期評估是否改善。
         </div>
         ${appealDeadline ? `
-        <div style="margin-top:.75rem;padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.88rem;color:var(--warn);">
-          ⏱ <strong>申復截止日：${appealDeadline}</strong>（逾期視同放棄申復權利）
+        <div style="margin-top:.5rem;padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.88rem;color:var(--warn);font-weight:600;">
+          ⏱ 申復截止日：${appealDeadline}（逾期視同放棄申復權利）
         </div>` : ''}
-        <p style="color:#888;font-size:.88rem;margin-top:.75rem;">STAGE_08 申復列管與輔導追蹤介面建置中，請從儀表板繼續追蹤。</p>
       </div>
     </div>
+
+    <!-- 申復狀況確認 -->
+    <div class="section-card">
+      <div class="section-head">⚖️ 申復狀況確認（第49條）</div>
+      <div class="section-body">
+        <div class="warning-note">
+          ⚠️ 申復期限未屆至前，<strong>不得提前結案</strong>。請確認申復狀況後方可推進。
+        </div>
+        <div class="branch-options" style="margin-top:.75rem;">
+          <label class="branch-option" onclick="selectBranch('appealStatus', 'none', this); showAppealDetail('none')">
+            <input type="radio" name="appealStatus" value="none">
+            <div>
+              <div class="branch-label">⏳ 選項 A：期限內，尚未提出申復</div>
+              <div class="branch-desc">申復期限尚未屆滿，請繼續列管，<strong>不可結案</strong></div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('appealStatus', 'passed', this); showAppealDetail('passed')">
+            <input type="radio" name="appealStatus" value="passed">
+            <div>
+              <div class="branch-label">✅ 選項 B：已逾申復期限 / 當事人放棄申復</div>
+              <div class="branch-desc">30日期限已過，或當事人已書面聲明放棄，可進行結案</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('appealStatus', 'appealed', this); showAppealDetail('appealed')">
+            <input type="radio" name="appealStatus" value="appealed">
+            <div>
+              <div class="branch-label">🚨 選項 C：已提出申復</div>
+              <div class="branch-desc">當事人已提出申復，需完成申復審議程序後方可結案</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 選項C展開區 -->
+        <div id="appealDetailArea" style="display:none;margin-top:.75rem;">
+          <div class="law-note">
+            本系統僅作最終結案列管，申復實體程序請依準則第51至54條辦理，並由申復審議委員會完成審議。
+          </div>
+          <div class="time-field" style="margin:.75rem 0;">
+            <label>接獲申復書日期 *</label>
+            <input type="date" id="appealDate" onchange="checkAdvanceReady08()" style="width:180px;">
+          </div>
+          <div class="checklist">
+            <label class="check-item required-check" onclick="toggleCheck(this, event)">
+              <input type="checkbox" id="cbAppealDone">
+              <span>已完成申復審議程序，並將申復決定書面通知當事人（第54條）</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 輔導與追蹤 -->
+    <div class="section-card">
+      <div class="section-head">🌱 輔導與追蹤（第58條）</div>
+      <div class="section-body">
+        <div class="checklist">
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbCounseling1">
+            <span>已依防制委員會決議，訂定並執行輔導計畫（含輔導內容、分工、期程）</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbCounseling2">
+            <span>輔導紀錄已完整留存，並定期向防制委員會報告輔導成效</span>
+          </label>
+          <label class="check-item required-check" onclick="toggleCheck(this, event)">
+            <input type="checkbox" id="cbCounseling3">
+            <span>經防制委員會評估輔導成效良好，或無須再輔導，同意結案歸檔</span>
+          </label>
+        </div>
+        <div class="download-list" style="margin-top:.75rem;">
+          <a class="download-item" href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank">
+            <span>8-1 輔導紀錄表（公版範本）</span>→
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 推進（結案） -->
     <div class="advance-area">
-      <button onclick="goBack()" style="padding:.6rem 1.2rem;background:transparent;border:1px solid var(--line);border-radius:6px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;">← 返回儀表板</button>
+      <button class="advance-btn" id="advanceBtn08" disabled onclick="advanceStage08()">
+        請先完成上方所有項目
+      </button>
+      <p class="advance-hint" id="advanceHint08">請確認申復狀況並完成輔導追蹤確認</p>
     </div>
   `;
+
+  // 回填已儲存資料
+  try {
+    if (saved.appeal_status) {
+      const el = document.querySelector(`input[name="appealStatus"][value="${saved.appeal_status}"]`);
+      if (el) {
+        el.checked = true;
+        el.closest('.branch-option')?.classList.add('selected');
+        showAppealDetail(saved.appeal_status);
+      }
+    }
+    if (saved.appeal_date) {
+      const dateEl = document.getElementById('appealDate');
+      if (dateEl) dateEl.value = saved.appeal_date;
+    }
+    checkAdvanceReady08();
+  } catch(e) {}
 }
 
-// ── 重啟通報列管案件
-async function resumeToStage01() {
-  if (!confirm('確定已接獲正式檢舉，要重啟此案件的處理流程嗎？')) return;
-  showToast('正在重啟案件流程...');
+function showAppealDetail(status) {
+  const area = document.getElementById('appealDetailArea');
+  if (area) area.style.display = status === 'appealed' ? 'block' : 'none';
+  checkAdvanceReady08();
+}
+
+function checkAdvanceReady08() {
+  const btn = document.getElementById('advanceBtn08');
+  const hint = document.getElementById('advanceHint08');
+  if (!btn) return;
+
+  const appealStatus = document.querySelector('input[name="appealStatus"]:checked')?.value;
+  const cbC1 = document.getElementById('cbCounseling1')?.checked;
+  const cbC2 = document.getElementById('cbCounseling2')?.checked;
+  const cbC3 = document.getElementById('cbCounseling3')?.checked;
+  const counselingDone = cbC1 && cbC2 && cbC3;
+
+  let appealReady = false;
+  if (appealStatus === 'none') {
+    appealReady = false; // 絕對不允許結案
+  } else if (appealStatus === 'passed') {
+    appealReady = true;
+  } else if (appealStatus === 'appealed') {
+    const appealDate = document.getElementById('appealDate')?.value;
+    const cbAppealDone = document.getElementById('cbAppealDone')?.checked;
+    appealReady = !!(appealDate && cbAppealDone);
+  }
+
+  const ready = appealReady && counselingDone;
+  btn.disabled = !ready;
+
+  if (ready) {
+    btn.textContent = '🎉 全案完結，推進至【結案歸檔】 →';
+    if (hint) hint.textContent = '';
+  } else {
+    btn.textContent = '請先完成上方所有項目';
+    const missing = [];
+    if (!appealStatus) missing.push('申復狀況未選擇');
+    else if (appealStatus === 'none') missing.push('申復期限未屆至，不可結案');
+    else if (appealStatus === 'appealed') {
+      if (!document.getElementById('appealDate')?.value) missing.push('申復接獲日期');
+      if (!document.getElementById('cbAppealDone')?.checked) missing.push('申復審議完成確認');
+    }
+    if (!counselingDone) missing.push('輔導追蹤確認未完成');
+    if (hint) hint.textContent = missing.join('、');
+  }
+}
+
+async function advanceStage08() {
+  if (!confirm('確定要將此案件標記為「結案歸檔」嗎？
+
+結案後，案件將於儀表板顯示為【已結案】，且無法再修改。')) return;
+
+  const appealStatus = document.querySelector('input[name="appealStatus"]:checked')?.value;
+  const appealDate = document.getElementById('appealDate')?.value || '';
+
+  showToast('正在結案歸檔...');
   try {
-    const result = await callGAS('bully_save', {
+    const saved = JSON.parse(caseData.data_json || '{}');
+    const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
-      stage: 'STAGE_01',
-      status: '辦理中'
+      milestone: '結案歸檔',
+      done_date: new Date().toISOString().split('T')[0],
+      stage: 'STAGE_08',
+      status: '已結案',
+      data_json: JSON.stringify({
+        ...saved,
+        appeal_status: appealStatus,
+        appeal_date: appealDate,
+        closed_at: new Date().toISOString()
+      })
     });
-    if (!result.ok) throw new Error(result.error);
+    if (!res.ok) throw new Error(res.error);
     hideToast();
-    
-    // 更新本地狀態並重新渲染 STAGE_01
-    caseData.stage = 'STAGE_01';
-    renderStage01();
+    alert('🎉 恭喜！本案已圓滿結案歸檔。');
+    window.location.href = './dashboard.html';
   } catch(e) {
     hideToast();
-    alert('重啟失敗：' + e.message);
+    alert('結案失敗：' + e.message);
+  }
+}
+// ══════════════════════════════
+// 切換程序（05A ⇄ 05B）
+// ══════════════════════════════
+function openSwitchModal() {
+  const stage = caseData?.stage;
+  const toStage = stage === 'STAGE_05A' ? 'STAGE_05B' : 'STAGE_05A';
+  const fromLabel = stage === 'STAGE_05A' ? '05A 調和程序' : '05B 調查程序';
+  const toLabel   = toStage === 'STAGE_05A' ? '05A 調和程序' : '05B 調查程序';
+
+  // 頭部顏色
+  const head = document.getElementById('switchModalHead');
+  head.textContent = `⇄ 切換：${fromLabel} → ${toLabel}`;
+  head.style.background = toStage === 'STAGE_05B' ? 'var(--accent)' : 'var(--ok)';
+
+  // 說明
+  document.getElementById('switchModalInfo').innerHTML = `
+    ⏱ <strong>期限時鐘不重算</strong>，維持原第一次會議日起算點。<br>
+    切換後將立即更新系統紀錄。
+  `;
+
+  // 警告
+  const warnEl = document.getElementById('switchModalWarn');
+  const extraCheck = document.getElementById('switchExtraCheck');
+  const checkLabel = document.getElementById('switchCheckLabel');
+
+  if (stage === 'STAGE_05A') {
+    // 調和 → 調查：證據排除防火牆
+    warnEl.innerHTML = `
+      <div style="background:#fff0f0;border-left:3px solid var(--accent);padding:.75rem;border-radius:0 4px 4px 0;font-size:.82rem;color:var(--accent);line-height:1.7;">
+        🔒 <strong>法定證據排除防火牆（第31條第2項）</strong><br>
+        調和程序中之勸導及雙方不利於己之陳述，<strong>不得採為後續調查報告之基礎</strong>。<br>
+        請確認相關調和紀錄已封存，不移交調查委員。
+      </div>`;
+    extraCheck.style.display = 'block';
+    checkLabel.textContent = '已確認調和紀錄已封存，不移交調查委員（第31條第2項強制聲明）';
+  } else {
+    // 調查 → 調和：重新簽意願書
+    warnEl.innerHTML = `
+      <div style="background:var(--warn-light);border-left:3px solid #e6a817;padding:.75rem;border-radius:0 4px 4px 0;font-size:.82rem;color:var(--warn);line-height:1.7;">
+        📋 <strong>切換回調和程序（第33條第2項）</strong><br>
+        雙方當事人須重新簽署調和意願書（4-2），並於原調查紀錄中載明中斷意願。
+      </div>`;
+    extraCheck.style.display = 'block';
+    checkLabel.textContent = '已於原調查紀錄載明中斷意願，且雙方已重新簽署調和意願書（4-2）';
+  }
+
+  // 重置勾選
+  const cb = document.getElementById('cbSwitch1');
+  if (cb) { cb.checked = false; cb.closest('.check-item')?.classList.remove('checked'); }
+
+  // 預設今天
+  document.getElementById('switchDate').value = new Date().toISOString().split('T')[0];
+
+  document.getElementById('switchModalOverlay').style.display = 'flex';
+}
+
+function closeSwitchModal() {
+  document.getElementById('switchModalOverlay').style.display = 'none';
+}
+
+async function confirmSwitchModal() {
+  const stage = caseData?.stage;
+  const switchDate = document.getElementById('switchDate')?.value;
+  const cbSwitch = document.getElementById('cbSwitch1')?.checked;
+
+  if (!switchDate) { alert('請填寫切換日期'); return; }
+  if (!cbSwitch) {
+    alert(stage === 'STAGE_05A'
+      ? '請確認並勾選「證據排除」聲明後才能切換'
+      : '請確認並勾選相關聲明後才能切換');
+    return;
+  }
+
+  const toStage = stage === 'STAGE_05A' ? 'STAGE_05B' : 'STAGE_05A';
+  const toLabel = toStage === 'STAGE_05A' ? '05A 調和程序' : '05B 調查程序';
+  const milestone = stage === 'STAGE_05A'
+    ? '調和不成立 (切換調查)'
+    : '切換回調和程序（第33條第2項）';
+
+  const btn = document.getElementById('switchConfirmBtn');
+  btn.disabled = true; btn.textContent = '切換中…';
+  showToast(`正在切換至${toLabel}...`);
+
+  try {
+    const res = await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: toStage,
+      status: '進行中',
+      data_json: JSON.stringify({
+        ...JSON.parse(caseData.data_json || '{}'),
+        switch_date: switchDate,
+        switched_from: stage,
+        switch_reason: milestone
+      })
+    });
+    if (!res.ok) throw new Error(res.error);
+
+    // 重新載入期限和案件資料
+    const [caseResult, dlResult] = await Promise.all([
+      callGAS('bully_load', { case_id: currentCaseId }),
+      callGAS('bully_deadline_list', { case_id: currentCaseId })
+    ]);
+    deadlines = dlResult.deadlines || [];
+    if (caseResult.ok) caseData = caseResult.case;
+
+    hideToast();
+    closeSwitchModal();
+    alert(`✅ 已切換至「${toLabel}」`);
+    renderStage(toStage);
+  } catch(e) {
+    hideToast();
+    alert('切換失敗：' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '確認切換';
   }
 }
 
