@@ -1365,6 +1365,9 @@ async function setListingStatus() {
       email: currentEmail,
       stage: 'PRE_STAGE',
       status: '通報列管中',
+      case_name: caseData.case_name,
+      school: caseData.school,
+      case_type: caseData.case_type,
       data_json: JSON.stringify({
         report_no: reportNo,
         aware_datetime: timeKnown,
@@ -3079,6 +3082,9 @@ async function confirmSwitchModal() {
       email: currentEmail,
       stage: toStage,
       status: '進行中',
+      case_name: caseData.case_name,
+      school: caseData.school,
+      case_type: caseData.case_type,
       data_json: JSON.stringify({
         ...JSON.parse(caseData.data_json || '{}'),
         switch_date: switchDate,
