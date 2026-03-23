@@ -1340,7 +1340,7 @@ async function advanceStage02() {
       email: currentEmail,
       milestone: '決議受理',
       done_date: acceptDate,
-      stage: 'STAGE_03'
+      stage: 'STAGE_03',
       status: '進行中'
     });
     if (!result.ok) throw new Error(result.error);
