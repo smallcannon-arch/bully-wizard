@@ -334,6 +334,14 @@ body {
   display: flex;
   align-items: center;
   gap: .75rem;
+  flex-wrap: wrap;
+}
+.advance-hint {
+  font-size: .78rem;
+  color: #aaa;
+  text-align: center;
+  margin-top: .5rem;
+  width: 100%;
 }
 .advance-btn {
   flex: 1;
@@ -351,12 +359,6 @@ body {
 }
 .advance-btn:hover { opacity: .88; }
 .advance-btn:disabled { opacity: .35; cursor: not-allowed; }
-.advance-hint {
-  font-size: .78rem;
-  color: #aaa;
-  text-align: center;
-  margin-top: .5rem;
-}
 
 /* ── 載入中 Toast ── */
 #loadingToast {
