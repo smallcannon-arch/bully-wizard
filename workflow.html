@@ -428,6 +428,97 @@ body {
 </div>
 
 <script>
+
+let _autoSaveTimer = null;
+
+function triggerAutoSave() {
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(autoSave, 2000);
+}
+
+async function autoSave() {
+  if (!currentCaseId || !caseData) return;
+  try {
+    const currentData = collectCurrentStageData();
+    if (!currentData) return;
+    await callGAS('bully_save', {
+      case_id: currentCaseId,
+      email: currentEmail,
+      stage: caseData.stage,
+      status: caseData.status,
+      case_name: caseData.case_name,
+      school: caseData.school,
+      case_type: caseData.case_type,
+      data_json: JSON.stringify({
+        ...JSON.parse(caseData.data_json || '{}'),
+        ...currentData
+      })
+    });
+    caseData.data_json = JSON.stringify({
+      ...JSON.parse(caseData.data_json || '{}'),
+      ...currentData
+    });
+    showAutoSaveToast();
+  } catch(e) {}
+}
+
+function showAutoSaveToast() {
+  let toast = document.getElementById('autoSaveToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'autoSaveToast';
+    toast.style.cssText = 'position:fixed;bottom:5rem;right:1.5rem;background:#1a5c2e;color:#fff;padding:.4rem 1rem;border-radius:20px;font-size:.78rem;font-family:Noto Sans TC,sans-serif;opacity:0;transition:opacity .3s;z-index:9998;';
+    toast.textContent = '💾 已自動儲存';
+    document.body.appendChild(toast);
+  }
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+function collectCurrentStageData() {
+  const stage = caseData?.stage;
+  if (!stage) return null;
+
+  if (stage === 'STAGE_03') {
+    const count = parseInt(document.getElementById('memberCount')?.value || '3');
+    const members = Array.from({length: count}, (_, i) => ({
+      name: (document.getElementById('memberName_' + i)?.value || '').trim(),
+      type: document.getElementById('memberType_' + i)?.value || 'external'
+    }));
+    return { members, member_count: count };
+  }
+
+  if (stage === 'STAGE_04') {
+    const track = document.querySelector('input[name="track"]:checked')?.value;
+    const preMeetingDate = document.getElementById('preMeetingDate')?.value;
+    return { track_decision: track, pre_meeting_date: preMeetingDate };
+  }
+
+  if (stage === 'STAGE_05A') {
+    const result = document.querySelector('input[name="reconResult"]:checked')?.value;
+    const endDate = document.getElementById('reconciliationEndDate')?.value;
+    return { reconciliation_result: result, reconciliation_end_date: endDate };
+  }
+
+  if (stage === 'STAGE_05B') {
+    const result = document.querySelector('input[name="invResult"]:checked')?.value;
+    const endDate = document.getElementById('investigationEndDate')?.value;
+    return { investigation_result: result, investigation_end_date: endDate };
+  }
+
+  if (stage === 'STAGE_06') {
+    return {
+      committee_meeting_date: document.getElementById('committeeMeetingDate')?.value || '',
+      committee_decision: document.querySelector('input[name="committeeDecision"]:checked')?.value,
+      committee_total: document.getElementById('totalMembers')?.value || '',
+      committee_attend: document.getElementById('attendMembers')?.value || '',
+      committee_agree: document.getElementById('agreeMembers')?.value || ''
+    };
+  }
+
+  return null;
+}
+  
 const GAS_URL = 'https://bully-proxy.smallcannon.workers.dev';
 
 // ── 狀態
@@ -1591,7 +1682,7 @@ function updateMemberRows() {
     <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
       <span style="font-size:.78rem;color:#888;min-width:2em;">委員${i+1}</span>
       <input type="text" id="memberName_${i}" placeholder="委員姓名"
-        oninput="checkAdvanceReady03()"
+        oninput="checkAdvanceReady03(); triggerAutoSave()"
         style="flex:1;min-width:120px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;outline:none;">
       <select id="memberType_${i}" onchange="calculateProportion(); checkAdvanceReady03()"
         style="padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;outline:none;">
@@ -2365,19 +2456,19 @@ function renderStage06() {
           <div class="number-field">
             <label>委員總人數</label>
             <input type="number" id="totalMembers" min="1" max="30" placeholder="例：11"
-              oninput="validateCommittee()"
+              oninput="validateCommittee(); triggerAutoSave()"
               style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
           </div>
           <div class="number-field">
             <label>實際出席人數</label>
             <input type="number" id="attendMembers" min="1" max="30" placeholder="例：7"
-              oninput="validateCommittee()"
+              oninput="validateCommittee(); triggerAutoSave()"
               style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
           </div>
           <div class="number-field">
             <label>同意決議人數</label>
             <input type="number" id="agreeMembers" min="1" max="30" placeholder="例：5"
-              oninput="validateCommittee()"
+              oninput="validateCommittee(); triggerAutoSave()"
               style="width:80px;padding:.4rem .6rem;border:1px solid var(--line);border-radius:4px;font-family:'Noto Sans TC',sans-serif;font-size:.85rem;text-align:center;outline:none;">
           </div>
         </div>
