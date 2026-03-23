@@ -2566,9 +2566,7 @@ async function advanceStage06() {
   const milestone = decision === 'approve' ? '防制委員會議通過' : '退回重新調查';
 
   if (decision === 'return') {
-    const confirmed = confirm('🚨 確認退回重新調查？
-
-退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
+    const confirmed = confirm('🚨 確認退回重新調查？\n\n退回後系統將重回 STAGE_05B，期限依實際重啟日期重新計算。');
     if (!confirmed) return;
   }
 
