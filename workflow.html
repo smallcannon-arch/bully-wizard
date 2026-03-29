@@ -1602,7 +1602,6 @@ function renderStage03() {
       <div class="section-body">
         <div class="law-note">
           <strong>第27條：</strong>學校應於決議受理後 <strong>5個工作日內</strong> 組成處理小組，人數以3人或5人為原則，<strong>外聘委員須過半數</strong>（3人組至少2位外聘；5人組至少3位外聘）。<br>
-          <strong>第28條：</strong>外聘委員應自教育部生對生霸凌事件專業調和及調查人才庫遴聘。<br>
           <strong>第60條：</strong>委員有行政程序法第32、33條應迴避情事者，應自行迴避。
         </div>
       </div>
@@ -2049,7 +2048,9 @@ function renderStage05A() {
       <div class="section-head">📋 STAGE 05A｜調和程序</div>
       <div class="section-body">
         <div class="law-note">
+          <strong>第30條：</strong>雙方同意調和時應簽署調和意願書。<br>
           <strong>第32條：</strong>處理小組應於召開第一次調和或調查會議之日起 <strong>1個月內</strong> 完成調和報告；必要時得延長，延長以2次為限，每次不得逾1個月。<br>
+          <strong>第32條的意思是調和開了1個月仍未成立，須停止調和轉入調查。報告完成期限是第43條的2個月。<br>
           <strong>第31條第2項：</strong>調和程序中委員之勸導，及雙方所為不利於己之陳述或讓步，於調和不成立後之調查，<strong>不得採為調查報告之基礎</strong>。
         </div>
         ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
@@ -2290,8 +2291,8 @@ function renderStage05B() {
       <div class="section-body">
         <div class="law-note">
           <strong>第43條：</strong>處理小組應於召開第一次調查會議之日起 <strong>2個月內</strong> 完成調查報告；必要時得延長，以2次為限，每次不得逾1個月，並應通知當事人。<br>
-          <strong>第37條：</strong>調查過程中，<strong>不得讓雙方當事人或檢舉人進行對質</strong>。<br>
-          <strong>第36條：</strong>訪談時應全程錄音錄影，受訪者應被告知保密義務。
+          <strong>第39條第1項第5款：</strong>調查過程中，<strong>不得讓雙方當事人或檢舉人進行對質</strong>。<br>
+          <strong>第39條第1項第1款：</strong>訪談時應全程錄音或錄影，受訪者應被告知保密義務。
         </div>
         ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
       </div>
@@ -2308,7 +2309,7 @@ function renderStage05B() {
           </label>
           <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbInv2">
-            <span>確認調查過程中<strong>未安排雙方當事人或檢舉人進行對質</strong>（第37條禁止對質）</span>
+            <span>確認調查過程中<strong>未安排雙方當事人或檢舉人進行對質</strong>（第39條第1項第5款不得對質）</span>
           </label>
           <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbInv3">
@@ -2563,8 +2564,8 @@ function renderStage06() {
         <div id="returnDetail" style="display:none;margin-top:.75rem;">
           <div class="warning-note" style="font-size:.88rem;line-height:1.8;">
             🚨 <strong>退回重新調查</strong><br>
-            委員會認定調查程序有重大瑕疵或發現足以影響結果之新事證，依法得退回學校命其繼續調查或另組處理小組調查（第64條）。<br>
-            退回後，系統將重新進入 STAGE_05B，期限依實際重啟日期重新計算。
+            學校防制委員會認定調查報告有重大瑕疵，得依內部審議權限退回處理小組重新調查。<br>
+            另，若主管機關（教育局）審議陳情或進行事後監督時，認定有重大瑕疵或發現足以影響結果之新事證，得依<strong>第64條</strong>退回學校命其繼續調查或另組處理小組調查。<br>
           </div>
           <div class="checklist" style="margin-top:.5rem;">
             <label class="check-item required-check" onclick="toggleCheck(this, event)">
@@ -2768,6 +2769,7 @@ function renderStage07() {
           <strong>第46條第1項：</strong>學校應於防制委員會決議後 <strong>15個工作日內</strong> 作成終局實體處理。<br>
           <strong>第46條第2項：</strong>學校應於作成終局實體處理後 <strong>10個工作日內</strong> 以書面通知雙方當事人及其法定代理人。<br>
           <strong>第49條：</strong>被行為人、其法定代理人或實際照顧者，不服終局實體處理者，於收受通知之次日起 <strong>30日內</strong>，得填具陳情書向學校所屬<strong>主管機關</strong>陳情；陳情，同一事件以一次為限。
+          <strong>第48條：</strong>行為人不服處置依學生申訴規定提起申訴。
         </div>
       </div>
     </div>
