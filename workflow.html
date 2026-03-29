@@ -2049,8 +2049,7 @@ function renderStage05A() {
       <div class="section-body">
         <div class="law-note">
           <strong>第30條：</strong>雙方同意調和時應簽署調和意願書。<br>
-          <strong>第32條：</strong>處理小組應於召開第一次調和或調查會議之日起 <strong>1個月內</strong> 完成調和報告；必要時得延長，延長以2次為限，每次不得逾1個月。<br>
-          <strong>第32條的意思是調和開了1個月仍未成立，須停止調和轉入調查。報告完成期限是第43條的2個月。</strong><br>
+          <strong>第32條：調和開了1個月仍未成立，須停止調和轉入調查。報告完成期限是第43條的2個月。</strong><br>
           <strong>第31條第2項：</strong>調和程序中委員之勸導，及雙方所為不利於己之陳述或讓步，於調和不成立後之調查，<strong>不得採為調查報告之基礎</strong>。
         </div>
         ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
@@ -2813,7 +2812,7 @@ function renderStage07() {
           <input type="date" id="noticeDeliveredDate" onchange="checkAdvanceReady07()" style="width:200px;">
         </div>
         <div class="warning-note">
-          ⚠️ 送達日期是申復期限（30日）的起算點，請務必正確記錄。
+          ⚠️ 送達日期是陳情期限（30日）的起算點，請務必正確記錄。
         </div>
         <div class="checklist" style="margin-top:.75rem;">
           <label class="check-item required-check" onclick="toggleCheck(this, event)">
@@ -2870,11 +2869,11 @@ function checkAdvanceReady07() {
   btn.disabled = !ready;
 
   if (ready) {
-    // 計算並顯示申復截止日
+    // 計算並顯示陳情截止日
     const noticeD = new Date(noticeDate);
     noticeD.setDate(noticeD.getDate() + 31); // 次日起算30日
     const appealDeadline = `${noticeD.getFullYear()}/${String(noticeD.getMonth()+1).padStart(2,'0')}/${String(noticeD.getDate()).padStart(2,'0')}`;
-    btn.textContent = `✅ 確認完成，進入 STAGE_08 申復列管（申復截止：${appealDeadline}）→`;
+    btn.textContent = `✅ 確認完成，進入 STAGE_08 陳情列管（陳情截止：${appealDeadline}）→`;
     if (hint) hint.textContent = '';
   } else {
     btn.textContent = '請先完成上方所有項目';
@@ -2890,12 +2889,12 @@ async function advanceStage07() {
   const finalDate = document.getElementById('finalDecisionDate')?.value;
   const noticeDate = document.getElementById('noticeDeliveredDate')?.value;
 
-  // 計算申復截止日（次日起算30日）
+  // 計算陳情截止日（次日起算30日）
   const noticeD = new Date(noticeDate);
   noticeD.setDate(noticeD.getDate() + 31);
   const appealDeadline = noticeD.toISOString().split('T')[0];
 
-  showToast('正在推進至申復列管階段...');
+  showToast('正在推進至陳情列管階段...');
   try {
     const saved = JSON.parse(caseData.data_json || '{}');
     const res = await callGAS('bully_advance_stage', {
@@ -2916,7 +2915,7 @@ async function advanceStage07() {
     deadlines = dlResult.deadlines || [];
     caseData.stage = 'STAGE_08';
     hideToast();
-    alert(`✅ 已推進至「08 申復列管」\n申復截止日：${appealDeadline.replace(/-/g,'/')}`);
+    alert(`✅ 已推進至「08 陳情列管」\n陳情截止日：${appealDeadline.replace(/-/g,'/')}`);
     renderStage('STAGE_08');
   } catch(e) {
     hideToast();
@@ -2925,7 +2924,7 @@ async function advanceStage07() {
 }
 
 // ══════════════════════════════
-// STAGE_08 申復列管與輔導追蹤
+// STAGE_08 陳情列管與輔導追蹤
 // ══════════════════════════════
 function renderStage08() {
   let appealDeadline = '';
@@ -2939,7 +2938,7 @@ function renderStage08() {
     ${deadlineCardHtml()}
 
     <div class="section-card">
-      <div class="section-head">📋 STAGE 08｜申復列管與輔導追蹤</div>
+      <div class="section-head">📋 STAGE 08｜陳情列管與輔導追蹤</div>
       <div class="section-body">
         <div class="law-note">
           <strong>第49條：</strong>被行為人、其法定代理人或實際照顧者，不服終局實體處理者，於收受通知之次日起 <strong>30日內</strong>，得填具陳情書向學校所屬<strong>主管機關</strong>陳情；陳情，同一事件以一次為限。<br>
@@ -2947,38 +2946,38 @@ function renderStage08() {
         </div>
         ${appealDeadline ? `
         <div style="margin-top:.5rem;padding:.75rem;background:var(--warn-light);border-radius:4px;font-size:.88rem;color:var(--warn);font-weight:600;">
-          ⏱ 申復截止日：${appealDeadline}（逾期視同放棄申復權利）
+          ⏱ 陳情截止日：${appealDeadline}（逾期視同放棄陳情權利）
         </div>` : ''}
       </div>
     </div>
 
-    <!-- 申復狀況確認 -->
+    <!-- 陳情狀況確認 -->
     <div class="section-card">
-      <div class="section-head">⚖️ 申復狀況確認（第49條）</div>
+      <div class="section-head">⚖️ 陳情狀況確認（第49條）</div>
       <div class="section-body">
         <div class="warning-note">
-          ⚠️ 申復期限未屆至前，<strong>不得提前結案</strong>。請確認申復狀況後方可推進。
+          ⚠️ 陳情期限未屆至前，<strong>不得提前結案</strong>。請確認陳情狀況後方可推進。
         </div>
         <div class="branch-options" style="margin-top:.75rem;">
           <label class="branch-option" onclick="selectBranch('appealStatus', 'none', this); showAppealDetail('none')">
             <input type="radio" name="appealStatus" value="none">
             <div>
-              <div class="branch-label">⏳ 選項 A：期限內，尚未提出申復</div>
-              <div class="branch-desc">申復期限尚未屆滿，請繼續列管，<strong>不可結案</strong></div>
+              <div class="branch-label">⏳ 選項 A：期限內，尚未提出陳情</div>
+              <div class="branch-desc">陳情期限尚未屆滿，請繼續列管，<strong>不可結案</strong></div>
             </div>
           </label>
           <label class="branch-option" onclick="selectBranch('appealStatus', 'passed', this); showAppealDetail('passed')">
             <input type="radio" name="appealStatus" value="passed">
             <div>
-              <div class="branch-label">✅ 選項 B：已逾申復期限 / 當事人放棄申復</div>
+              <div class="branch-label">✅ 選項 B：已逾陳情期限 / 當事人放棄陳情</div>
               <div class="branch-desc">30日期限已過，或當事人已書面聲明放棄，可進行結案</div>
             </div>
           </label>
           <label class="branch-option" onclick="selectBranch('appealStatus', 'appealed', this); showAppealDetail('appealed')">
             <input type="radio" name="appealStatus" value="appealed">
             <div>
-              <div class="branch-label">🚨 選項 C：已提出申復</div>
-              <div class="branch-desc">當事人已提出申復，需完成申復審議程序後方可結案</div>
+              <div class="branch-label">🚨 選項 C：已提出陳情</div>
+              <div class="branch-desc">當事人已提出陳情，需完成陳情審議程序後方可結案</div>
             </div>
           </label>
         </div>
@@ -2989,7 +2988,7 @@ function renderStage08() {
             本系統僅作最終結案列管，陳情後續程序由學校所屬主管機關（教育局、處）辦理。
           </div>
           <div class="time-field" style="margin:.75rem 0;">
-            <label>接獲申復書日期 *</label>
+            <label>接獲陳情書日期 *</label>
             <input type="date" id="appealDate" onchange="checkAdvanceReady08()" style="width:180px;">
           </div>
           <div class="checklist">
@@ -3034,7 +3033,7 @@ function renderStage08() {
       <button class="advance-btn" id="advanceBtn08" disabled onclick="advanceStage08()">
         請先完成上方所有項目
       </button>
-      <p class="advance-hint" id="advanceHint08">請確認申復狀況並完成輔導追蹤確認</p>
+      <p class="advance-hint" id="advanceHint08">請確認陳情狀況並完成輔導追蹤確認</p>
     </div>
   `;
 
@@ -3093,11 +3092,11 @@ function checkAdvanceReady08() {
   } else {
     btn.textContent = '請先完成上方所有項目';
     const missing = [];
-    if (!appealStatus) missing.push('申復狀況未選擇');
-    else if (appealStatus === 'none') missing.push('申復期限未屆至，不可結案');
+    if (!appealStatus) missing.push('陳情狀況未選擇');
+    else if (appealStatus === 'none') missing.push('陳情期限未屆至，不可結案');
     else if (appealStatus === 'appealed') {
-      if (!document.getElementById('appealDate')?.value) missing.push('申復接獲日期');
-      if (!document.getElementById('cbAppealDone')?.checked) missing.push('申復審議完成確認');
+      if (!document.getElementById('appealDate')?.value) missing.push('陳情接獲日期');
+      if (!document.getElementById('cbAppealDone')?.checked) missing.push('陳情審議完成確認');
     }
     if (!counselingDone) missing.push('輔導追蹤確認未完成');
     if (hint) hint.textContent = missing.join('、');
