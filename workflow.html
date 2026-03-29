@@ -3173,9 +3173,6 @@ function checkAdvanceReady08() {
   const ready = appealReady && perpAppealReady && counselingDone;
   }
 
-  const ready = appealReady && counselingDone;
-  btn.disabled = !ready;
-
   if (ready) {
     btn.textContent = '🎉 全案完結，推進至【結案歸檔】 →';
     if (hint) hint.textContent = '';
