@@ -2709,35 +2709,8 @@ window.onload = function() {
 
 // ── STAGE 01 確認清單解鎖機制（Gemini 整合版）
 function checkStage01Ready() {
-  const tKnown = document.getElementById('time_known') ? document.getElementById('time_known').value : '';
-  const tReported = document.getElementById('time_reported') ? document.getElementById('time_reported').value : '';
-  const msgEl = document.getElementById('time_status_msg');
   const cbReport = document.getElementById('cbReport24h');
-
-  let timeLogical = false;
-
-  if (tKnown && tReported && msgEl) {
-    const dKnown = new Date(tKnown);
-    const dReported = new Date(tReported);
-    const diffMs = dReported - dKnown;
-    const diffHrs = diffMs / 3600000;
-
-    if (diffMs < 0) {
-      msgEl.innerHTML = '❌ 錯誤：通報時間不可早於知悉時間';
-      msgEl.style.color = '#c0392b';
-      timeLogical = false;
-    } else if (diffHrs > 24) {
-      msgEl.innerHTML = `⚠️ 逾時通報（已超過 ${Math.floor(diffHrs)} 小時）`;
-      msgEl.style.color = '#d35400';
-      timeLogical = true;
-    } else {
-      msgEl.innerHTML = '✅ 符合 24h 內通報';
-      msgEl.style.color = '#27ae60';
-      timeLogical = true;
-    }
-  } else if (!tKnown && !tReported) {
-    timeLogical = true; // 未填時間則不強制（向下相容）
-  }
+  const timeLogical = true;  // index.html 無時間輸入欄，不在此驗證
 
   // 證據保全 4 選 1
   const evidenceIds = ['cbEvidence1','cbEvidence2','cbEvidence3','cbEvidenceNA'];
