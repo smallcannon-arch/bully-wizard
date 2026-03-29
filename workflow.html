@@ -1883,7 +1883,7 @@ function renderStage04() {
               <div class="branch-label">🤝 選項 A：進入調和程序（STAGE_05A）</div>
               <div class="branch-desc">
                 雙方當事人均同意調和，且無權力極度不對等之情形。<br>
-                調和程序自第一次會議起 <strong>1個月內</strong> 須完成調和報告（第32條）。
+                調和程序若1個月內仍未成立，須停止調和轉入調查（第32條）；調和報告須於第一次會議起 <strong>2個月內</strong> 完成（第43條）。
               </div>
             </div>
           </label>
@@ -2050,7 +2050,7 @@ function renderStage05A() {
         <div class="law-note">
           <strong>第30條：</strong>雙方同意調和時應簽署調和意願書。<br>
           <strong>第32條：</strong>處理小組應於召開第一次調和或調查會議之日起 <strong>1個月內</strong> 完成調和報告；必要時得延長，延長以2次為限，每次不得逾1個月。<br>
-          <strong>第32條的意思是調和開了1個月仍未成立，須停止調和轉入調查。報告完成期限是第43條的2個月。<br>
+          <strong>第32條的意思是調和開了1個月仍未成立，須停止調和轉入調查。報告完成期限是第43條的2個月。</strong><br>
           <strong>第31條第2項：</strong>調和程序中委員之勸導，及雙方所為不利於己之陳述或讓步，於調和不成立後之調查，<strong>不得採為調查報告之基礎</strong>。
         </div>
         ${firstMeetingDate ? `<div style="font-size:.82rem;color:var(--info);padding:.35rem .75rem;background:var(--info-light);border-radius:4px;margin-top:.5rem;">📅 第一次會議日（共用時鐘起算點）：<strong>${firstMeetingDate.replace(/-/g,'/')}</strong></div>` : ''}
@@ -2822,7 +2822,7 @@ function renderStage07() {
           </label>
           <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbNotice2">
-            <span><strong>書面通知內已載明：</strong>收受通知次日起 <strong>30 日內</strong> 得向學校提出申復，同一事件以一次為限（第49條）</span>
+            <span><strong>書面通知內已載明：</strong>被行為人收受通知次日起 <strong>30 日內</strong> 得向學校所屬主管機關提出陳情（第49條）；行為人得依學生申訴規定提起申訴（第48條）</span>
           </label>
           <label class="check-item required-check" onclick="toggleCheck(this, event)">
             <input type="checkbox" id="cbNotice3">
