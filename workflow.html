@@ -519,6 +519,24 @@ function collectCurrentStageData() {
       committee_agree: document.getElementById('agreeMembers')?.value || ''
     };
   }
+  
+  if (stage === 'STAGE_07') {
+    return {
+      final_decision_date: document.getElementById('finalDecisionDate')?.value || '',
+      notice_delivered_date: document.getElementById('noticeDeliveredDate')?.value || ''
+    };
+  }
+
+  if (stage === 'STAGE_08') {
+    return {
+      appeal_status: document.querySelector('input[name="appealStatus"]:checked')?.value || '',
+      appeal_date: document.getElementById('appealDate')?.value || '',
+      cbCounseling1: document.getElementById('cbCounseling1')?.checked || false,
+      cbCounseling2: document.getElementById('cbCounseling2')?.checked || false,
+      cbCounseling3: document.getElementById('cbCounseling3')?.checked || false,
+      cbAppealDone: document.getElementById('cbAppealDone')?.checked || false
+    };
+  }
 
   return null;
 }
@@ -3210,14 +3228,12 @@ async function confirmSwitchModal() {
   showToast(`正在切換至${toLabel}...`);
 
   try {
-    const res = await callGAS('bully_save', {
+    const res = await callGAS('bully_advance_stage', {
       case_id: currentCaseId,
       email: currentEmail,
+      milestone,
+      done_date: switchDate,
       stage: toStage,
-      status: '進行中',
-      case_name: caseData.case_name,
-      school: caseData.school,
-      case_type: caseData.case_type,
       data_json: JSON.stringify({
         ...JSON.parse(caseData.data_json || '{}'),
         switch_date: switchDate,
