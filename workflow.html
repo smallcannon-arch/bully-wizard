@@ -3171,6 +3171,7 @@ function checkAdvanceReady08() {
   }
 
   const ready = appealReady && perpAppealReady && counselingDone;
+  btn.disabled = !ready;
 
   if (ready) {
     btn.textContent = '🎉 全案完結，推進至【結案歸檔】 →';
@@ -3207,7 +3208,10 @@ async function advanceStage08() {
     cbCounseling1: document.getElementById('cbCounseling1')?.checked,
     cbCounseling2: document.getElementById('cbCounseling2')?.checked,
     cbCounseling3: document.getElementById('cbCounseling3')?.checked,
-    cbAppealDone: document.getElementById('cbAppealDone')?.checked
+    cbAppealDone: document.getElementById('cbAppealDone')?.checked,
+    appeal_status_perp: document.querySelector('input[name="appealStatusPerp"]:checked')?.value || '',
+    appeal_date_perp: document.getElementById('perpAppealDate')?.value || '',
+    cbPerpAppealDone: document.getElementById('cbPerpAppealDone')?.checked || false
   };
 
   showToast('正在結案歸檔...');
