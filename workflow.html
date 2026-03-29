@@ -531,10 +531,13 @@ function collectCurrentStageData() {
     return {
       appeal_status: document.querySelector('input[name="appealStatus"]:checked')?.value || '',
       appeal_date: document.getElementById('appealDate')?.value || '',
+      appeal_status_perp: document.querySelector('input[name="appealStatusPerp"]:checked')?.value || '',
+      appeal_date_perp: document.getElementById('perpAppealDate')?.value || '',
       cbCounseling1: document.getElementById('cbCounseling1')?.checked || false,
       cbCounseling2: document.getElementById('cbCounseling2')?.checked || false,
       cbCounseling3: document.getElementById('cbCounseling3')?.checked || false,
-      cbAppealDone: document.getElementById('cbAppealDone')?.checked || false
+      cbAppealDone: document.getElementById('cbAppealDone')?.checked || false,
+      cbPerpAppealDone: document.getElementById('cbPerpAppealDone')?.checked || false
     };
   }
 
@@ -3001,6 +3004,57 @@ function renderStage08() {
       </div>
     </div>
 
+     <!-- 行為人申訴狀況 -->
+    <div class="section-card">
+      <div class="section-head">⚖️ 行為人申訴狀況（第48條）</div>
+      <div class="section-body">
+        <div class="law-note">
+          <strong>第48條：</strong>行為人不服學校終局實體處理，依各級學校學生申訴相關規定提起申訴。<br>
+          申訴期限依學制：<strong>國中小 40日</strong>、<strong>高中 30日</strong>，自收受通知次日起算。
+        </div>
+        <div class="warning-note">
+          ⚠️ 申訴期限未屆至前，<strong>不得提前結案</strong>。
+        </div>
+        <div class="branch-options" style="margin-top:.75rem;">
+          <label class="branch-option" onclick="selectBranch('appealStatusPerp', 'none', this); showPerpAppealDetail('none')">
+            <input type="radio" name="appealStatusPerp" value="none">
+            <div>
+              <div class="branch-label">⏳ 選項 A：期限內，尚未提出申訴</div>
+              <div class="branch-desc">申訴期限尚未屆滿，請繼續列管，<strong>不可結案</strong></div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('appealStatusPerp', 'passed', this); showPerpAppealDetail('passed')">
+            <input type="radio" name="appealStatusPerp" value="passed">
+            <div>
+              <div class="branch-label">✅ 選項 B：已逾申訴期限 / 行為人放棄申訴</div>
+              <div class="branch-desc">期限已過，或行為人已書面聲明放棄，可進行結案</div>
+            </div>
+          </label>
+          <label class="branch-option" onclick="selectBranch('appealStatusPerp', 'appealed', this); showPerpAppealDetail('appealed')">
+            <input type="radio" name="appealStatusPerp" value="appealed">
+            <div>
+              <div class="branch-label">🚨 選項 C：已提出申訴</div>
+              <div class="branch-desc">行為人已提出申訴，需完成學校申評會審議程序後方可結案</div>
+            </div>
+          </label>
+        </div>
+        <div id="perpAppealDetailArea" style="display:none;margin-top:.75rem;">
+          <div class="law-note">
+            申訴審議由學校申評會辦理，審議結果應書面通知行為人。
+          </div>
+          <div class="time-field" style="margin:.75rem 0;">
+            <label>接獲申訴書日期 *</label>
+            <input type="date" id="perpAppealDate" onchange="checkAdvanceReady08()" style="width:180px;">
+          </div>
+          <div class="checklist">
+            <label class="check-item required-check" onclick="toggleCheck(this, event)">
+              <input type="checkbox" id="cbPerpAppealDone">
+              <span>已完成申訴審議程序，並將審議結果書面通知行為人</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 輔導與追蹤 -->
     <div class="section-card">
       <div class="section-head">🌱 輔導與追蹤（第58條）</div>
@@ -3051,6 +3105,20 @@ function renderStage08() {
       const dateEl = document.getElementById('appealDate');
       if (dateEl) dateEl.value = saved.appeal_date;
     }
+
+    if (saved.appeal_status_perp) {
+      const el = document.querySelector(`input[name="appealStatusPerp"][value="${saved.appeal_status_perp}"]`);
+      if (el) {
+        el.checked = true;
+        el.closest('.branch-option')?.classList.add('selected');
+        showPerpAppealDetail(saved.appeal_status_perp);
+      }
+    }
+    if (saved.appeal_date_perp) {
+      const dateEl = document.getElementById('perpAppealDate');
+      if (dateEl) dateEl.value = saved.appeal_date_perp;
+    }
+    
     checkAdvanceReady08();
   } catch(e) {}
 }
@@ -3061,6 +3129,12 @@ function showAppealDetail(status) {
   checkAdvanceReady08();
 }
 
+function showPerpAppealDetail(status) {
+  const area = document.getElementById('perpAppealDetailArea');
+  if (area) area.style.display = status === 'appealed' ? 'block' : 'none';
+  checkAdvanceReady08();
+}
+  
 function checkAdvanceReady08() {
   const btn = document.getElementById('advanceBtn08');
   const hint = document.getElementById('advanceHint08');
@@ -3072,15 +3146,31 @@ function checkAdvanceReady08() {
   const cbC3 = document.getElementById('cbCounseling3')?.checked;
   const counselingDone = cbC1 && cbC2 && cbC3;
 
-  let appealReady = false;
+ let appealReady = false;
   if (appealStatus === 'none') {
-    appealReady = false; // 絕對不允許結案
+    appealReady = false;
   } else if (appealStatus === 'passed') {
     appealReady = true;
   } else if (appealStatus === 'appealed') {
     const appealDate = document.getElementById('appealDate')?.value;
     const cbAppealDone = document.getElementById('cbAppealDone')?.checked;
     appealReady = !!(appealDate && cbAppealDone);
+  }
+
+  // 行為人申訴
+  const appealStatusPerp = document.querySelector('input[name="appealStatusPerp"]:checked')?.value;
+  let perpAppealReady = false;
+  if (appealStatusPerp === 'none') {
+    perpAppealReady = false;
+  } else if (appealStatusPerp === 'passed') {
+    perpAppealReady = true;
+  } else if (appealStatusPerp === 'appealed') {
+    const perpAppealDate = document.getElementById('perpAppealDate')?.value;
+    const cbPerpAppealDone = document.getElementById('cbPerpAppealDone')?.checked;
+    perpAppealReady = !!(perpAppealDate && cbPerpAppealDone);
+  }
+
+  const ready = appealReady && perpAppealReady && counselingDone;
   }
 
   const ready = appealReady && counselingDone;
@@ -3097,6 +3187,12 @@ function checkAdvanceReady08() {
     else if (appealStatus === 'appealed') {
       if (!document.getElementById('appealDate')?.value) missing.push('陳情接獲日期');
       if (!document.getElementById('cbAppealDone')?.checked) missing.push('陳情審議完成確認');
+    }
+    if (!appealStatusPerp) missing.push('行為人申訴狀況未選擇');
+    else if (appealStatusPerp === 'none') missing.push('行為人申訴期限未屆至，不可結案');
+    else if (appealStatusPerp === 'appealed') {
+      if (!document.getElementById('perpAppealDate')?.value) missing.push('申訴接獲日期');
+      if (!document.getElementById('cbPerpAppealDone')?.checked) missing.push('申訴審議完成確認');
     }
     if (!counselingDone) missing.push('輔導追蹤確認未完成');
     if (hint) hint.textContent = missing.join('、');
