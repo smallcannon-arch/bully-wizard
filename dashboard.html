@@ -575,6 +575,7 @@ function closeNewCaseModal() {
   document.getElementById('newCaseModal').classList.remove('show');
   const btn = document.getElementById('createCaseBtn');
   if (btn) { btn.disabled = false; btn.textContent = '建立案件'; }
+  window._convertFromReportId = null;
 }
 
 async function createCase() {
