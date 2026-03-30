@@ -46,22 +46,22 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .stage-head {
   padding: .6rem .9rem;
   font-size: .82rem; font-weight: 700; letter-spacing: .04em;
-  color: #fff; background: var(--ink-soft, #3a3a5c);
+  color: #fff; background: var(--ink-soft, );
   border-bottom: 1px solid rgba(255,255,255,.1);
   cursor: pointer;
   display: flex; align-items: center; justify-content: space-between;
   user-select: none;
 }
-.stage-head.s-receive { background: #2c4a6e; }
-.stage-head.s-mediate { background: #2c5c3c; }
-.stage-head.s-investigate { background: #5c3a00; }
-.stage-head.s-review { background: #6e2c2c; }
+.stage-head.s-receive { background: #3a5c1e; }
+.stage-head.s-mediate { background: #4a6e2c; }
+.stage-head.s-investigate { background: #5c6e1a; }
+.stage-head.s-review { background: #2e4a1e; }
 .stage-arrow { font-size: .65rem; transition: transform .2s; }
 .stage-arrow.open { transform: rotate(90deg); }
 
 .nav-item {
   padding: .45rem .9rem .45rem 1rem;
-  font-size: .88rem; color: var(--ink-soft, #3a3a5c);
+  font-size: .88rem; color: var(--ink-soft, #3a4a2e);
   cursor: pointer; border-bottom: 1px solid var(--paper);
   line-height: 1.5;
   transition: background .12s;
@@ -89,7 +89,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   margin-bottom: 1rem;
   font-family: 'Noto Sans TC', sans-serif;
 }
-.breadcrumb span { color: var(--ink-soft, #3a3a5c); }
+.breadcrumb span { color: var(--ink-soft, #3a4a2e); }
 
 /* ── 表單樣式（繼承自各階段）── */
 .doc {
@@ -142,7 +142,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 .relief-box { border: 1.5px solid var(--line); border-radius: 3px; overflow: hidden; margin-top: .75rem; }
 .relief-head { padding: .45rem .8rem; font-size: .82rem; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; }
 .relief-head-victim { background: #ddeeff; color: var(--info); }
-.relief-head-perp { background: #fff3cd; color: #5c3a00; }
+.relief-head-perp { background: #fff3cd; color: #5c6e1a; }
 .relief-body { padding: .65rem .8rem; font-size: .82rem; line-height: 1.7; font-family: 'Noto Sans TC', sans-serif; }
 
 .history-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
@@ -192,7 +192,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   </div>
   <div class="top-bar-right">
     <span id="currentFormName" style="color:rgba(255,255,255,.6);">請選擇表單</span>
-    <button class="print-btn" id="wordBtn" onclick="downloadWord()" style="background:#2c5c3c;">⬇️ 下載 Word</button>
+    <button class="print-btn" id="wordBtn" onclick="downloadWord()" style="background:#4a6e2c;">⬇️ 下載 Word</button>
     <button class="print-btn" onclick="window.print()">🖨️ 列印此表單</button>
   </div>
 </div>
@@ -233,7 +233,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 
     <!-- 前置分流作業 -->
     <div class="stage-group">
-      <div class="stage-head" style="background:#3a3a5c;" onclick="toggleStage('s4pre')">
+      <div class="stage-head" style="background:#3a4a2e;" onclick="toggleStage('s4pre')">
         📋 前置分流作業<span class="stage-arrow" id="arr-s4pre">›</span>
       </div>
       <div class="stage-items" id="s4pre">
@@ -1018,7 +1018,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
 <div class="doc">
   <div class="doc-title">✅ 受理前確認清單（建案前必讀）</div>
 
-  <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c3a00;">
+  <div class="quorum-notice" style="background:#fff3cd;border-color:#f0d080;color:#5c6e1a;">
     <strong>⚠️ 請完成以下所有確認後，才能送出 STAGE 01 並進入審查小組階段。</strong>
   </div>
 
@@ -1027,13 +1027,13 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 案件管轄權確認（第19、20條）</div>
     <div class="ck-row">
       <input type="radio" name="jurisdiction" id="jur_local" value="local"
-             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;"
              onchange="checkStage01Ready()">
       <label for="jur_local">雙方當事人均為本校在籍學生（非跨校案件）。</label>
     </div>
     <div class="ck-row">
       <input type="radio" name="jurisdiction" id="jur_cross" value="cross"
-             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;"
              onchange="checkStage01Ready()">
       <label for="jur_cross">本案為<strong>跨校案件</strong>（行為人非本校生）。<br>
         <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:1.5rem;">
@@ -1043,7 +1043,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
     </div>
     <div class="ck-row">
       <input type="radio" name="jurisdiction" id="jur_none" value="none"
-             style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;"
+             style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;"
              onchange="checkStage01Ready()">
       <label for="jur_none">本案<strong>不具管轄權</strong>（如當事人已非本校生）。<br>
         <span style="font-size:.82rem;color:#666;font-family:'Noto Sans TC',sans-serif;margin-left:1.5rem;">
@@ -1061,19 +1061,19 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       <strong style="color:#8b1a1a;">監視器錄影通常僅保存7至30天，須立即確認！</strong>
     </div>
     <div class="ck-row">
-      <input type="checkbox" id="cbEvidence1" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <input type="checkbox" id="cbEvidence1" style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>監視器錄影</strong>（若有），已備份或申請留存。</span>
     </div>
     <div class="ck-row">
-      <input type="checkbox" id="cbEvidence2" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <input type="checkbox" id="cbEvidence2" style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>數位通訊紀錄</strong>（如 LINE 截圖、FB 貼文等），已請當事人提供或截圖存檔。</span>
     </div>
     <div class="ck-row">
-      <input type="checkbox" id="cbEvidence3" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <input type="checkbox" id="cbEvidence3" style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;">
       <span>已確認並保全與本案相關之<strong>實物證據</strong>（如毀損物品、醫療診斷書等），已拍照或妥善保存。</span>
     </div>
     <div class="ck-row">
-      <input type="checkbox" id="cbEvidenceNA" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <input type="checkbox" id="cbEvidenceNA" style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;">
       <span>本案目前無可保全之相關證據，已記錄說明。</span>
     </div>
   </div>
@@ -1082,7 +1082,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
   <div class="section" style="margin-top:1rem;">
     <div class="section-title" style="font-size:.9rem; margin-bottom:.5rem;">📌 校安通報確認（第17條）</div>
     <div class="ck-row">
-      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#1a1a2e;flex-shrink:0;margin-top:3px;">
+      <input type="checkbox" id="cbReport24h" style="width:16px;height:16px;accent-color:#2a3a1e;flex-shrink:0;margin-top:3px;">
       <span>已於知悉後<strong>24小時內</strong>完成校安通報（含通報主管機關與社政機關）。<br>
         <span style="font-size:.8rem;color:#666;font-family:'Noto Sans TC',sans-serif;">校安通報編號：<span style="display:inline-block;width:120px;border-bottom:1px solid #999;"></span></span>
       </span>
@@ -2363,7 +2363,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       <div class="relief-head relief-head-perp">⚠️ 行為人救濟方式（第48條）— 依學制勾選填寫</div>
       <div class="relief-body">
         四、依據防制準則第48條：「行為人不服學校於行政程序中所為之決定或處置者，僅得於對學校之終局實體處理不服，而依各級學校學生申訴相關規定提起申訴時，一併聲明之。」
-        <div style="margin-top:.5rem; font-weight:700; font-size:.8rem; color:#5c3a00;">申訴期限（依學制選擇）：</div>
+        <div style="margin-top:.5rem; font-weight:700; font-size:.8rem; color:#5c6e1a;">申訴期限（依學制選擇）：</div>
         <div class="ck-row" style="margin-top:.3rem;">
           <span class="cb"></span>
           <span><strong>國中小：</strong>應於收受或知悉原措施之次日起 <strong>40日內</strong>，以書面向學校提出申訴。（依高級中等以下學校學生申訴及再申訴評議委員會組織及運作辦法第55條）</span>
@@ -2447,7 +2447,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       </div>
     </div>
     <div style="padding:1.5rem;">
-      <div style="font-size:.85rem;line-height:1.8;color:#3a3a5c;margin-bottom:1rem;">
+      <div style="font-size:.85rem;line-height:1.8;color:#3a4a2e;margin-bottom:1rem;">
         案件結案前，請確認以下歸檔事項均已完成：
       </div>
       <div style="display:flex;flex-direction:column;gap:.5rem;">
@@ -2477,7 +2477,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--paper); color:
       </div>
     </div>
     <div style="padding:1rem 1.5rem;background:#f5f3ee;display:flex;gap:.75rem;justify-content:flex-end;">
-      <button onclick="closeArchiveModal()" style="padding:.5rem 1.2rem;background:transparent;border:1px solid #c5bfb0;color:#3a3a5c;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;">取消</button>
+      <button onclick="closeArchiveModal()" style="padding:.5rem 1.2rem;background:transparent;border:1px solid #c5bfb0;color:#3a4a2e;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;">取消</button>
       <button id="arc-confirm-btn" onclick="confirmArchive()" disabled style="padding:.5rem 1.5rem;background:#1a5c2e;color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;opacity:.45;">確認結案</button>
     </div>
   </div>
@@ -2543,7 +2543,7 @@ function downloadWord() {
   .relief-box { border: 1.5pt solid #c5bfb0; margin-top: 8pt; }
   .relief-head { padding: 4pt 8pt; font-size: 10pt; font-weight: bold; }
   .relief-head-victim { background: #ddeeff; color: #1a3a5c; }
-  .relief-head-perp { background: #fff3cd; color: #5c3a00; }
+  .relief-head-perp { background: #fff3cd; color: #5c6e1a; }
   .relief-body { padding: 6pt 8pt; font-size: 10pt; }
   .variant-badge { font-size: 9pt; border: 1pt solid #c5bfb0; padding: 1pt 6pt; margin-bottom: 4pt; }
   .page-sep { border-top: 2pt dashed #c5bfb0; margin: 16pt 0; }
