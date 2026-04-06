@@ -483,7 +483,29 @@ function collectCurrentStageData() {
   const stage = caseData?.stage;
   if (!stage) return null;
 
+  if (stage === 'STAGE_01') {
+    const evidence = ['cbEv1','cbEv2','cbEv3','cbEv4','cbEvNA']
+      .filter(id => document.getElementById(id)?.checked);
+    return {
+      report_date:       document.getElementById('complainDate')?.value || '',
+      report_no:         document.getElementById('reportNo')?.value || '',
+      aware_datetime:    document.getElementById('timeKnown')?.value || '',
+      reported_datetime: document.getElementById('timeReported')?.value || '',
+      complain_type:     document.querySelector('input[name="complain"]:checked')?.value || '',
+      jurisdiction:      document.querySelector('input[name="jurisdiction"]:checked')?.value || '',
+      evidence,
+    };
+  }
+
+  if (stage === 'STAGE_02') {
+    return {
+      verdict:     document.querySelector('input[name="verdict"]:checked')?.value || '',
+      accept_date: document.getElementById('acceptDate')?.value || '',
+    };
+  }
+
   if (stage === 'STAGE_03') {
+  // ↑ 以下原本內容全部不動
     const count = parseInt(document.getElementById('memberCount')?.value || '3');
     const members = Array.from({length: count}, (_, i) => ({
       name: (document.getElementById('memberName_' + i)?.value || '').trim(),
@@ -1814,7 +1836,6 @@ caseData.stage = 'STAGE_04';
 hideToast();
 renderStage04();
 alert('✅ 已推進至「04 會前會」');
-    hideToast();
   } catch(e) {
     hideToast();
     alert('推進失敗：' + e.message);
