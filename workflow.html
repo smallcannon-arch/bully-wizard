@@ -584,7 +584,8 @@ function goBack() {
 }
 
 async function callGAS(action, data = {}) {
-  const body = JSON.stringify({ action, email: currentEmail, ...data });
+  const token = sessionStorage.getItem('bully_token') || '';
+  const body = JSON.stringify({ action, email: currentEmail, token: token, ...data });
   const res = await fetch(GAS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
